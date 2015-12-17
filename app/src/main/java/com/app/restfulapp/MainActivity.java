@@ -6,9 +6,12 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
+import com.loopj.android.http.PersistentCookieStore;
+
 public class MainActivity extends AppCompatActivity {
 
     private ProgressDialog prgDialog;
+    private PersistentCookieStore cookieStore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         prgDialog.setMessage("Please wait...");
         // Set Cancelable as False
         prgDialog.setCancelable(false);
-
+        cookieStore = new PersistentCookieStore(this);
         addFragment(new FrgLogin(), false);
 
     }
@@ -42,5 +45,9 @@ public class MainActivity extends AppCompatActivity {
             ft.addToBackStack(frg.getName());
         }
         ft.commit();
+    }
+
+    public PersistentCookieStore getCookieStore() {
+        return cookieStore;
     }
 }

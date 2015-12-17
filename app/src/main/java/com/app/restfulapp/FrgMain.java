@@ -30,11 +30,13 @@ public class FrgMain extends BaseFrg {
     private SimpleDateFormat dateFormatter;
     private DatePickerDialog toDatePickerDialog;
     private TextView txContent;
+    private EditText etSal;
 
     @Override
     protected void initView() {
         // find view
         etDate = (EditText) rootView.findViewById(R.id.ed_date);
+        etSal = (EditText) rootView.findViewById(R.id.ed_sal);
         btnSubmit = (Button) rootView.findViewById(R.id.btnSubmit);
         txContent = (TextView) rootView.findViewById(R.id.tx_content);
 
@@ -63,16 +65,16 @@ public class FrgMain extends BaseFrg {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (TextUtils.isEmpty(etDate.getText())) {
+                if (TextUtils.isEmpty(etDate.getText()) || TextUtils.isEmpty(etSal.getText())) {
                     return;
                 }
                 mActivity.showLoading(true);
-                String url = SUBMIT_DATA_URL + String.format(params, Utility.getString(mActivity, "code"), etDate.getText().toString());
+                String url = SUBMIT_DATA_URL + String.format(params, etSal.getText().toString(), etDate.getText().toString());
 
 
                 // Make RESTful webservice call using AsyncHttpClient object
                 AsyncHttpClient client = new AsyncHttpClient();
-
+                client.setCookieStore(mActivity.getCookieStore());
                 client.get(url, new AsyncHttpResponseHandler() {
 
                     @Override

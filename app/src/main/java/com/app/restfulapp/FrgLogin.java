@@ -10,6 +10,7 @@ import android.widget.Toast;
 import com.app.restfulapp.ultis.Utility;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.PersistentCookieStore;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -50,6 +51,11 @@ public class FrgLogin extends BaseFrg implements View.OnClickListener {
         mActivity.showLoading(true);
         // Make RESTful webservice call using AsyncHttpClient object
         AsyncHttpClient client = new AsyncHttpClient();
+        PersistentCookieStore myCookieStore = mActivity.getCookieStore();
+        // clear cookie to make the fresh cookie, to ensure the newest cookie is being send
+        myCookieStore.clear();
+        // set the new cookie
+        client.setCookieStore(myCookieStore);
         client.get(LOGIN_URL + params, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {

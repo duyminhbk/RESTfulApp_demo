@@ -26,6 +26,22 @@
         android:inputType="none" />
 
     <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="SaleNo"
+        android:layout_marginTop="5dp"
+        android:gravity="left"
+        android:textColor="#0a0a0a"
+        android:textSize="15sp" />
+    <EditText
+        android:id="@+id/ed_sal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:hint="Enter SaleNo"
+        android:inputType="text" />
+
+    <TextView
         android:id="@+id/tx_content"
         android:layout_width="fill_parent"
         android:layout_height="150dp"
