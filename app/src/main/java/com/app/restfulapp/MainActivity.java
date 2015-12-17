@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showLoading(boolean flag) {
-        if (flag && !prgDialog.isShowing()) {
+        if (flag ) {
             prgDialog.show();
         } else {
             prgDialog.hide();

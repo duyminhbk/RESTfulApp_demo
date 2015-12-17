@@ -31,7 +31,6 @@
         android:text="SaleNo"
         android:layout_marginTop="5dp"
         android:gravity="left"
-        android:textColor="#0a0a0a"
         android:textSize="15sp" />
     <EditText
         android:id="@+id/ed_sal"
@@ -41,21 +40,32 @@
         android:hint="Enter SaleNo"
         android:inputType="text" />
 
-    <TextView
-        android:id="@+id/tx_content"
+    <ListView
+        android:id="@+id/lv_content"
         android:layout_width="fill_parent"
         android:layout_height="150dp"
-        android:layout_marginBottom="10dip"
-        android:layout_marginTop="20dp"
-        android:gravity="center"
-        android:textSize="20sp" />
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:dividerHeight="1dp"
+        android:divider="#e0e0e0">
 
+    </ListView>
+    <TextView
+        android:id="@+id/tv_empty"
+        android:layout_width="fill_parent"
+        android:layout_height="150dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:text="No Data"
+        android:textColor="#000"
+        android:textSize="30sp"
+        android:visibility="gone"/>
 
     <Button
         android:id="@+id/btnSubmit"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dip"
+        android:layout_marginTop="20dip"
         android:background="#ff6347"
         android:text="Submit"
         android:textColor="#fff" />
