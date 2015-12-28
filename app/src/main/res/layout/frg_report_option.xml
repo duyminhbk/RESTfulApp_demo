@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:background="#fff"
+    android:layout_height="match_parent">
+    <TextView
+        style="@style/TitleStyle"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="50dp"
+        android:gravity="center_horizontal"
+        android:text="@string/report_option_title"/>
+    <Button
+        android:id="@+id/btn_slgd"
+        style="@style/ReportOptionStyle"
+        android:text="@string/slgd_title"/>
+    <Button
+        android:id="@+id/btn_slkh"
+        style="@style/ReportOptionStyle"
+        android:text="@string/slkh_title"/>
+    <Button
+        android:id="@+id/btn_sltt"
+        style="@style/ReportOptionStyle"
+        android:text="@string/sltt_title"/>
+    <Button
+        android:id="@+id/btn_sltv"
+        style="@style/ReportOptionStyle"
+        android:text="@string/sltv_title"/>
+</LinearLayout>

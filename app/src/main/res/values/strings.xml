@@ -12,4 +12,9 @@
     <string name="btnRegister">Register</string>
     <string name="welcome">Welcome</string>
     <string name="home_title">Home</string>
+    <string name="sltv_title">Sản lượng Trưởng Vùng </string>
+    <string name="sltt_title">Sản lượng Tiếp Thị </string>
+    <string name="slkh_title">Sản lượng KH </string>
+    <string name="slgd_title">Sản lượng Giám Đốc</string>
+    <string name="report_option_title">Chọn loại report</string>
 </resources>

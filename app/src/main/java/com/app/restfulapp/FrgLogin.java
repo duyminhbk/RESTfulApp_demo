@@ -119,7 +119,8 @@ public class FrgLogin extends BaseFrg implements View.OnClickListener {
     }
 
     private void goHomeScreen() {
-        mActivity.addFragment(new FrgMain(), false);
+//        mActivity.addFragment(new FrgMain(), false);
+        mActivity.addFragment(new FrgReportOption(), false);
     }
 
     @Override

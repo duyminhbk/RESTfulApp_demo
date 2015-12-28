@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         // Set Cancelable as False
         prgDialog.setCancelable(false);
         cookieStore = new PersistentCookieStore(this);
-        addFragment(new FrgLogin(), false);
+        addFragment(new FrgReportOption(), false);
 
     }
 
