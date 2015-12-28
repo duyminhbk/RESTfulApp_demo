@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">RESTfulApp</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_login">Login</string>
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="register_title">Register</string>
+    <string name="login_title">Login</string>
+    <string name="name">Name</string>
+    <string name="email">Email</string>
+    <string name="pwd">Password</string>
+    <string name="btnRegister">Register</string>
+    <string name="welcome">Welcome</string>
+    <string name="home_title">Home</string>
+    <string name="sltv_title">Sản lượng Trưởng Vùng </string>
+    <string name="sltt_title">Sản lượng Tiếp Thị </string>
+    <string name="slkh_title">Sản lượng KH </string>
+    <string name="slgd_title">Sản lượng Giám Đốc</string>
+    <string name="report_option_title">Chọn loại report</string>
+</resources>
