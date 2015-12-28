@@ -17,28 +17,31 @@
 
     <EditText
         android:id="@+id/ed_date"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
 
         android:editable="false"
-        android:hint="Enter Date"
+        android:hint="From Date"
+        android:inputType="none" />
+
+    <EditText
+        android:id="@+id/ed_date2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:editable="false"
+        android:hint="To Date"
         android:inputType="none" />
 
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="SaleNo"
+        android:text="SaleName"
         android:layout_marginTop="5dp"
         android:gravity="left"
-        android:textSize="15sp" />
-    <EditText
-        android:id="@+id/ed_sal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:hint="Enter SaleNo"
-        android:inputType="text" />
+        android:textSize="15sp"
+        android:id="@+id/txtSaleName" />
 
     <ListView
         android:id="@+id/lv_content"
@@ -60,6 +63,16 @@
         android:textColor="#000"
         android:textSize="30sp"
         android:visibility="gone"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Total: _"
+        android:layout_marginTop="5dp"
+        android:gravity="left"
+        android:textSize="15sp"
+        android:id="@+id/txtTotal"
+        android:layout_gravity="right" />
 
     <Button
         android:id="@+id/btnSubmit"
