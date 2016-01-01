@@ -3,6 +3,7 @@ package com.app.restfulapp;
 import android.app.DatePickerDialog;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -67,6 +68,12 @@ public class FrgMain extends BaseFrg {
         mData = new ArrayList<String>();
         listAdapter = new ArrayAdapter<String>(mActivity, android.R.layout.simple_list_item_1, mData);
         lvContent.setAdapter(listAdapter);
+        lvContent.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mActivity.addFragment(new FrgReportOption(),true);
+            }
+        });
         //init date picker
         dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
         Calendar newCalendar = Calendar.getInstance();

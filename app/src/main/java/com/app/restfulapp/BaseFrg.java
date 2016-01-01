@@ -23,6 +23,10 @@ public abstract class BaseFrg extends Fragment {
         return rootView;
     }
 
+    protected View findViewById(int id){
+        return rootView==null?null:rootView.findViewById(id);
+    }
+
     protected abstract void initView();
 
     public abstract String getName();
