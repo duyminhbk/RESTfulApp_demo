@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,8 +33,8 @@ public class FrgMain extends BaseFrg {
     private static final String SUBMIT_DATA_URL = "http://visitme.cloudapp.net:83/Home/GetSaleData";
     // private static final String SUBMIT_DATA_URL = "http://192.168.1.103:83/Home/GetSaleData";
     private String params = "?SaleNo=%s&Date1=%s&Date2=%s";
-    private EditText etDate;
-    private EditText etDate2;
+    private TextView txDate;
+    private TextView txDate2;
     private Button btnSubmit;
     private SimpleDateFormat dateFormatter;
 
@@ -47,13 +48,17 @@ public class FrgMain extends BaseFrg {
     private TextView txEmpty;
     private TextView txtSaleName;
     private TextView txtTotal;
+    private EditText etName;
+    private Spinner spinnerReport;
 
     @Override
     protected void initView() {
 
         // find view
-        etDate = (EditText) rootView.findViewById(R.id.ed_date);
-        etDate2 = (EditText) rootView.findViewById(R.id.ed_date2);
+        txDate = (TextView) rootView.findViewById(R.id.ed_date);
+        txDate2 = (TextView) rootView.findViewById(R.id.ed_date2);
+        etName=(EditText)findViewById(R.id.ed_member_name);
+        spinnerReport = (Spinner)findViewById(R.id.sp_report);
 //        etSal = (EditText) rootView.findViewById(R.id.ed_sal);
 
         txtSaleName = (TextView) rootView.findViewById(R.id.txtSaleName);
@@ -65,67 +70,42 @@ public class FrgMain extends BaseFrg {
         lvContent = (ListView) rootView.findViewById(R.id.lv_content);
         txEmpty = (TextView) rootView.findViewById(R.id.tv_empty);
 
-        mData = new ArrayList<String>();
-        listAdapter = new ArrayAdapter<String>(mActivity, android.R.layout.simple_list_item_1, mData);
-        lvContent.setAdapter(listAdapter);
-        lvContent.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        initList();
+        initDatePicker();
+        initSpinner();
+        handleSubmit();
+    }
+
+    private void initSpinner() {
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(mActivity, R.array.report_type, android.R.layout.simple_spinner_dropdown_item);
+        spinnerReport.setAdapter(adapter);
+
+        spinnerReport.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mActivity.addFragment(new FrgReportOption(),true);
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                CharSequence item = (CharSequence) parent.getSelectedItem();
+                Toast.makeText(mActivity,item,Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
-        //init date picker
-        dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
-        Calendar newCalendar = Calendar.getInstance();
+    }
 
-        toDatePickerDialog = new DatePickerDialog(mActivity, new DatePickerDialog.OnDateSetListener() {
-
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                Calendar newDate = Calendar.getInstance();
-                newDate.set(year, monthOfYear, dayOfMonth);
-                etDate.setText(dateFormatter.format(newDate.getTime()));
-            }
-
-        }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
-
-        // init onClick
-        etDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toDatePickerDialog.show();
-            }
-        });
-
-        toDatePickerDialog2 = new DatePickerDialog(mActivity, new DatePickerDialog.OnDateSetListener() {
-
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                Calendar newDate = Calendar.getInstance();
-                newDate.set(year, monthOfYear, dayOfMonth);
-                etDate2.setText(dateFormatter.format(newDate.getTime()));
-            }
-
-        }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
-
-        // init onClick
-        etDate2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toDatePickerDialog2.show();
-            }
-        });
-
+    private void handleSubmit() {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (TextUtils.isEmpty(etDate.getText()) || TextUtils.isEmpty(etDate2.getText())) {
+                if (TextUtils.isEmpty(txDate.getText()) || TextUtils.isEmpty(txDate2.getText())) {
                     return;
                 }
 
                 mActivity.showLoading(true);
 
                 String saleNo = Utility.getString(mActivity, "saleNo");
-                // String url = SUBMIT_DATA_URL + String.format(params, etSal.getText().toString(), etDate.getText().toString());
-                String url = SUBMIT_DATA_URL + String.format(params, saleNo, etDate.getText().toString(), etDate2.getText().toString());
+                String url = SUBMIT_DATA_URL + String.format(params, saleNo, txDate.getText().toString(), txDate2.getText().toString());
 
                 // Make RESTful webservice call using AsyncHttpClient object
                 AsyncHttpClient client = new AsyncHttpClient();
@@ -158,7 +138,7 @@ public class FrgMain extends BaseFrg {
                             }
                             listAdapter.notifyDataSetChanged();
                         }catch (Exception e){
-                            Toast.makeText(mActivity,"can't parse data !!!",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mActivity, "can't parse data !!!", Toast.LENGTH_SHORT).show();
                         }
                     }
 
@@ -168,6 +148,60 @@ public class FrgMain extends BaseFrg {
                         Toast.makeText(mActivity, "get data fail", Toast.LENGTH_SHORT).show();
                     }
                 });
+            }
+        });
+    }
+
+    private void initDatePicker() {
+        //init date picker
+        dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
+        Calendar newCalendar = Calendar.getInstance();
+
+        toDatePickerDialog = new DatePickerDialog(mActivity, new DatePickerDialog.OnDateSetListener() {
+
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                Calendar newDate = Calendar.getInstance();
+                newDate.set(year, monthOfYear, dayOfMonth);
+                txDate.setText(dateFormatter.format(newDate.getTime()));
+            }
+
+        }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
+
+        // init onClick
+        txDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toDatePickerDialog.show();
+            }
+        });
+
+        toDatePickerDialog2 = new DatePickerDialog(mActivity, new DatePickerDialog.OnDateSetListener() {
+
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                Calendar newDate = Calendar.getInstance();
+                newDate.set(year, monthOfYear, dayOfMonth);
+                txDate2.setText(dateFormatter.format(newDate.getTime()));
+            }
+
+        }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
+
+        // init onClick
+        txDate2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toDatePickerDialog2.show();
+            }
+        });
+    }
+
+    private void initList() {
+        mData = new ArrayList<String>();
+        listAdapter = new ArrayAdapter<String>(mActivity, android.R.layout.simple_list_item_1, mData);
+        lvContent.setAdapter(listAdapter);
+        lvContent.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mActivity.addFragment(new FrgReportSample(),true);
             }
         });
     }

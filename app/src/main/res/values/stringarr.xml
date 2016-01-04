@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <array name="slkh_header">
-        <item>Truong vung</item>
-        <item>Tiep thi</item>
-        <item>In this day</item>
-        <item>This month</item>
-        <item>Last month</item>
-        <item>Offset</item>
-        <item>Percent Offset</item>
+        <item>   Truong vung   </item>
+        <item>   Tiep thi   </item>
+        <item>   In this day   </item>
+        <item>   This month   </item>
+        <item>   Last month   </item>
+        <item>   Offset   </item>
+        <item>   Percent Offset   </item>
+    </array>
+
+    <array name="report_type">
+        <item>Choose kind of report</item>
+        <item>@string/sltv_title</item>
+        <item>@string/slgd_title</item>
+        <item>@string/slkh_title</item>
+        <item>@string/sltt_title</item>
     </array>
 
 </resources>

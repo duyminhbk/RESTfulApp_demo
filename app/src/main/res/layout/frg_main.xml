@@ -5,7 +5,8 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="10dip">
+    android:padding="10dip"
+    android:weightSum="1">
 
     <TextView
         android:layout_width="fill_parent"
@@ -15,24 +16,30 @@
         android:textSize="25sp"
         android:textStyle="bold" />
 
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/sp_report"/>
+
     <EditText
+        android:id="@+id/ed_member_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/member_name"/>
+
+    <TextView
         android:id="@+id/ed_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
+        style="@android:style/Widget.EditText"
+        android:hint="From Date"/>
 
-        android:editable="false"
-        android:hint="From Date"
-        android:inputType="none" />
-
-    <EditText
+    <TextView
         android:id="@+id/ed_date2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:editable="false"
-        android:hint="To Date"
-        android:inputType="none" />
+        style="@android:style/Widget.EditText"
+        android:hint="To Date"/>
 
     <TextView
         android:layout_width="fill_parent"
@@ -46,11 +53,13 @@
     <ListView
         android:id="@+id/lv_content"
         android:layout_width="fill_parent"
-        android:layout_height="150dp"
+        android:layout_height="0dp"
         android:layout_marginBottom="10dp"
         android:layout_marginTop="10dp"
         android:dividerHeight="1dp"
-        android:divider="#e0e0e0">
+
+        android:divider="#e0e0e0"
+        android:layout_weight="1">
 
     </ListView>
     <TextView

@@ -27,18 +27,17 @@ public class SLKHLayout extends RelativeLayout {
 	public final String TAG = "TableMainLayout.java";
 
 	// set the header titles
-	String headers[]= {
-			"Header 1 \n multi-lines",
-			"Header 2",
-			"Header 3",
-			"Header 4",
-			"Header 5",
-			"Header 6",
-			"Header 7",
-			"Header 8",
-			"Header 9"
-	} ;
-//	String headers[];
+//	String headers[]= {
+//			"Header 1 \n multi-lines",
+//			"Header 2",
+//			"Header 3",
+//			"Header 4",
+//			"Header 5",
+//			"Header 6",
+//			"Header 7",
+//			"Header 8"
+//	} ;
+	String headers[];
 	TableLayout tableA;
 	TableLayout tableB;
 	TableLayout tableC;
@@ -54,7 +53,7 @@ public class SLKHLayout extends RelativeLayout {
 	
 	List<SampleObject> sampleObjects = this.sampleObjects();
 	
-	int headerCellsWidth[] = new int[headers.length];
+	int headerCellsWidth[] ;
 	public SLKHLayout(Context context, AttributeSet attrs) {
 		this(context);
 	}
@@ -70,7 +69,8 @@ public class SLKHLayout extends RelativeLayout {
 	public SLKHLayout(Context context) {
 		
 		super(context);
-//		headers = context.getResources().getStringArray(R.array.slkh_header);
+		headers = context.getResources().getStringArray(R.array.slkh_header);
+		headerCellsWidth = new int[headers.length];
 		this.context = context;
 		
 		// initialize the main components (TableLayouts, HorizontalScrollView, ScrollView)
@@ -110,25 +110,26 @@ public class SLKHLayout extends RelativeLayout {
 		
 		List<SampleObject> sampleObjects = new ArrayList<SampleObject>();
 		
-		for(int x=1; x<=20; x++){
+		for(int x=1; x<=50; x++){
 			
 			SampleObject sampleObject = new SampleObject(
-				"Col 1, Row " + x, 
-				"Col 2, Row " + x + " - multi-lines",
-				"Col 3, Row " + x,
-				"Col 4, Row " + x,
-				"Col 5, Row " + x,
-				"Col 6, Row " + x,
-				"Col 7, Row " + x,
-				"Col 8, Row " + x,
-				"Col 9, Row " + x
+				x%4 != 0? "": (x+" Phan tuan trung ") ,
+				"6080\n"+x+" Phan Tuan Trung"+x+ "\n0938084093"+x,
+				"55,500" + x,
+				"1,027,150"+ x,
+				"877,035" + x,
+				"150,115" + x,
+				"1" + x+"%"
 			);
 			
 			sampleObjects.add(sampleObject);
 		}
-		
+		SampleObject sampleObject = new SampleObject(
+				"","TOTAL","900,220","15,080,245","15,186,716","",""
+		);
+		sampleObjects.add(sampleObject);
 		return sampleObjects;
-	
+
 	}
 	
 	// initalized components 
@@ -218,7 +219,7 @@ public class SLKHLayout extends RelativeLayout {
 		TableRow componentBTableRow = new TableRow(this.context);
 		int headerFieldCount = this.headers.length;
 
-		TableRow.LayoutParams params = new TableRow.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+		TableRow.LayoutParams params = new TableRow.LayoutParams(400, LayoutParams.MATCH_PARENT);
 		params.setMargins(2, 0, 0, 0);
 
 		for(int x=0; x<(headerFieldCount-1); x++){
@@ -277,12 +278,10 @@ public class SLKHLayout extends RelativeLayout {
 			sampleObject.header5,
 			sampleObject.header6,
 			sampleObject.header7,
-			sampleObject.header8,
-			sampleObject.header9
 		};
 
 		for(int x=0 ; x<loopCount; x++){
-			TableRow.LayoutParams params = new TableRow.LayoutParams( headerCellsWidth[x+1], LayoutParams.MATCH_PARENT);
+			TableRow.LayoutParams params = new TableRow.LayoutParams( 400, LayoutParams.MATCH_PARENT);
 			params.setMargins(2, 2, 0, 0);
 
 			TextView textViewB = this.bodyTextView(info[x]);
