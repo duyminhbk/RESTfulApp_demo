@@ -5,10 +5,11 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
+import android.text.Html;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -16,32 +17,18 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import com.app.restfulapp.R;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 
 @SuppressWarnings("ResourceType")
 public class ReportLayout extends RelativeLayout {
 
 	public final String TAG = "TableMainLayout.java";
 
-	// set the header titles
-//	String headers[]= {
-//			"Header 1 \n multi-lines",
-//			"Header 2",
-//			"Header 3",
-//			"Header 4",
-//			"Header 5",
-//			"Header 6",
-//			"Header 7",
-//			"Header 8"
-//	} ;
 
 	TableLayout tableA;
 	TableLayout tableB;
@@ -62,20 +49,11 @@ public class ReportLayout extends RelativeLayout {
 	private Object[] tableData;
 
 	public ReportLayout(Context context, AttributeSet attrs) {
-		this(context);
+		this(context,attrs,0);
 	}
 
 	public ReportLayout(Context context, AttributeSet attrs, int defStyleAttr) {
-		this(context);
-	}
-
-	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
-	public ReportLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-		this(context);
-	}
-	public ReportLayout(Context context) {
-
-		super(context);
+		super(context,attrs,defStyleAttr);
 		this.context = context;
 
 		// initialize the main components (TableLayouts, HorizontalScrollView, ScrollView)
@@ -94,7 +72,19 @@ public class ReportLayout extends RelativeLayout {
 
 		// add the components to be part of the main layout
 		this.addComponentToMainLayout();
-		this.setBackgroundColor(Color.RED);
+		this.setBackgroundColor(Color.parseColor("#dadada"));
+	}
+
+	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
+	public ReportLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+		this(context, attrs, defStyleAttr);
+	}
+	public ReportLayout(Context context) {
+		super(context, null, 0);
+	}
+
+	public void setColumnWidth(int[] widths){
+		this.headerCellsWidth = widths;
 	}
 
 	// data struct
@@ -103,10 +93,11 @@ public class ReportLayout extends RelativeLayout {
 		if(data == null){
 			throw new DataFormatException("can not set null");
 		}
-		if( data.isNull("index")){
+		if( data.isNull("index") ||data.optJSONArray("index") == null ){
 			throw new DataFormatException("missing index data");
 		}
 		index = new String[data.optJSONArray("index").length()];
+
 		JSONArray indexTemp = data.optJSONArray("index");
 		if(indexTemp.length() == 0 || indexTemp.toString() == "[]"){
 			throw new DataFormatException("index must not empty");
@@ -135,42 +126,15 @@ public class ReportLayout extends RelativeLayout {
 
 	private void updateLayout() {
 		// add some table rows
-		addTableRowToTableA();
-		addTableRowToTableB();
+		addDataToTableA();
+
+		addDataToTableCAndTableD();
+
+		addDataToTableB();
 
 		resizeHeaderHeight();
 
-		getTableRowHeaderCellWidth();
-
-		generateTableC_AndTable_B();
-
 		resizeBodyTableRowHeight();
-	}
-
-	List<SampleObject> sampleObjects(){
-
-		List<SampleObject> sampleObjects = new ArrayList<SampleObject>();
-
-		for(int x=1; x<=50; x++){
-
-			SampleObject sampleObject = new SampleObject(
-				x%4 != 0? "": (x+" Phan tuan trung ") ,
-				"6080\n"+x+" Phan Tuan Trung"+x+ "\n0938084093"+x,
-				"55,500" + x,
-				"1,027,150"+ x,
-				"877,035" + x,
-				"150,115" + x,
-				"1" + x+"%"
-			);
-
-			sampleObjects.add(sampleObject);
-		}
-		SampleObject sampleObject = new SampleObject(
-				"","TOTAL","900,220","15,080,245","15,186,716","",""
-		);
-		sampleObjects.add(sampleObject);
-		return sampleObjects;
-
 	}
 
 	// initalized components
@@ -185,6 +149,7 @@ public class ReportLayout extends RelativeLayout {
 		this.horizontalScrollViewD = new MyHorizontalScrollView(this.context);
 
 		this.scrollViewC = new MyScrollView(this.context);
+		scrollViewC.setVerticalScrollBarEnabled(false);
 		this.scrollViewD = new MyScrollView(this.context);
 
 		this.tableA.setBackgroundColor(Color.GREEN);
@@ -236,50 +201,36 @@ public class ReportLayout extends RelativeLayout {
 
 
 
-	private void addTableRowToTableA(){
-		this.tableA.addView(this.componentATableRow());
-	}
-
-	private void addTableRowToTableB(){
-		this.tableB.addView(this.componentBTableRow());
-	}
-
-	// generate table row of table A
-	TableRow componentATableRow(){
-
+	private void addDataToTableA(){
 		TableRow componentATableRow = new TableRow(this.context);
 		TextView textView = this.headerTextView(index[0]);
+		if(headerCellsWidth != null) {
+			textView.setWidth(headerCellsWidth[0]);
+		}
 		componentATableRow.addView(textView);
-
-		return componentATableRow;
+		this.tableA.addView(componentATableRow);
 	}
 
-	// generate table row of table B
-	TableRow componentBTableRow(){
+	private void addDataToTableB(){
 
 		TableRow componentBTableRow = new TableRow(this.context);
-		int headerFieldCount = index.length;
-
-		TableRow.LayoutParams params = new TableRow.LayoutParams(400, LayoutParams.MATCH_PARENT);
-		params.setMargins(2, 0, 0, 0);
-
-		for(int x=0; x<(headerFieldCount-1); x++){
-			TextView textView = this.headerTextView(this.index[x+1]);
+		TableRow.LayoutParams params;
+		for(int x=1; x<index.length; x++){
+			if(headerCellsWidth == null) {
+				params = new TableRow.LayoutParams(400, LayoutParams.MATCH_PARENT);
+			}else{
+				params = new TableRow.LayoutParams(headerCellsWidth[x], LayoutParams.MATCH_PARENT);
+			}
+			params.setMargins(2, 0, 0, 0);
+			TextView textView = this.headerTextView(this.index[x]);
 			textView.setLayoutParams(params);
 			componentBTableRow.addView(textView);
 		}
-
-		return componentBTableRow;
+		this.tableB.addView(componentBTableRow);
 	}
 
 	// generate table row of table C and table D
-	private void generateTableC_AndTable_B(){
-
-		// just seeing some header cell width
-		for(int x=0; x<this.headerCellsWidth.length; x++){
-			Log.v("TableMainLayout.java", this.headerCellsWidth[x] + "");
-		}
-
+	private void addDataToTableCAndTableD(){
 		for(Object object : tableData){
 			TableRow tableRowForTableC = this.tableRowForTableC((String[])object);
 			TableRow taleRowForTableD = this.taleRowForTableD((String[])object);
@@ -295,8 +246,8 @@ public class ReportLayout extends RelativeLayout {
 
 	// a TableRow for table C
 	TableRow tableRowForTableC(String[] data){
-
-		TableRow.LayoutParams params = new TableRow.LayoutParams( this.headerCellsWidth[0], LayoutParams.MATCH_PARENT);
+		int width = this.viewWidth(((TableRow) this.tableA.getChildAt(0)).getChildAt(0));
+		TableRow.LayoutParams params = new TableRow.LayoutParams( width, LayoutParams.MATCH_PARENT);
 		params.setMargins(0, 2, 0, 0);
 
 		TableRow tableRowForTableC = new TableRow(this.context);
@@ -309,14 +260,14 @@ public class ReportLayout extends RelativeLayout {
 	TableRow taleRowForTableD(String[] data){
 
 		TableRow taleRowForTableD = new TableRow(this.context);
-
-		int loopCount = ((TableRow)this.tableB.getChildAt(0)).getChildCount();
-
-
-		for(int x=1 ; x<loopCount; x++){
-			TableRow.LayoutParams params = new TableRow.LayoutParams( 400, LayoutParams.MATCH_PARENT);
+		TableRow.LayoutParams params;
+		for(int x=1 ; x<index.length; x++){
+			if(headerCellsWidth == null){
+				params = new TableRow.LayoutParams(400, LayoutParams.MATCH_PARENT);
+			}else{
+				params = new TableRow.LayoutParams(headerCellsWidth[x], LayoutParams.MATCH_PARENT);
+			}
 			params.setMargins(2, 2, 0, 0);
-
 			TextView textViewB = this.bodyTextView(data[x]);
 			taleRowForTableD.addView(textViewB,params);
 		}
@@ -330,7 +281,7 @@ public class ReportLayout extends RelativeLayout {
 
 		TextView bodyTextView = new TextView(this.context);
 		bodyTextView.setBackgroundColor(Color.WHITE);
-		bodyTextView.setText(label);
+		bodyTextView.setText(Html.fromHtml(label));
 		bodyTextView.setGravity(Gravity.CENTER);
 		bodyTextView.setPadding(5, 5, 5, 5);
 
@@ -342,7 +293,7 @@ public class ReportLayout extends RelativeLayout {
 
 		TextView headerTextView = new TextView(this.context);
 		headerTextView.setBackgroundColor(Color.WHITE);
-		headerTextView.setText(label);
+		headerTextView.setText(Html.fromHtml("<b>" + label + "</b>"));
 		headerTextView.setGravity(Gravity.CENTER);
 		headerTextView.setPadding(5, 5, 5, 5);
 
@@ -358,26 +309,10 @@ public class ReportLayout extends RelativeLayout {
 		int rowAHeight = this.viewHeight(productNameHeaderTableRow);
 		int rowBHeight = this.viewHeight(productInfoTableRow);
 
-		TableRow tableRow = rowAHeight < rowBHeight ? productNameHeaderTableRow : productInfoTableRow;
 		int finalHeight = rowAHeight > rowBHeight ? rowAHeight : rowBHeight;
 
-		this.matchLayoutHeight(tableRow, finalHeight);
-	}
-
-	void getTableRowHeaderCellWidth(){
-
-		int tableAChildCount = ((TableRow)this.tableA.getChildAt(0)).getChildCount();
-		int tableBChildCount = ((TableRow)this.tableB.getChildAt(0)).getChildCount();;
-
-		for(int x=0; x<(tableAChildCount+tableBChildCount); x++){
-
-			if(x==0){
-				this.headerCellsWidth[x] = this.viewWidth(((TableRow)this.tableA.getChildAt(0)).getChildAt(x));
-			}else{
-				this.headerCellsWidth[x] = this.viewWidth(((TableRow)this.tableB.getChildAt(0)).getChildAt(x-1));
-			}
-
-		}
+		this.matchLayoutHeight(productNameHeaderTableRow, finalHeight>=100?finalHeight:100);
+		this.matchLayoutHeight(productInfoTableRow, finalHeight>=100?finalHeight:100);
 	}
 
 	// resize body table row height
@@ -461,7 +396,7 @@ public class ReportLayout extends RelativeLayout {
 	// read a view's width
 	private int viewWidth(View view) {
 		view.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
-		return view.getMeasuredWidth();
+		return view.getMeasuredWidth() ;
 	}
 
 	// horizontal scroll view custom class

@@ -13,11 +13,17 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.restfulapp.reports.FrgSLGDReport;
+import com.app.restfulapp.reports.FrgSLKHReport;
+import com.app.restfulapp.reports.FrgSLTTReport;
+import com.app.restfulapp.reports.FrgSLTVReport;
+import com.app.restfulapp.ultis.Url;
 import com.app.restfulapp.ultis.Utility;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,11 +36,9 @@ import cz.msebera.android.httpclient.Header;
  * Created by minhpham on 12/16/15.
  */
 public class FrgMain extends BaseFrg {
-    private static final String SUBMIT_DATA_URL = "http://visitme.cloudapp.net:83/Home/GetSaleData";
-    // private static final String SUBMIT_DATA_URL = "http://192.168.1.103:83/Home/GetSaleData";
     private String params = "?SaleNo=%s&Date1=%s&Date2=%s";
-    private TextView txDate;
-    private TextView txDate2;
+    private TextView txDateFrom;
+    private TextView txDateTo;
     private Button btnSubmit;
     private SimpleDateFormat dateFormatter;
 
@@ -50,13 +54,29 @@ public class FrgMain extends BaseFrg {
     private TextView txtTotal;
     private EditText etName;
     private Spinner spinnerReport;
+    private Reports report_type = Reports.NONE;
+
+    public String getID(String item) {
+        String id="";
+        try {
+            JSONObject json = new JSONObject(item);
+            id = json.optString("CustNo");
+        }catch (Exception e){
+
+        }
+        return id;
+    }
+
+    public enum Reports{
+        NONE,SLTV,SLGD,SLKH,SLTT
+    }
 
     @Override
     protected void initView() {
 
         // find view
-        txDate = (TextView) rootView.findViewById(R.id.ed_date);
-        txDate2 = (TextView) rootView.findViewById(R.id.ed_date2);
+        txDateFrom = (TextView) rootView.findViewById(R.id.ed_date_from);
+        txDateTo = (TextView) rootView.findViewById(R.id.ed_date_to);
         etName=(EditText)findViewById(R.id.ed_member_name);
         spinnerReport = (Spinner)findViewById(R.id.sp_report);
 //        etSal = (EditText) rootView.findViewById(R.id.ed_sal);
@@ -83,8 +103,7 @@ public class FrgMain extends BaseFrg {
         spinnerReport.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                CharSequence item = (CharSequence) parent.getSelectedItem();
-                Toast.makeText(mActivity,item,Toast.LENGTH_SHORT).show();
+                report_type = Reports.values()[position];
             }
 
             @Override
@@ -98,14 +117,14 @@ public class FrgMain extends BaseFrg {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (TextUtils.isEmpty(txDate.getText()) || TextUtils.isEmpty(txDate2.getText())) {
+                if (TextUtils.isEmpty(txDateFrom.getText()) || TextUtils.isEmpty(txDateTo.getText())) {
                     return;
                 }
 
                 mActivity.showLoading(true);
 
                 String saleNo = Utility.getString(mActivity, "saleNo");
-                String url = SUBMIT_DATA_URL + String.format(params, saleNo, txDate.getText().toString(), txDate2.getText().toString());
+                String url = Url.SUBMIT_DATA_URL + String.format(params, saleNo, txDateFrom.getText().toString(), txDateTo.getText().toString());
 
                 // Make RESTful webservice call using AsyncHttpClient object
                 AsyncHttpClient client = new AsyncHttpClient();
@@ -162,13 +181,13 @@ public class FrgMain extends BaseFrg {
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 Calendar newDate = Calendar.getInstance();
                 newDate.set(year, monthOfYear, dayOfMonth);
-                txDate.setText(dateFormatter.format(newDate.getTime()));
+                txDateFrom.setText(dateFormatter.format(newDate.getTime()));
             }
 
         }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
 
         // init onClick
-        txDate.setOnClickListener(new View.OnClickListener() {
+        txDateFrom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 toDatePickerDialog.show();
@@ -180,13 +199,13 @@ public class FrgMain extends BaseFrg {
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 Calendar newDate = Calendar.getInstance();
                 newDate.set(year, monthOfYear, dayOfMonth);
-                txDate2.setText(dateFormatter.format(newDate.getTime()));
+                txDateTo.setText(dateFormatter.format(newDate.getTime()));
             }
 
         }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
 
         // init onClick
-        txDate2.setOnClickListener(new View.OnClickListener() {
+        txDateTo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 toDatePickerDialog2.show();
@@ -201,7 +220,20 @@ public class FrgMain extends BaseFrg {
         lvContent.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mActivity.addFragment(new FrgReportSample(),true);
+                switch (report_type){
+                    case SLGD:
+                        mActivity.addFragment(new FrgSLGDReport().setData(getID(listAdapter.getItem(position)),txDateFrom.getText()+"",txDateTo.getText()+""),true);
+                        break;
+                    case SLKH:
+                        mActivity.addFragment(new FrgSLKHReport().setData(getID(listAdapter.getItem(position)),txDateFrom.getText()+"",txDateTo.getText()+""),true);
+                        break;
+                    case SLTT:
+                        mActivity.addFragment(new FrgSLTTReport().setData(getID(listAdapter.getItem(position)),txDateFrom.getText()+"",txDateTo.getText()+""),true);
+                        break;
+                    case SLTV:
+                        mActivity.addFragment(new FrgSLTVReport().setData(getID(listAdapter.getItem(position)),txDateFrom.getText()+"",txDateTo.getText()+""),true);
+                        break;
+                }
             }
         });
     }

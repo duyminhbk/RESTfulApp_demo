@@ -17,6 +17,7 @@ public abstract class BaseFrg extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         rootView = inflater.inflate(defineLayout(), container, false);
         mActivity = (MainActivity) getActivity();
         initView();
@@ -29,7 +30,9 @@ public abstract class BaseFrg extends Fragment {
 
     protected abstract void initView();
 
-    public abstract String getName();
+    public String getName(){
+        return getClass().getName();
+    }
 
     protected abstract int defineLayout();
 }

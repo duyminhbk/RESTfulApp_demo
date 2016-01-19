@@ -25,10 +25,11 @@
             android:layout_height="wrap_content"
             android:text="Mix:AH"/>
     </LinearLayout>
-    <com.app.restfulapp.ultis.SLKHLayout
-        android:orientation="vertical" android:layout_width="match_parent"
+    <com.app.restfulapp.ultis.ReportLayout
+        android:id="@+id/rp_sample"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingBottom="5dp">
 
-    </com.app.restfulapp.ultis.SLKHLayout>
+    </com.app.restfulapp.ultis.ReportLayout>
 </LinearLayout>

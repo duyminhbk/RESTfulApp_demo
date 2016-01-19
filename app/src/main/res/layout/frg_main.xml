@@ -28,14 +28,14 @@
         android:hint="@string/member_name"/>
 
     <TextView
-        android:id="@+id/ed_date"
+        android:id="@+id/ed_date_from"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@android:style/Widget.EditText"
         android:hint="From Date"/>
 
     <TextView
-        android:id="@+id/ed_date2"
+        android:id="@+id/ed_date_to"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@android:style/Widget.EditText"

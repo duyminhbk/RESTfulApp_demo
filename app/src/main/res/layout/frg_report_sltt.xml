@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:orientation="vertical">
+    <TextView
+        style="@style/TitleStyle"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:text="THỐNG KÊ TIÊU THỤ CỦA TIẾP THỊ"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_gravity="left"
+            android:layout_height="wrap_content"
+            android:text="Brand loại lớn - loại trung"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_gravity="right"
+            android:gravity="right"
+            android:layout_height="wrap_content"
+            android:text="Mix:AH"/>
+    </LinearLayout>
+    <com.app.restfulapp.ultis.ReportLayout
+        android:id="@+id/rp_sample"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="5dp">
+
+    </com.app.restfulapp.ultis.ReportLayout>
+</LinearLayout>
