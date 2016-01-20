@@ -3,11 +3,10 @@ package com.app.restfulapp.reports;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.app.restfulapp.BaseFrg;
 import com.app.restfulapp.R;
 import com.app.restfulapp.ultis.Parser;
 import com.app.restfulapp.ultis.ReportLayout;
-import com.app.restfulapp.ultis.Url;
+import com.app.restfulapp.ultis.Define;
 import com.app.restfulapp.ultis.Utility;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -24,8 +23,8 @@ public class FrgSLKHReport extends FrgReport {
     @Override
     protected void initView() {
         super.initView();
-        int unit = Utility.getMaxScreen(mActivity)/9;
-        reportLayout.setColumnWidth(new int[]{unit * 3, unit * 2, unit * 2, unit * 2});
+        int unit = Utility.getMaxScreen(mActivity)/11;
+        reportLayout.setColumnWidth(new int[]{unit*2,unit * 3, unit * 2, unit * 2, unit * 2});
 
         TextView txDate = (TextView) findViewById(R.id.txdate);
         txDate.setText(fromDate.substring(0,fromDate.indexOf('T'))+" - "+ toDate.substring(0,toDate.indexOf('T')));
@@ -37,7 +36,7 @@ public class FrgSLKHReport extends FrgReport {
         mActivity.showLoading(true);
         AsyncHttpClient client = new AsyncHttpClient();
         client.setCookieStore(mActivity.getCookieStore());
-        client.get(String.format(Url.SLKH_URL, reportID, "1970-01-01", "2020-01-01"), new JsonHttpResponseHandler() {
+        client.get(String.format(Define.SLKH_URL, reportID, "1970-01-01", "2020-01-01"), new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 //                        super.onSuccess(statusCode, headers, response);

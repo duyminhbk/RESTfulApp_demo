@@ -7,13 +7,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.app.restfulapp.ultis.Url;
+import com.app.restfulapp.ultis.Define;
 import com.app.restfulapp.ultis.Utility;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.PersistentCookieStore;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -59,7 +58,7 @@ public class FrgLogin extends BaseFrg implements View.OnClickListener {
         myCookieStore.clear();
         // set the new cookie
         client.setCookieStore(myCookieStore);
-        client.get(Url.LOGIN_URL + params, new AsyncHttpResponseHandler() {
+        client.get(Define.LOGIN_URL + params, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 String response = new String(responseBody);

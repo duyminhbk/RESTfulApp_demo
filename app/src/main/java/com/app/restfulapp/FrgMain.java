@@ -17,7 +17,7 @@ import com.app.restfulapp.reports.FrgSLGDReport;
 import com.app.restfulapp.reports.FrgSLKHReport;
 import com.app.restfulapp.reports.FrgSLTTReport;
 import com.app.restfulapp.reports.FrgSLTVReport;
-import com.app.restfulapp.ultis.Url;
+import com.app.restfulapp.ultis.Define;
 import com.app.restfulapp.ultis.Utility;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -124,7 +124,7 @@ public class FrgMain extends BaseFrg {
                 mActivity.showLoading(true);
 
                 String saleNo = Utility.getString(mActivity, "saleNo");
-                String url = Url.SUBMIT_DATA_URL + String.format(params, saleNo, txDateFrom.getText().toString(), txDateTo.getText().toString());
+                String url = Define.SUBMIT_DATA_URL + String.format(params, saleNo, txDateFrom.getText().toString(), txDateTo.getText().toString());
 
                 // Make RESTful webservice call using AsyncHttpClient object
                 AsyncHttpClient client = new AsyncHttpClient();
