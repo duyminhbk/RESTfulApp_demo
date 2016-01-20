@@ -5,46 +5,58 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="10dip">
+    android:padding="10dip"
+    android:weightSum="1">
 
     <TextView
         style="@style/TitleStyle"
         android:layout_marginBottom="10dip"
         android:text="@string/home_title"/>
 
-    <EditText
-        android:id="@+id/ed_date"
-        android:layout_width="fill_parent"
+    <Spinner
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
+        android:id="@+id/sp_report"/>
 
-        android:editable="false"
-        android:hint="Enter Date"
-        android:inputType="none" />
+    <EditText
+        android:id="@+id/ed_member_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/member_name"/>
+
+    <TextView
+        android:id="@+id/ed_date_from"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@android:style/Widget.EditText"
+        android:hint="From Date"/>
+
+    <TextView
+        android:id="@+id/ed_date_to"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@android:style/Widget.EditText"
+        android:hint="To Date"/>
 
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="SaleNo"
+        android:text="SaleName"
         android:layout_marginTop="5dp"
         android:gravity="left"
-        android:textSize="15sp" />
-    <EditText
-        android:id="@+id/ed_sal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:hint="Enter SaleNo"
-        android:inputType="text" />
+        android:textSize="15sp"
+        android:id="@+id/txtSaleName" />
 
     <ListView
         android:id="@+id/lv_content"
         android:layout_width="fill_parent"
-        android:layout_height="150dp"
+        android:layout_height="0dp"
         android:layout_marginBottom="10dp"
         android:layout_marginTop="10dp"
         android:dividerHeight="1dp"
-        android:divider="#e0e0e0">
+
+        android:divider="#e0e0e0"
+        android:layout_weight="1">
 
     </ListView>
     <TextView
@@ -57,6 +69,16 @@
         android:textColor="#000"
         android:textSize="30sp"
         android:visibility="gone"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Total: _"
+        android:layout_marginTop="5dp"
+        android:gravity="left"
+        android:textSize="15sp"
+        android:id="@+id/txtTotal"
+        android:layout_gravity="right" />
 
     <Button
         android:id="@+id/btnSubmit"

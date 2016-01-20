@@ -7,10 +7,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.restfulapp.ultis.Define;
 import com.app.restfulapp.ultis.Utility;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.PersistentCookieStore;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -19,7 +23,7 @@ import cz.msebera.android.httpclient.Header;
  */
 public class FrgLogin extends BaseFrg implements View.OnClickListener {
 
-    private static final String LOGIN_URL = "http://visitme.cloudapp.net:83/Home/Login";
+    //private static final String LOGIN_URL = "http://192.168.1.103:83/Home/Login";
     private String params = "?Email=%s&Password=%s";
     private TextView errorMsg;
     private EditText emailET;
@@ -37,8 +41,6 @@ public class FrgLogin extends BaseFrg implements View.OnClickListener {
         // Find login button
         btnLogin = (Button) rootView.findViewById(R.id.btnLogin);
         btnLogin.setOnClickListener(this);
-
-
     }
 
     /**
@@ -56,15 +58,20 @@ public class FrgLogin extends BaseFrg implements View.OnClickListener {
         myCookieStore.clear();
         // set the new cookie
         client.setCookieStore(myCookieStore);
-        client.get(LOGIN_URL + params, new AsyncHttpResponseHandler() {
+        client.get(Define.LOGIN_URL + params, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 String response = new String(responseBody);
                 // Hide Progress Dialog
                 mActivity.showLoading(false);
-//                try {
-//                    // JSON Object
-//                    JSONObject obj = new JSONObject(response);
+
+                try {
+
+                    // JSON Object
+                    JSONObject obj = new JSONObject(response);
+                    String saleName = obj.optString("sale_ename");
+
+//
 //                    // When the JSON response has status boolean value assigned with true
 //                    if(obj.getBoolean("status")){
 //                        Toast.makeText(mActivity, "You are successfully logged in!", Toast.LENGTH_LONG).show();
@@ -76,15 +83,18 @@ public class FrgLogin extends BaseFrg implements View.OnClickListener {
 //                        errorMsg.setText(obj.optString("error_msg"));
 //                        Toast.makeText(mActivity, obj.optString("error_msg"), Toast.LENGTH_LONG).show();
 //                    }
-//                } catch (JSONException e) {
-//                    // TODO Auto-generated catch block
-//                    Toast.makeText(mActivity, "Error Occured [Server's JSON response might be invalid]!", Toast.LENGTH_LONG).show();
-//                    e.printStackTrace();
-//
-//                }
-                Utility.saveSecurity(mActivity, new String(headers[0].getValue()));
-                Utility.saveString(mActivity, "code", emailET.getText().toString());
-                goHomeScreen();
+
+                    Utility.saveSecurity(mActivity, new String(headers[0].getValue()));
+                    Utility.saveString(mActivity, "saleNo", emailET.getText().toString());
+                    Utility.saveString(mActivity, "saleName", saleName);
+
+                    goHomeScreen();
+
+                } catch (JSONException e) {
+                    // TODO Auto-generated catch block
+                    Toast.makeText(mActivity, "Error Occured [Server's JSON response might be invalid]!", Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+                }
             }
 
             @Override
@@ -125,9 +135,11 @@ public class FrgLogin extends BaseFrg implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
+
 //        goHomeScreen();
         // Get Email Edit View Value
         String email = emailET.getText().toString();
+
         // Get Password Edit View Value
         String password = pwdET.getText().toString();
 

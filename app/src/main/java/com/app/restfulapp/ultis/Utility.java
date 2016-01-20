@@ -1,7 +1,9 @@
 package com.app.restfulapp.ultis;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.DisplayMetrics;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -46,4 +48,14 @@ public class Utility {
     public static void saveSecurity(Context context, String code) {
         saveString(context, SECURITY_REF, code);
     }
+
+    public static int getMaxScreen(Activity activity){
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        int height = displaymetrics.heightPixels;
+        int width = displaymetrics.widthPixels;
+        return Math.max(height,width);
+    }
+
+
 }
