@@ -1,5 +1,6 @@
 package com.app.restfulapp.reports;
 
+import android.util.Log;
 import android.widget.Toast;
 
 import com.app.restfulapp.R;
@@ -33,10 +34,11 @@ public class FrgSLTVReport extends FrgReport {
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                     super.onSuccess(statusCode, headers, response);
                     mActivity.showLoading(false);
+                    Log.d("minh", response.toString());
                     //success request
                     if(Parser.isSuccess(response)){
                         try {
-                            reportLayout.setData(Parser.parseSLTV(response));
+                            reportLayout.setDataAndLayout(Parser.parseSLTV(response.optJSONObject("Result")));
                         }catch (ReportLayout.DataFormatException e){
                             e.printStackTrace();
                         }

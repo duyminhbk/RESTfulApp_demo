@@ -24,7 +24,7 @@ public class FrgSLKHReport extends FrgReport {
     protected void initView() {
         super.initView();
         int unit = Utility.getMaxScreen(mActivity)/11;
-        reportLayout.setColumnWidth(new int[]{unit*2,unit * 3, unit * 2, unit * 2, unit * 2});
+        reportLayout.setColumnWidth(new int[]{unit * 2, unit * 3, unit * 2, unit * 2, unit * 2});
 
         TextView txDate = (TextView) findViewById(R.id.txdate);
         txDate.setText(fromDate.substring(0,fromDate.indexOf('T'))+" - "+ toDate.substring(0,toDate.indexOf('T')));
@@ -45,7 +45,7 @@ public class FrgSLKHReport extends FrgReport {
                             try {
                                 TextView txName = (TextView) findViewById(R.id.tx_name);
                                 txName.setText(response.optJSONObject("Result").optString("cust_vname"));
-                                reportLayout.setData(Parser.parseSLKH(response.optJSONObject("Result")));
+                                reportLayout.setDataAndLayout(Parser.parseSLKH(response.optJSONObject("Result")));
                             }catch (ReportLayout.DataFormatException e){
                                 e.printStackTrace();
                             }

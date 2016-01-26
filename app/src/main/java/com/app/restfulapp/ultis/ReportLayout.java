@@ -47,6 +47,7 @@ public class ReportLayout extends RelativeLayout {
 	int headerCellsWidth[] ;
 	private String[] index;
 	private Object[] tableData;
+	private JSONObject mData;
 
 	public ReportLayout(Context context, AttributeSet attrs) {
 		this(context,attrs,0);
@@ -87,9 +88,28 @@ public class ReportLayout extends RelativeLayout {
 		this.headerCellsWidth = widths;
 	}
 
+	public int getHeaderCount() throws DataFormatException {
+		if(mData == null){
+			throw new DataFormatException("let init data first");
+		}
+		if( mData.isNull("index") ||mData.optJSONArray("index") == null ){
+			throw new DataFormatException("bad format data");
+		}
+		return mData.optJSONArray("index").length();
+	}
+
+	public void setData(JSONObject data){
+		mData = data;
+	}
+
+	public void doLayout() throws DataFormatException {
+		setDataAndLayout(mData);
+		mData = null;
+	}
+
 	// data struct
 	//	{"index":["firstname","lastname","phone"],"data":{"1":["minh","pham","0123"],"2":["ha","nguyen",""],"3":["ngoc","","112"]}}
-	public void setData(JSONObject data) throws DataFormatException {
+	public void setDataAndLayout(JSONObject data) throws DataFormatException {
 		if(data == null){
 			throw new DataFormatException("can not set null");
 		}
