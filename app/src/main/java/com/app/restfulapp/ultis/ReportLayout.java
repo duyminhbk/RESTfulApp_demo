@@ -88,14 +88,19 @@ public class ReportLayout extends RelativeLayout {
 		this.headerCellsWidth = widths;
 	}
 
-	public int getHeaderCount() throws DataFormatException {
+	public int[] getHeaderWidth() throws DataFormatException {
 		if(mData == null){
 			throw new DataFormatException("let init data first");
 		}
 		if( mData.isNull("index") ||mData.optJSONArray("index") == null ){
 			throw new DataFormatException("bad format data");
 		}
-		return mData.optJSONArray("index").length();
+		if(mData.optJSONArray("index").length() ==0) return null;
+		int [] result = new int[mData.optJSONArray("index").length()];
+		for(int i =0;i<result.length;i++){
+			result[i] = 400;
+		}
+		return result;
 	}
 
 	public void setData(JSONObject data){
@@ -122,6 +127,10 @@ public class ReportLayout extends RelativeLayout {
 		if(indexTemp.length() == 0 || indexTemp.toString() == "[]"){
 			throw new DataFormatException("index must not empty");
 		}
+
+        if(headerCellsWidth == null){
+            headerCellsWidth = getHeaderWidth();
+        }
 		for(int i = 0; i<indexTemp.length();i++){
 			index[i] = indexTemp.optString(i);
 		}

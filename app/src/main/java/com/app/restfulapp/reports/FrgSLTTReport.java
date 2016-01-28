@@ -28,7 +28,8 @@ public class FrgSLTTReport extends FrgReport {
 //        reportLayout.setColumnWidth(new int[]{unit * 3, unit * 2, unit * 2, unit * 2});
 
         TextView txDate = (TextView) findViewById(R.id.txdate);
-        txDate.setText(fromDate.substring(0, fromDate.indexOf('T')) + " - " + toDate.substring(0, toDate.indexOf('T')));
+
+        txDate.setText(Utility.convertSimpleDate(fromDate) + " - " + Utility.convertSimpleDate(toDate));
     }
 
     @Override
@@ -41,8 +42,8 @@ public class FrgSLTTReport extends FrgReport {
         mActivity.showLoading(true);
         AsyncHttpClient client = new AsyncHttpClient();
         client.setCookieStore(mActivity.getCookieStore());
-        client.get(String.format(Define.SLTT_URL, Utility.getString(mActivity, "saleNo"),
-                        "1970-01-01", "2020-01-01"), new JsonHttpResponseHandler() {
+        client.get(String.format(Define.SLTT_URL, reportID,
+                        Utility.convertSimpleDate(fromDate), Utility.convertSimpleDate(toDate)), new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                         super.onSuccess(statusCode, headers, response);

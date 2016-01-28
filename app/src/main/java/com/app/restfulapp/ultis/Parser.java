@@ -1,8 +1,13 @@
 package com.app.restfulapp.ultis;
 
+import com.app.restfulapp.models.Member;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by minhpham on 1/18/16.
@@ -40,5 +45,33 @@ public class Parser {
 
    public static JSONObject parseSLTV(JSONObject response) {
         return response;
+    }
+
+    /*
+     json model
+       {
+          "sale_no":"6104",
+          "chief_ename":"aa"
+       }
+     */
+    public static List<Member> parseMember(JSONArray arr) {
+        ArrayList<Member> result = new ArrayList<Member>();
+        if(arr == null || arr.length() == 0) return null;
+        for(int i =0;i<arr.length();i++){
+            JSONObject temp = arr.optJSONObject(i);
+            result.add(new Member(temp.optString("chief_ename"),temp.optString("sale_no")));
+        }
+        return result;
+    }
+
+    public static String getID(String item) {
+        String id="";
+        try {
+            JSONObject json = new JSONObject(item);
+            id = json.optString("CustNo");
+        }catch (Exception e){
+
+        }
+        return id;
     }
 }

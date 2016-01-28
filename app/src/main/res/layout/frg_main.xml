@@ -17,12 +17,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/sp_report"/>
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/sp_member"/>
 
     <EditText
         android:id="@+id/ed_member_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/member_name"/>
+        android:hint="@string/member_name"
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/ed_date_from"
