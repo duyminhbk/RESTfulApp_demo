@@ -14,6 +14,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.restfulapp.models.Customer;
 import com.app.restfulapp.models.Member;
 import com.app.restfulapp.reports.FrgSLGDReport;
 import com.app.restfulapp.reports.FrgSLKHReport;
@@ -21,7 +22,6 @@ import com.app.restfulapp.reports.FrgSLTTReport;
 import com.app.restfulapp.reports.FrgSLTVReport;
 import com.app.restfulapp.ultis.Define;
 import com.app.restfulapp.ultis.Parser;
-import com.app.restfulapp.ultis.ReportLayout;
 import com.app.restfulapp.ultis.Utility;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -30,10 +30,8 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Locale;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -59,9 +57,12 @@ public class FrgMain extends BaseFrg {
     private EditText etName;
     private Spinner spinnerReport;
     private Spinner spinnerMember;
+    private Spinner spinnerCustomer;
     private Reports reportType = Reports.NONE;
-    private AdapMember mAdap;
+    private AdapMember mAdapMember;
     private Member mMember;
+    private AdapCustomer mAdapCus;
+    private Customer mCustomer;
 
     public enum Reports{
         NONE,SLTV,SLGD,SLKH,SLTT
@@ -76,23 +77,49 @@ public class FrgMain extends BaseFrg {
         etName=(EditText)findViewById(R.id.ed_member_name);
         spinnerReport = (Spinner)findViewById(R.id.sp_report);
         spinnerMember = (Spinner)findViewById(R.id.sp_member);
+        spinnerCustomer = (Spinner)findViewById(R.id.sp_customer);
 //        etSal = (EditText) rootView.findViewById(R.id.ed_sal);
 
         txtSaleName = (TextView) rootView.findViewById(R.id.txtSaleName);
         txtSaleName.setText(Utility.getString(mActivity, "saleName"));
 
-        txtTotal = (TextView) rootView.findViewById(R.id.txtTotal);
+//        txtTotal = (TextView) rootView.findViewById(R.id.txtTotal);
 
         btnSubmit = (Button) rootView.findViewById(R.id.btnSubmit);
-        lvContent = (ListView) rootView.findViewById(R.id.lv_content);
-        txEmpty = (TextView) rootView.findViewById(R.id.tv_empty);
+//        lvContent = (ListView) rootView.findViewById(R.id.lv_content);
+//        txEmpty = (TextView) rootView.findViewById(R.id.tv_empty);
 
-        initList();
+//        initList();
         initDatePicker();
         initSpinner();
+        getCustomer();
         handleSubmit();
     }
 
+    private void getCustomer(){
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.setCookieStore(mActivity.getCookieStore());
+        client.get(Define.GET_CUSTOMERS_URL, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                mActivity.showLoading(false);
+                Log.d("minh", "GET_CUSTOMERS_URL: " + response);
+                if(Parser.isSuccess(response)){
+
+                    mAdapCus.setData(Parser.parseCustomers(response.optJSONArray("Result"))).notifyDataSetChanged();
+                }else{
+                    // show error
+                    Toast.makeText(mActivity,Parser.getError(response),Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                mActivity.showLoading(false);
+                Toast.makeText(mActivity,responseString,Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
     private void initSpinner() {
         // init spinner report
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(mActivity, R.array.report_type, android.R.layout.simple_spinner_dropdown_item);
@@ -112,8 +139,8 @@ public class FrgMain extends BaseFrg {
         });
 
         //init spinner member
-        mAdap = new AdapMember(mActivity);
-        spinnerMember.setAdapter(mAdap);
+        mAdapMember = new AdapMember(mActivity);
+        spinnerMember.setAdapter(mAdapMember);
         spinnerMember.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -125,6 +152,22 @@ public class FrgMain extends BaseFrg {
 
             }
         });
+
+        //init spinner customer
+        mAdapCus = new AdapCustomer(mActivity);
+        spinnerCustomer.setAdapter(mAdapCus);
+        spinnerCustomer.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mCustomer = (Customer) parent.getSelectedItem();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
 
     }
 
@@ -142,7 +185,7 @@ public class FrgMain extends BaseFrg {
                         mActivity.showLoading(false);
                         Log.d("minh", "SALEMAN_LIST_URL: " + response);
                         if(Parser.isSuccess(response)){
-                            mAdap.setData(Parser.parseMember(response.optJSONArray("Result"))).notifyDataSetChanged();
+                            mAdapMember.setData(Parser.parseMember(response.optJSONArray("Result"))).notifyDataSetChanged();
                         }else{
                             // show error
                             Toast.makeText(mActivity,Parser.getError(response),Toast.LENGTH_SHORT).show();
@@ -168,7 +211,7 @@ public class FrgMain extends BaseFrg {
                         mActivity.showLoading(false);
                         Log.d("minh", "CHIEF_LIST_URL: " + response);
                         if(Parser.isSuccess(response)){
-                            mAdap.setData(Parser.parseMember(response.optJSONArray("Result"))).notifyDataSetChanged();
+                            mAdapMember.setData(Parser.parseMember(response.optJSONArray("Result"))).notifyDataSetChanged();
                         }else{
                             // show error
                             Toast.makeText(mActivity,Parser.getError(response),Toast.LENGTH_SHORT).show();
@@ -191,56 +234,23 @@ public class FrgMain extends BaseFrg {
             @Override
             public void onClick(View v) {
                 if (TextUtils.isEmpty(txDateFrom.getText()) || TextUtils.isEmpty(txDateTo.getText())) {
+                    Toast.makeText(mActivity,"Date field not empty",Toast.LENGTH_SHORT).show();
                     return;
                 }
-
-                mActivity.showLoading(true);
-
-                String saleNo = Utility.getString(mActivity, "saleNo");
-                String url = Define.SUBMIT_DATA_URL + String.format(params, saleNo, txDateFrom.getText().toString());
-
-                // Make RESTful webservice call using AsyncHttpClient object
-                AsyncHttpClient client = new AsyncHttpClient();
-                client.setCookieStore(mActivity.getCookieStore());
-                client.get(url, new AsyncHttpResponseHandler() {
-
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                        mActivity.showLoading(false);
-                        try {
-                            Log.d("minh","getdata: "+responseBody);
-                            JSONArray arr = new JSONArray(new String(responseBody));
-
-                            mData.clear();
-
-                            if (arr.length()>0){
-                                lvContent.setVisibility(View.VISIBLE);
-                                txEmpty.setVisibility(View.GONE);
-                                for(int i = 0;i<arr.length();i++){
-
-                                    if(i < arr.length() - 1) {
-                                        mData.add(arr.optJSONObject(i).toString());
-                                    } else {
-                                        txtTotal.setText("Total: " + arr.optJSONObject(i).optString("SumTotalQty", "_"));
-                                    }
-                                }
-                            }else{
-                                lvContent.setVisibility(View.GONE);
-                                txEmpty.setVisibility(View.VISIBLE);
-                                txtTotal.setText("Total: 0");
-                            }
-                            listAdapter.notifyDataSetChanged();
-                        }catch (Exception e){
-                            Toast.makeText(mActivity, "can't parse data !!!", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                        mActivity.showLoading(false);
-                        Toast.makeText(mActivity, "get data fail", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                switch (reportType){
+                    case SLGD:
+                        mActivity.addFragment(new FrgSLGDReport().setData(mCustomer,mMember,txDateFrom.getText()+"",txDateTo.getText()+""),true);
+                        break;
+                    case SLKH:
+                        mActivity.addFragment(new FrgSLKHReport().setData(mCustomer,mMember,txDateFrom.getText()+"",txDateTo.getText()+""),true);
+                        break;
+                    case SLTT:
+                        mActivity.addFragment(new FrgSLTTReport().setData(mCustomer,mMember,txDateFrom.getText()+"",txDateTo.getText()+""),true);
+                        break;
+                    case SLTV:
+                        mActivity.addFragment(new FrgSLTVReport().setData(mCustomer,mMember,txDateFrom.getText()+"",txDateTo.getText()+""),true);
+                        break;
+                }
             }
         });
     }
@@ -293,20 +303,20 @@ public class FrgMain extends BaseFrg {
         lvContent.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                switch (reportType){
-                    case SLGD:
-                        mActivity.addFragment(new FrgSLGDReport().setData(Parser.getID(listAdapter.getItem(position)),txDateFrom.getText()+"",txDateTo.getText()+""),true);
-                        break;
-                    case SLKH:
-                        mActivity.addFragment(new FrgSLKHReport().setData(Parser.getID(listAdapter.getItem(position)),txDateFrom.getText()+"",txDateTo.getText()+""),true);
-                        break;
-                    case SLTT:
-                        mActivity.addFragment(new FrgSLTTReport().setData(mMember.getCode(),txDateFrom.getText()+"",txDateTo.getText()+""),true);
-                        break;
-                    case SLTV:
-                        mActivity.addFragment(new FrgSLTVReport().setData(Parser.getID(listAdapter.getItem(position)),txDateFrom.getText()+"",txDateTo.getText()+""),true);
-                        break;
-                }
+//                switch (reportType){
+//                    case SLGD:
+//                        mActivity.addFragment(new FrgSLGDReport().setData(Parser.getID(listAdapter.getItem(position)),txDateFrom.getText()+"",txDateTo.getText()+""),true);
+//                        break;
+//                    case SLKH:
+//                        mActivity.addFragment(new FrgSLKHReport().setData(Parser.getID(listAdapter.getItem(position)),txDateFrom.getText()+"",txDateTo.getText()+""),true);
+//                        break;
+//                    case SLTT:
+//                        mActivity.addFragment(new FrgSLTTReport().setData(mMember.getCode(),txDateFrom.getText()+"",txDateTo.getText()+""),true);
+//                        break;
+//                    case SLTV:
+//                        mActivity.addFragment(new FrgSLTVReport().setData(Parser.getID(listAdapter.getItem(position)),txDateFrom.getText()+"",txDateTo.getText()+""),true);
+//                        break;
+//                }
             }
         });
     }

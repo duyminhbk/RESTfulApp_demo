@@ -88,6 +88,12 @@ public class ReportLayout extends RelativeLayout {
 		this.headerCellsWidth = widths;
 	}
 
+	public ReportLayout setColumnWidth(int index,int width){
+		if(headerCellsWidth == null|| headerCellsWidth.length <= index) return this;
+		headerCellsWidth[index] = width;
+		return this;
+	}
+
 	public int[] getHeaderWidth() throws DataFormatException {
 		if(mData == null){
 			throw new DataFormatException("let init data first");

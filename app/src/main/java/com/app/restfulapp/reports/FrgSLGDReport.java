@@ -21,6 +21,10 @@ public class FrgSLGDReport extends FrgReport {
 
     @Override
     protected void requestData() {
+        if(customer == null){
+            Toast.makeText(mActivity,"customer not define",Toast.LENGTH_SHORT).show();
+            return;
+        }
         mActivity.showLoading(true);
         AsyncHttpClient client = new AsyncHttpClient();
         client.setCookieStore(mActivity.getCookieStore());

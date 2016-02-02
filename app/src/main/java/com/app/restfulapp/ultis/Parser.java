@@ -1,5 +1,6 @@
 package com.app.restfulapp.ultis;
 
+import com.app.restfulapp.models.Customer;
 import com.app.restfulapp.models.Member;
 
 import org.json.JSONArray;
@@ -74,4 +75,34 @@ public class Parser {
         }
         return id;
     }
+    /*
+    json format
+        {
+            "cust_no": "C50097",
+            "cust_vname": "Phạm Văn Quân.",
+            "address_name": null,
+            "sale_no": "6066",
+            "label_flag": "5",
+            "cust_type": "3",
+            "cust_kind": null
+        }
+     */
+    public static List<Customer> parseCustomers(JSONArray arr){
+        if(arr ==null || arr.length() ==0) return null;
+        List<Customer> result = new ArrayList<Customer>();
+        for(int i=0;i<arr.length();i++){
+            JSONObject json = arr.optJSONObject(i);
+            Customer temp = new Customer();
+            temp.setCustNo(json.optString("cust_no"));
+            temp.setCustName(json.optString("cust_vname"));
+            temp.setAddress(json.optString("address_name"));
+            temp.setSaleNo(json.optString("sale_no"));
+            temp.setLabelFlag(json.optString("label_flag"));
+            temp.setCustType(json.optString("cust_type"));
+            temp.setCustKind(json.optString("cust_kind"));
+            result.add(temp);
+        }
+        return result;
+    }
+
 }

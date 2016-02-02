@@ -7,6 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.app.restfulapp.models.Customer;
+import com.app.restfulapp.models.Member;
+
 /**
  * Created by minhpham on 12/16/15.
  */

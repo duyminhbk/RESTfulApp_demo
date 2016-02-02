@@ -39,10 +39,14 @@ public class FrgSLTTReport extends FrgReport {
 
     @Override
     protected void requestData() {
+        if(customer == null){
+            Toast.makeText(mActivity,"customer not define",Toast.LENGTH_SHORT).show();
+            return;
+        }
         mActivity.showLoading(true);
         AsyncHttpClient client = new AsyncHttpClient();
         client.setCookieStore(mActivity.getCookieStore());
-        client.get(String.format(Define.SLTT_URL, reportID,
+        client.get(String.format(Define.SLTT_URL, customer.getCustNo(),
                         Utility.convertSimpleDate(fromDate), Utility.convertSimpleDate(toDate)), new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
