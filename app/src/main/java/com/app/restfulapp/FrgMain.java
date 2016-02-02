@@ -75,17 +75,18 @@ public class FrgMain extends BaseFrg {
         txDateFrom = (TextView) rootView.findViewById(R.id.ed_date_from);
         txDateTo = (TextView) rootView.findViewById(R.id.ed_date_to);
         etName=(EditText)findViewById(R.id.ed_member_name);
+
         spinnerReport = (Spinner)findViewById(R.id.sp_report);
         spinnerMember = (Spinner)findViewById(R.id.sp_member);
         spinnerCustomer = (Spinner)findViewById(R.id.sp_customer);
-//        etSal = (EditText) rootView.findViewById(R.id.ed_sal);
 
         txtSaleName = (TextView) rootView.findViewById(R.id.txtSaleName);
         txtSaleName.setText(Utility.getString(mActivity, "saleName"));
 
-//        txtTotal = (TextView) rootView.findViewById(R.id.txtTotal);
-
         btnSubmit = (Button) rootView.findViewById(R.id.btnSubmit);
+
+//        etSal = (EditText) rootView.findViewById(R.id.ed_sal);
+//        txtTotal = (TextView) rootView.findViewById(R.id.txtTotal);
 //        lvContent = (ListView) rootView.findViewById(R.id.lv_content);
 //        txEmpty = (TextView) rootView.findViewById(R.id.tv_empty);
 
@@ -120,6 +121,7 @@ public class FrgMain extends BaseFrg {
             }
         });
     }
+
     private void initSpinner() {
         // init spinner report
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(mActivity, R.array.report_type, android.R.layout.simple_spinner_dropdown_item);
@@ -296,13 +298,13 @@ public class FrgMain extends BaseFrg {
         });
     }
 
-    private void initList() {
-        mData = new ArrayList<String>();
-        listAdapter = new ArrayAdapter<String>(mActivity, android.R.layout.simple_list_item_1, mData);
-        lvContent.setAdapter(listAdapter);
-        lvContent.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//    private void initList() {
+//        mData = new ArrayList<String>();
+//        listAdapter = new ArrayAdapter<String>(mActivity, android.R.layout.simple_list_item_1, mData);
+//        lvContent.setAdapter(listAdapter);
+//        lvContent.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 //                switch (reportType){
 //                    case SLGD:
 //                        mActivity.addFragment(new FrgSLGDReport().setData(Parser.getID(listAdapter.getItem(position)),txDateFrom.getText()+"",txDateTo.getText()+""),true);
@@ -317,9 +319,9 @@ public class FrgMain extends BaseFrg {
 //                        mActivity.addFragment(new FrgSLTVReport().setData(Parser.getID(listAdapter.getItem(position)),txDateFrom.getText()+"",txDateTo.getText()+""),true);
 //                        break;
 //                }
-            }
-        });
-    }
+//            }
+//        });
+//    }
 
     @Override
     public String getName() {
