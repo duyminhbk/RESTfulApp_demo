@@ -127,6 +127,7 @@ public class ReportLayout extends RelativeLayout {
 		if( data.isNull("index") ||data.optJSONArray("index") == null ){
 			throw new DataFormatException("missing index data");
 		}
+		mData = data;
 		index = new String[data.optJSONArray("index").length()];
 
 		JSONArray indexTemp = data.optJSONArray("index");

@@ -198,6 +198,7 @@ public class FrgMain extends BaseFrg {
                     public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                         mActivity.showLoading(false);
                         Toast.makeText(mActivity,responseString,Toast.LENGTH_SHORT).show();
+                        mAdapMember.setData(null);
                     }
                 });
                 }
@@ -224,6 +225,7 @@ public class FrgMain extends BaseFrg {
                     public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                         mActivity.showLoading(false);
                         Log.d("minh", "CHIEF_LIST_URL- error: " + responseString);
+                        mAdapMember.setData(null);
                     }
                 });
             }

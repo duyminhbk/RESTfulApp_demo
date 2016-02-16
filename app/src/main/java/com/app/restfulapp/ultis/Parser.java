@@ -60,7 +60,7 @@ public class Parser {
         if(arr == null || arr.length() == 0) return null;
         for(int i =0;i<arr.length();i++){
             JSONObject temp = arr.optJSONObject(i);
-            result.add(new Member(temp.optString("chief_ename"),temp.optString("sale_no")));
+            result.add(new Member(temp.optString("sale_ename"),temp.optString("sale_no")));
         }
         return result;
     }
