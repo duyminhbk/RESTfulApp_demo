@@ -177,6 +177,8 @@ public class FrgMain extends BaseFrg {
         mMember = null;
         switch (reportType){
             case SLGD:
+                mAdapMember.setData(null);
+                mAdapMember.notifyDataSetChanged();
                 break;
             case SLTT:{
                 AsyncHttpClient client = new AsyncHttpClient();
@@ -192,18 +194,22 @@ public class FrgMain extends BaseFrg {
                             // show error
                             Toast.makeText(mActivity,Parser.getError(response),Toast.LENGTH_SHORT).show();
                         }
+                        mMember = (Member) spinnerMember.getSelectedItem();
                     }
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                         mActivity.showLoading(false);
-                        Toast.makeText(mActivity,responseString,Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mActivity, responseString,Toast.LENGTH_SHORT).show();
                         mAdapMember.setData(null);
+                        mAdapMember.notifyDataSetChanged();
                     }
                 });
                 }
                 break;
             case SLKH:
+                mAdapMember.setData(null);
+                mAdapMember.notifyDataSetChanged();
                 break;
             case SLTV:{
                 AsyncHttpClient client = new AsyncHttpClient();
@@ -219,6 +225,7 @@ public class FrgMain extends BaseFrg {
                             // show error
                             Toast.makeText(mActivity,Parser.getError(response),Toast.LENGTH_SHORT).show();
                         }
+                        mMember = (Member) spinnerMember.getSelectedItem();
                     }
 
                     @Override
@@ -226,6 +233,7 @@ public class FrgMain extends BaseFrg {
                         mActivity.showLoading(false);
                         Log.d("minh", "CHIEF_LIST_URL- error: " + responseString);
                         mAdapMember.setData(null);
+                        mAdapMember.notifyDataSetChanged();
                     }
                 });
             }

@@ -31,10 +31,14 @@ public class FrgSLTVReport extends FrgReport {
             Toast.makeText(mActivity,"customer not define",Toast.LENGTH_SHORT).show();
             return;
         }
+        if(member == null || "Alert".equalsIgnoreCase(member.getCode())){
+            Toast.makeText(mActivity,"member not define",Toast.LENGTH_SHORT).show();
+            return;
+        }
         mActivity.showLoading(true);
         AsyncHttpClient client = new AsyncHttpClient();
         client.setCookieStore(mActivity.getCookieStore());
-        client.get(String.format(Define.SLTV_URL, Utility.convertSimpleDate(fromDate),customer.getCustType(),customer.getLabelFlag()), new JsonHttpResponseHandler() {
+        client.get(String.format(Define.SLTV_URL, Utility.convertSimpleDate(fromDate),customer.getCustType(),customer.getLabelFlag(),member.getCode()), new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                     super.onSuccess(statusCode, headers, response);
