@@ -46,7 +46,7 @@ public class FrgSLTTReport extends FrgReport {
         mActivity.showLoading(true);
         AsyncHttpClient client = new AsyncHttpClient();
         client.setCookieStore(mActivity.getCookieStore());
-        client.get(String.format(Define.SLTT_URL, customer.getCustNo(),
+        client.get(String.format(Define.SLTT_URL, customer.getSaleNo(),
                         Utility.convertSimpleDate(fromDate), Utility.convertSimpleDate(toDate)), new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
