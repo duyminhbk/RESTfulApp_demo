@@ -29,7 +29,7 @@ public class FrgSLGDReport extends FrgReport {
         mActivity.showLoading(true);
         AsyncHttpClient client = new AsyncHttpClient();
         client.setCookieStore(mActivity.getCookieStore());
-        client.get(String.format(Define.SLGD_URL, Utility.convertSimpleDate(fromDate), customer.getCustType(),customer.getLabelFlag()), new JsonHttpResponseHandler() {
+        client.get(String.format(Define.SLGD_URL, Utility.convertSimpleDate(toDate),customer.getCustType(),customer.getLabelFlag()), new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                         super.onSuccess(statusCode, headers, response);
