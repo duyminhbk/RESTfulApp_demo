@@ -1,11 +1,13 @@
 package com.app.restfulapp.reports;
 
+import android.util.Log;
 import android.widget.Toast;
 
 import com.app.restfulapp.R;
 import com.app.restfulapp.ultis.Parser;
 import com.app.restfulapp.ultis.ReportLayout;
 import com.app.restfulapp.ultis.Define;
+import com.app.restfulapp.ultis.Utility;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -20,18 +22,23 @@ public class FrgSLGDReport extends FrgReport {
 
     @Override
     protected void requestData() {
+        if(customer == null){
+            Toast.makeText(mActivity,"customer not define",Toast.LENGTH_SHORT).show();
+            return;
+        }
         mActivity.showLoading(true);
         AsyncHttpClient client = new AsyncHttpClient();
         client.setCookieStore(mActivity.getCookieStore());
-        client.get(String.format(Define.SLGD_URL, "C51442", "1970-01-01", "2020-01-01"), new JsonHttpResponseHandler() {
+        client.get(String.format(Define.SLGD_URL, Utility.convertSimpleDate(fromDate), customer.getCustType(),customer.getLabelFlag()), new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                         super.onSuccess(statusCode, headers, response);
                         mActivity.showLoading(false);
+                        Log.d("minh", response.toString());
                         //success request
                         if(Parser.isSuccess(response)){
                             try {
-                                reportLayout.setData(Parser.parseSLGD(response));
+                                reportLayout.setDataAndLayout(Parser.parseSLGD(response.optJSONObject("Result")));
                             }catch (ReportLayout.DataFormatException e){
                                 e.printStackTrace();
                             }

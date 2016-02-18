@@ -4,6 +4,8 @@ import android.widget.Toast;
 
 import com.app.restfulapp.BaseFrg;
 import com.app.restfulapp.R;
+import com.app.restfulapp.models.Customer;
+import com.app.restfulapp.models.Member;
 import com.app.restfulapp.ultis.ReportLayout;
 
 /**
@@ -11,9 +13,10 @@ import com.app.restfulapp.ultis.ReportLayout;
  */
 public abstract class FrgReport extends BaseFrg {
     protected ReportLayout reportLayout;
-    protected String reportID;
     protected String fromDate;
     protected String toDate;
+    protected Customer customer;
+    protected Member member;
 
     @Override
     protected void initView() {
@@ -23,8 +26,9 @@ public abstract class FrgReport extends BaseFrg {
 
     protected abstract void requestData();
 
-    public FrgReport setData(String id,String fromDate,String toDate){
-        this.reportID = id;
+    public FrgReport setData(Customer customer,Member member, String fromDate,String toDate){
+        this.customer = customer;
+        this.member = member;
         this.fromDate = fromDate;
         this.toDate = toDate;
         return this;

@@ -1,5 +1,6 @@
 package com.app.restfulapp.reports;
 
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,10 +25,11 @@ public class FrgSLTTReport extends FrgReport {
     protected void initView() {
         super.initView();
         int unit = Utility.getMaxScreen(mActivity)/9;
-        reportLayout.setColumnWidth(new int[]{unit * 3, unit * 2, unit * 2, unit * 2});
+//        reportLayout.setColumnWidth(new int[]{unit * 3, unit * 2, unit * 2, unit * 2});
 
         TextView txDate = (TextView) findViewById(R.id.txdate);
-        txDate.setText(fromDate.substring(0, fromDate.indexOf('T')) + " - " + toDate.substring(0, toDate.indexOf('T')));
+
+        txDate.setText(Utility.convertSimpleDate(fromDate) + " - " + Utility.convertSimpleDate(toDate));
     }
 
     @Override
@@ -37,21 +39,26 @@ public class FrgSLTTReport extends FrgReport {
 
     @Override
     protected void requestData() {
+        if(customer == null){
+            Toast.makeText(mActivity,"customer not define",Toast.LENGTH_SHORT).show();
+            return;
+        }
         mActivity.showLoading(true);
         AsyncHttpClient client = new AsyncHttpClient();
         client.setCookieStore(mActivity.getCookieStore());
-        client.get(String.format(Define.SLTT_URL, Utility.getString(mActivity, "saleNo"),
-                        "1970-01-01", "2020-01-01"), new JsonHttpResponseHandler() {
+        client.get(String.format(Define.SLTT_URL, customer.getSaleNo(),
+                        Utility.convertSimpleDate(fromDate), Utility.convertSimpleDate(toDate)), new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                         super.onSuccess(statusCode, headers, response);
                         mActivity.showLoading(false);
+                        Log.d("minh", response.toString());
                         //success request
                         if(Parser.isSuccess(response)){
                             try {
                                 TextView txName = (TextView) findViewById(R.id.tx_name);
                                 txName.setText(response.optJSONObject("Result").optString("sale_ename"));
-                                reportLayout.setData(Parser.parseSLTT(response.optJSONObject("Result")));
+                                reportLayout.setDataAndLayout(Parser.parseSLTT(response.optJSONObject("Result")));
                             }catch (ReportLayout.DataFormatException e){
                                 e.printStackTrace();
                             }

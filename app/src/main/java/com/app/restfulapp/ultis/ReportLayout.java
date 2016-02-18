@@ -47,6 +47,7 @@ public class ReportLayout extends RelativeLayout {
 	int headerCellsWidth[] ;
 	private String[] index;
 	private Object[] tableData;
+	private JSONObject mData;
 
 	public ReportLayout(Context context, AttributeSet attrs) {
 		this(context,attrs,0);
@@ -87,21 +88,56 @@ public class ReportLayout extends RelativeLayout {
 		this.headerCellsWidth = widths;
 	}
 
+	public ReportLayout setColumnWidth(int index,int width){
+		if(headerCellsWidth == null|| headerCellsWidth.length <= index) return this;
+		headerCellsWidth[index] = width;
+		return this;
+	}
+
+	public int[] getHeaderWidth() throws DataFormatException {
+		if(mData == null){
+			throw new DataFormatException("let init data first");
+		}
+		if( mData.isNull("index") ||mData.optJSONArray("index") == null ){
+			throw new DataFormatException("bad format data");
+		}
+		if(mData.optJSONArray("index").length() ==0) return null;
+		int [] result = new int[mData.optJSONArray("index").length()];
+		for(int i =0;i<result.length;i++){
+			result[i] = 400;
+		}
+		return result;
+	}
+
+	public void setData(JSONObject data){
+		mData = data;
+	}
+
+	public void doLayout() throws DataFormatException {
+		setDataAndLayout(mData);
+		mData = null;
+	}
+
 	// data struct
 	//	{"index":["firstname","lastname","phone"],"data":{"1":["minh","pham","0123"],"2":["ha","nguyen",""],"3":["ngoc","","112"]}}
-	public void setData(JSONObject data) throws DataFormatException {
+	public void setDataAndLayout(JSONObject data) throws DataFormatException {
 		if(data == null){
 			throw new DataFormatException("can not set null");
 		}
 		if( data.isNull("index") ||data.optJSONArray("index") == null ){
 			throw new DataFormatException("missing index data");
 		}
+		mData = data;
 		index = new String[data.optJSONArray("index").length()];
 
 		JSONArray indexTemp = data.optJSONArray("index");
 		if(indexTemp.length() == 0 || indexTemp.toString() == "[]"){
 			throw new DataFormatException("index must not empty");
 		}
+
+        if(headerCellsWidth == null){
+            headerCellsWidth = getHeaderWidth();
+        }
 		for(int i = 0; i<indexTemp.length();i++){
 			index[i] = indexTemp.optString(i);
 		}

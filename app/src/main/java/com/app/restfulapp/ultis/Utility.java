@@ -5,6 +5,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.DisplayMetrics;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,6 +58,15 @@ public class Utility {
         int height = displaymetrics.heightPixels;
         int width = displaymetrics.widthPixels;
         return Math.max(height,width);
+    }
+
+    public static String convertFullDate(Date date){
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
+        return dateFormatter.format(date);
+    }
+
+    public static String convertSimpleDate(String fulldate){
+        return fulldate.substring(0, fulldate.indexOf('T'));
     }
 
 
