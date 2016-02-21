@@ -5,7 +5,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.DisplayMetrics;
 
+import com.app.restfulapp.models.Customer;
+import com.app.restfulapp.models.Member;
+
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -67,6 +71,23 @@ public class Utility {
 
     public static String convertSimpleDate(String fulldate){
         return fulldate.substring(0, fulldate.indexOf('T'));
+    }
+
+    public static ArrayList<Customer> genCustType(){
+        ArrayList<Customer> result = new ArrayList<>();
+        result.add(new Customer("Area","1"));
+        result.add(new Customer("Area","2"));
+        result.add(new Customer("Area","3"));
+        result.add(new Customer("Area","4"));
+        return result;
+    }
+//1: nupak; 3: Dachan; 5:Redstar
+    public static ArrayList<Member> getFlag(){
+        ArrayList<Member> result = new ArrayList<>();
+        result.add(new Member("nupak","1"));
+        result.add(new Member("Dachan","3"));
+        result.add(new Member("Redstar","5"));
+        return result;
     }
 
 

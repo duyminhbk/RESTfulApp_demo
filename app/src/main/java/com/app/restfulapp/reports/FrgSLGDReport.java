@@ -22,14 +22,14 @@ public class FrgSLGDReport extends FrgReport {
 
     @Override
     protected void requestData() {
-        if(customer == null){
-            Toast.makeText(mActivity,"customer not define",Toast.LENGTH_SHORT).show();
-            return;
-        }
+//        if(customer == null){
+//            Toast.makeText(mActivity,"customer not define",Toast.LENGTH_SHORT).show();
+//            return;
+//        }
         mActivity.showLoading(true);
         AsyncHttpClient client = new AsyncHttpClient();
         client.setCookieStore(mActivity.getCookieStore());
-        client.get(String.format(Define.SLGD_URL, Utility.convertSimpleDate(toDate),customer.getCustType(),customer.getLabelFlag()), new JsonHttpResponseHandler() {
+        client.get(String.format(Define.SLGD_URL, Utility.convertSimpleDate(toDate),customer.getCustName(),member.getCode()), new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                         super.onSuccess(statusCode, headers, response);
