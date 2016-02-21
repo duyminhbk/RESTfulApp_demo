@@ -87,6 +87,7 @@ public class FrgLogin extends BaseFrg implements View.OnClickListener {
                     Utility.saveSecurity(mActivity, new String(headers[0].getValue()));
                     Utility.saveString(mActivity, "saleNo", emailET.getText().toString());
                     Utility.saveString(mActivity, "saleName", saleName);
+                    mActivity.setRole(obj.optString("role"));
 
                     goHomeScreen();
 

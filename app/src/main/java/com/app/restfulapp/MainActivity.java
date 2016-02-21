@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.loopj.android.http.PersistentCookieStore;
@@ -14,6 +15,19 @@ public class MainActivity extends AppCompatActivity {
 
     private ProgressDialog prgDialog;
     private PersistentCookieStore cookieStore;
+
+    public enum Role {UNKNOW,DIR,CHIEF,LEAD,SALE};
+
+    private Role role;
+
+    public void setRole(String txRole){
+        if(TextUtils.isEmpty(txRole)) role = Role.UNKNOW;
+        role = Role.values()[Integer.parseInt(txRole)];
+    }
+
+    public Role getRole(){
+        return role;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

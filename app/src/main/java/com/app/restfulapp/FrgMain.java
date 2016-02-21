@@ -3,6 +3,7 @@ package com.app.restfulapp;
 import android.app.DatePickerDialog;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -64,13 +65,25 @@ public class FrgMain extends BaseFrg {
     private AdapCustomer mAdapCus;
     private Customer mCustomer;
 
+    private MainActivity.Role role;
+
     public enum Reports{
         NONE,SLTV,SLGD,SLKH,SLTT
     }
-
+    public void setReport(String kind){
+        if(getString(R.string.slkh_title).equals(kind)){
+            reportType =Reports.SLKH;
+        }else if(getString(R.string.sltv_title).equals(kind)){
+            reportType =Reports.SLTV;
+        }else if(getString(R.string.sltt_title).equals(kind)){
+            reportType =Reports.SLTT;
+        }if(getString(R.string.slgd_title).equals(kind)){
+            reportType =Reports.SLGD;
+        }
+    }
     @Override
     protected void initView() {
-
+        role = mActivity.getRole();
         // find view
         txDateFrom = (TextView) rootView.findViewById(R.id.ed_date_from);
         txDateTo = (TextView) rootView.findViewById(R.id.ed_date_to);
@@ -105,32 +118,47 @@ public class FrgMain extends BaseFrg {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 mActivity.showLoading(false);
                 Log.d("minh", "GET_CUSTOMERS_URL: " + response);
-                if(Parser.isSuccess(response)){
+                if (Parser.isSuccess(response)) {
 
                     mAdapCus.setData(Parser.parseCustomers(response.optJSONArray("Result"))).notifyDataSetChanged();
-                }else{
+                } else {
                     // show error
-                    Toast.makeText(mActivity,Parser.getError(response),Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mActivity, Parser.getError(response), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 mActivity.showLoading(false);
-                Toast.makeText(mActivity,responseString,Toast.LENGTH_SHORT).show();
+                Toast.makeText(mActivity, responseString, Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void initSpinner() {
         // init spinner report
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(mActivity, R.array.report_type, android.R.layout.simple_spinner_dropdown_item);
+        int reportKinds;
+        switch (role){
+            case DIR:
+                reportKinds = R.array.report_type_dir;
+                break;
+            case CHIEF:
+                reportKinds = R.array.report_type_chief;
+                break;
+            case SALE:
+                reportKinds = R.array.report_type_sale;
+                break;
+            default:
+                reportKinds = R.array.report_type_default;
+                break;
+        }
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(mActivity, reportKinds, android.R.layout.simple_spinner_dropdown_item);
         spinnerReport.setAdapter(adapter);
 
         spinnerReport.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                reportType = Reports.values()[position];
+                setReport((String) parent.getItemAtPosition(position));
                 updateMember();
             }
 
@@ -175,12 +203,22 @@ public class FrgMain extends BaseFrg {
 
     private void updateMember() {
         mMember = null;
+        spinnerCustomer.setVisibility(View.GONE);
+        spinnerMember.setVisibility(View.GONE);
         switch (reportType){
+            // reuse spinner customer and member to define cust_type and label_flag
             case SLGD:
-                mAdapMember.setData(null);
+                spinnerCustomer.setVisibility(View.VISIBLE);
+                spinnerMember.setVisibility(View.VISIBLE);
+                mAdapCus.setData(Utility.genCustType());
+                mAdapMember.setData(Utility.getFlag());
                 mAdapMember.notifyDataSetChanged();
+                mAdapCus.notifyDataSetChanged();
+                mMember = (Member) spinnerMember.getSelectedItem();
+                mCustomer = (Customer) spinnerCustomer.getSelectedItem();
                 break;
             case SLTT:{
+                spinnerMember.setVisibility(View.VISIBLE);
                 AsyncHttpClient client = new AsyncHttpClient();
                 client.setCookieStore(mActivity.getCookieStore());
                 client.get(Define.SALEMAN_LIST_URL, new JsonHttpResponseHandler() {
@@ -208,10 +246,13 @@ public class FrgMain extends BaseFrg {
                 }
                 break;
             case SLKH:
+                spinnerCustomer.setVisibility(View.VISIBLE);
+                spinnerMember.setVisibility(View.GONE);
                 mAdapMember.setData(null);
                 mAdapMember.notifyDataSetChanged();
                 break;
             case SLTV:{
+                spinnerMember.setVisibility(View.VISIBLE);
                 AsyncHttpClient client = new AsyncHttpClient();
                 client.setCookieStore(mActivity.getCookieStore());
                 client.get(Define.CHIEF_LIST_URL, new JsonHttpResponseHandler() {
@@ -282,10 +323,14 @@ public class FrgMain extends BaseFrg {
         }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
 
         // init onClick
-        txDateFrom.setOnClickListener(new View.OnClickListener() {
+
+        txDateFrom.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                toDatePickerDialog.show();
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction() == MotionEvent.ACTION_DOWN){
+                    toDatePickerDialog.show();
+                }
+                return false;
             }
         });
 
@@ -300,10 +345,14 @@ public class FrgMain extends BaseFrg {
         }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
 
         // init onClick
-        txDateTo.setOnClickListener(new View.OnClickListener() {
+
+        txDateTo.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                toDatePickerDialog2.show();
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    toDatePickerDialog2.show();
+                }
+                return false;
             }
         });
     }

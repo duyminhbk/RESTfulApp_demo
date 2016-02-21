@@ -10,12 +10,28 @@
         <item>   Percent Offset   </item>
     </array>
 
-    <array name="report_type">
+    <array name="report_type_dir">
         <item>Choose kind of report</item>
         <item>@string/sltv_title</item>
         <item>@string/slgd_title</item>
         <item>@string/slkh_title</item>
         <item>@string/sltt_title</item>
+    </array>
+
+    <array name="report_type_chief">
+        <item>Choose kind of report</item>
+        <item>@string/sltv_title</item>
+        <item>@string/slkh_title</item>
+        <item>@string/sltt_title</item>
+    </array>
+
+    <array name="report_type_sale">
+        <item>Choose kind of report</item>
+        <item>@string/slkh_title</item>
+        <item>@string/sltt_title</item>
+    </array>
+    <array name="report_type_default">
+        <item>Limit Role can\'t see any report</item>
     </array>
 
 </resources>

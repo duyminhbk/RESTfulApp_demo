@@ -25,6 +25,15 @@ public class Customer implements Serializable{
     private String custType;
     private String custKind;
 
+    public Customer(){
+
+    }
+
+    public  Customer(String custNo,String custName){
+        this.custNo = custNo;
+        this.custName = custName;
+    }
+
     public String getCustNo() {
         return custNo;
     }
