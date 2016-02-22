@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.app.restfulapp.models.Customer;
 import com.app.restfulapp.models.Member;
+import com.app.restfulapp.models.Product;
 import com.app.restfulapp.reports.FrgSLGDReport;
 import com.app.restfulapp.reports.FrgSLKHReport;
 import com.app.restfulapp.reports.FrgSLTTReport;
@@ -75,7 +76,7 @@ public class FrgMain extends BaseFrg {
     private Spinner spinnerP2;
     private Spinner spinnerProduct;
 
-    private Member mProduct;
+    private Product mProduct;
     private Member mP2;
     private Member mP1;
 
@@ -254,6 +255,8 @@ public class FrgMain extends BaseFrg {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 mP1 = (Member) parent.getSelectedItem();
+                if("Alert".equalsIgnoreCase(mP1.getCode())) return;
+                updateP2();
             }
 
             @Override
@@ -261,13 +264,15 @@ public class FrgMain extends BaseFrg {
 
             }
         });
-        //init spinner kind
+        //init spinner p2
         mAdapP2 = new AdapMember(mActivity);
         spinnerP2.setAdapter(mAdapP2);
         spinnerP2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 mP2 = (Member) parent.getSelectedItem();
+                if("Alert".equalsIgnoreCase(mP2.getCode())) return;
+                updateProduct();
             }
 
             @Override
@@ -275,13 +280,15 @@ public class FrgMain extends BaseFrg {
 
             }
         });
-        //init spinner kind
+        //init spinner product
         mAdapProduct = new AdapMember(mActivity);
         spinnerProduct.setAdapter(mAdapProduct);
         spinnerProduct.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                mProduct = (Member) parent.getSelectedItem();
+                if(parent.getSelectedItem() instanceof Product) {
+                    mProduct = (Product) parent.getSelectedItem();
+                }
             }
 
             @Override
@@ -291,6 +298,63 @@ public class FrgMain extends BaseFrg {
         });
 
 
+    }
+
+    private void updateP2() {
+        mActivity.showLoading(true);
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.setCookieStore(mActivity.getCookieStore());
+        client.get(String.format(Define.GET_P2, mP1.getCode()), new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Log.d("minh", "GET_P2: " + response);
+                if (Parser.isSuccess(response)) {
+                    mAdapP2.setData(Parser.parseP2(response.optJSONArray("Result"))).notifyDataSetChanged();
+                } else {
+                    // show error
+                    Toast.makeText(mActivity, Parser.getError(response), Toast.LENGTH_SHORT).show();
+                }
+                mP2 = (Member) spinnerP2.getSelectedItem();
+                mActivity.showLoading(false);
+                updateProduct();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                mActivity.showLoading(false);
+                Toast.makeText(mActivity, responseString, Toast.LENGTH_SHORT).show();
+                mAdapP2.setData(null);
+                mAdapP2.notifyDataSetChanged();
+            }
+        });
+    }
+
+    private void updateProduct() {
+        mActivity.showLoading(true);
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.setCookieStore(mActivity.getCookieStore());
+        client.get(String.format(Define.GET_PRODUCT, mP2.getCode()), new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Log.d("minh", "GET_PRODUCT: " + response);
+                if (Parser.isSuccess(response)) {
+                    mAdapProduct.setData(Parser.parseProduct(response.optJSONArray("Result"))).notifyDataSetChanged();
+                } else {
+                    // show error
+                    Toast.makeText(mActivity, Parser.getError(response), Toast.LENGTH_SHORT).show();
+                }
+                mProduct = (Product) spinnerProduct.getSelectedItem();
+                mActivity.showLoading(false);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                mActivity.showLoading(false);
+                Toast.makeText(mActivity, responseString, Toast.LENGTH_SHORT).show();
+                mAdapProduct.setData(null);
+                mAdapProduct.notifyDataSetChanged();
+            }
+        });
     }
 
     private void updateMember() {
@@ -305,7 +369,7 @@ public class FrgMain extends BaseFrg {
         mActivity.showLoading(true);
         switch (reportType) {
             // reuse spinner customer and member to define cust_type and label_flag
-            case SLGD:
+            case SLGD: {
                 spinnerCustomer.setVisibility(View.VISIBLE);
                 spinnerMember.setVisibility(View.VISIBLE);
                 spinnerKind.setVisibility(View.VISIBLE);
@@ -316,26 +380,45 @@ public class FrgMain extends BaseFrg {
                 mAdapCus.setData(Utility.genCustType());
                 mAdapMember.setData(Utility.genFlag());
                 mAdapKind.setData(Utility.genPeriodType());
-                mAdapProduct.setData(Utility.genProduct());
-                mAdapP1.setData(Utility.genP1());
-                mAdapP2.setData(Utility.genP2());
+                //update P1
+                AsyncHttpClient client = new AsyncHttpClient();
+                client.setCookieStore(mActivity.getCookieStore());
+                client.get(Define.GET_P1, new JsonHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                        Log.d("minh", "GET_P1: " + response);
+                        if (Parser.isSuccess(response)) {
+                            mAdapP1.setData(Parser.parseP1(response.optJSONObject("Result"))).notifyDataSetChanged();
+                        } else {
+                            // show error
+                            Toast.makeText(mActivity, Parser.getError(response), Toast.LENGTH_SHORT).show();
+                        }
+                        mP1 = (Product) spinnerP1.getSelectedItem();
+                        mActivity.showLoading(false);
+                        updateP2();
+                    }
 
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                        mActivity.showLoading(false);
+                        Toast.makeText(mActivity, responseString, Toast.LENGTH_SHORT).show();
+                        mAdapP1.setData(null);
+                        mAdapP1.notifyDataSetChanged();
+                    }
+                });
                 mAdapMember.notifyDataSetChanged();
                 mAdapCus.notifyDataSetChanged();
                 mAdapKind.notifyDataSetChanged();
-                mAdapProduct.notifyDataSetChanged();
                 mAdapP1.notifyDataSetChanged();
-                mAdapP2.notifyDataSetChanged();
 
                 mMember = (Member) spinnerMember.getSelectedItem();
                 mCustomer = (Customer) spinnerCustomer.getSelectedItem();
                 mKind = (Member) spinnerKind.getSelectedItem();
-                mProduct = (Member) spinnerProduct.getSelectedItem();
                 mP1 = (Member) spinnerP1.getSelectedItem();
-                mP2 = (Member) spinnerP2.getSelectedItem();
 
                 mActivity.showLoading(false);
-                break;
+            }
+            break;
             case SLTT: {
                 if (role != MainActivity.Role.SALE) {
                     spinnerMember.setVisibility(View.VISIBLE);

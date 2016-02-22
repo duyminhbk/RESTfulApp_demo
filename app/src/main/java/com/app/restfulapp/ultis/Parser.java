@@ -2,6 +2,7 @@ package com.app.restfulapp.ultis;
 
 import com.app.restfulapp.models.Customer;
 import com.app.restfulapp.models.Member;
+import com.app.restfulapp.models.Product;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -104,5 +105,67 @@ public class Parser {
         }
         return result;
     }
-
+    /*
+      {
+         "p2":"0301",
+         "p2_name":"03_So 1"
+      }
+     */
+    public static List<Member> parseP2(JSONArray arr) {
+        if(arr == null || arr.length() ==0) return null;
+        List<Member> result = new ArrayList<>();
+        for(int i=0;i<arr.length();i++){
+            JSONObject temp = arr.optJSONObject(i);
+            result.add(new Member(temp.optString("p2_name"),temp.optString("p2")));
+        }
+        result.add(0,new Member("All",""));
+        return result;
+    }
+    /*
+    * {
+         "product_no":"B3000",
+         "product_vname":"ĐĐ gà đẻ 18 tuần - Đào thải",
+         "p_1":"03",
+         "p_2":"0301",
+         "part_kind":"B"
+      }
+    * */
+    public static List<Member> parseProduct(JSONArray arr) {
+        if(arr == null || arr.length() ==0) return null;
+        List<Member> result = new ArrayList<>();
+        for(int i=0;i<arr.length();i++){
+            JSONObject temp = arr.optJSONObject(i);
+            Product pro = new Product(temp.optString("product_vname"),temp.optString("product_no"));
+            pro.setP1(temp.optString("p_1"));
+            pro.setP2(temp.optString("p_2"));
+            pro.setPartKind(temp.optString("part_kind"));
+            result.add(pro);
+        }
+        result.add(0,new Member("All",""));
+        return result;
+    }
+    /*
+    "Result":{
+      "03":"Gà Đẻ",
+      "04":"Cút",
+      "05":"Vịt",
+      "06":"Gà Thịt",
+      "07":"Cám Cá",
+      "08":"Heo",
+      "09":"Bò",
+      "11":"Heo đặc biệt",
+      "12":"Cá đặc biệt",
+      "17":"Tôm"
+   }
+    * */
+    public static List<Member> parseP1(JSONObject json) {
+        if(json == null ) return null;
+        List<Member> result = new ArrayList<>();
+        while (json.keys().hasNext()){
+            String key = json.keys().next();
+            result.add(new Member(json.optString(key),key));
+        }
+        result.add(0,new Member("All",""));
+        return result;
+    }
 }
