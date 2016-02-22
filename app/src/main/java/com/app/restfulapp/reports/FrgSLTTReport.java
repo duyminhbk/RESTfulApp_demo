@@ -5,11 +5,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.restfulapp.R;
-import com.app.restfulapp.models.Customer;
 import com.app.restfulapp.models.Member;
+import com.app.restfulapp.ultis.Define;
 import com.app.restfulapp.ultis.Parser;
 import com.app.restfulapp.ultis.ReportLayout;
-import com.app.restfulapp.ultis.Define;
 import com.app.restfulapp.ultis.Utility;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -47,10 +46,10 @@ public class FrgSLTTReport extends FrgReport {
 
     @Override
     protected void requestData() {
-        if(member == null){
-            Toast.makeText(mActivity,"sale man not define",Toast.LENGTH_SHORT).show();
-            return;
-        }
+//        if(member == null){
+//            Toast.makeText(mActivity,"sale man not define",Toast.LENGTH_SHORT).show();
+//            return;
+//        }
         if(kind == null){
             Toast.makeText(mActivity,"part kind not define",Toast.LENGTH_SHORT).show();
             return;
@@ -59,7 +58,7 @@ public class FrgSLTTReport extends FrgReport {
         AsyncHttpClient client = new AsyncHttpClient();
         client.setCookieStore(mActivity.getCookieStore());
         ////sale_no: "6073", part_kind: "A", tc_date1: "2012-09-01", tc_date2: "2015-09-01"}
-        client.get(String.format(Define.SLTT_URL, member.getCode(),kind.getCode(),
+        client.get(String.format(Define.SLTT_URL,member ==null?"": member.getCode(),kind.getCode(),
                         fromDate, toDate), new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {

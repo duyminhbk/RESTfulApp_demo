@@ -94,40 +94,39 @@ public class FrgMain extends BaseFrg {
         result[2] = mP1.getCode();
         result[3] = mP2.getCode();
         result[4] = mProduct.getName();
-        result[5] = txDateFrom.getText()+"";
+        result[5] = txDateFrom.getText() + "";
         result[6] = mKind.getName();
         return result;
     }
 
-    public enum Reports{
-        NONE,SLTV,SLGD,SLKH,SLTT
-    }
-    public void setReport(String kind){
-        if(getString(R.string.slkh_title).equals(kind)){
-            reportType =Reports.SLKH;
-        }else if(getString(R.string.sltv_title).equals(kind)){
-            reportType =Reports.SLTV;
-        }else if(getString(R.string.sltt_title).equals(kind)){
-            reportType =Reports.SLTT;
-        }if(getString(R.string.slgd_title).equals(kind)){
-            reportType =Reports.SLGD;
+    public void setReport(String kind) {
+        if (getString(R.string.slkh_title).equals(kind)) {
+            reportType = Reports.SLKH;
+        } else if (getString(R.string.sltv_title).equals(kind)) {
+            reportType = Reports.SLTV;
+        } else if (getString(R.string.sltt_title).equals(kind)) {
+            reportType = Reports.SLTT;
+        }
+        if (getString(R.string.slgd_title).equals(kind)) {
+            reportType = Reports.SLGD;
         }
     }
+
     @Override
     protected void initView() {
         role = mActivity.getRole();
         // find view
         txDateFrom = (TextView) rootView.findViewById(R.id.ed_date_from);
         txDateTo = (TextView) rootView.findViewById(R.id.ed_date_to);
-        etName=(EditText)findViewById(R.id.ed_member_name);
+        etName = (EditText) findViewById(R.id.ed_member_name);
 
-        spinnerReport = (Spinner)findViewById(R.id.sp_report);
-        spinnerMember = (Spinner)findViewById(R.id.sp_member);
-        spinnerCustomer = (Spinner)findViewById(R.id.sp_customer);
-        spinnerKind = (Spinner)findViewById(R.id.sp_kind);
-        spinnerP1 = (Spinner)findViewById(R.id.sp_p1);
-        spinnerP2 = (Spinner)findViewById(R.id.sp_p2);
-        spinnerProduct = (Spinner)findViewById(R.id.sp_product);
+        spinnerReport = (Spinner) findViewById(R.id.sp_report);
+        spinnerMember = (Spinner) findViewById(R.id.sp_member);
+        spinnerCustomer = (Spinner) findViewById(R.id.sp_customer);
+        spinnerKind = (Spinner) findViewById(R.id.sp_kind);
+        spinnerP1 = (Spinner) findViewById(R.id.sp_p1);
+        spinnerP2 = (Spinner) findViewById(R.id.sp_p2);
+        spinnerProduct = (Spinner) findViewById(R.id.sp_product);
 
         txtSaleName = (TextView) rootView.findViewById(R.id.txtSaleName);
         txtSaleName.setText(Utility.getString(mActivity, "saleName"));
@@ -146,7 +145,7 @@ public class FrgMain extends BaseFrg {
         handleSubmit();
     }
 
-    private void getCustomer(){
+    private void getCustomer() {
         AsyncHttpClient client = new AsyncHttpClient();
         client.setCookieStore(mActivity.getCookieStore());
         client.get(Define.GET_CUSTOMERS_URL, new JsonHttpResponseHandler() {
@@ -174,7 +173,7 @@ public class FrgMain extends BaseFrg {
     private void initSpinner() {
         // init spinner report
         int reportKinds;
-        switch (role){
+        switch (role) {
             case DIR:
                 reportKinds = R.array.report_type_dir;
                 break;
@@ -304,7 +303,7 @@ public class FrgMain extends BaseFrg {
         spinnerP1.setVisibility(View.GONE);
         spinnerP2.setVisibility(View.GONE);
         mActivity.showLoading(true);
-        switch (reportType){
+        switch (reportType) {
             // reuse spinner customer and member to define cust_type and label_flag
             case SLGD:
                 spinnerCustomer.setVisibility(View.VISIBLE);
@@ -337,39 +336,43 @@ public class FrgMain extends BaseFrg {
 
                 mActivity.showLoading(false);
                 break;
-            case SLTT:{
-                spinnerMember.setVisibility(View.VISIBLE);
-                AsyncHttpClient client = new AsyncHttpClient();
-                client.setCookieStore(mActivity.getCookieStore());
-                client.get(Define.SALEMAN_LIST_URL, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                        mActivity.showLoading(false);
-                        Log.d("minh", "SALEMAN_LIST_URL: " + response);
-                        if (Parser.isSuccess(response)) {
-                            mAdapMember.setData(Parser.parseMember(response.optJSONArray("Result"))).notifyDataSetChanged();
-                        } else {
-                            // show error
-                            Toast.makeText(mActivity, Parser.getError(response), Toast.LENGTH_SHORT).show();
+            case SLTT: {
+                if (role != MainActivity.Role.SALE) {
+                    spinnerMember.setVisibility(View.VISIBLE);
+                    AsyncHttpClient client = new AsyncHttpClient();
+                    client.setCookieStore(mActivity.getCookieStore());
+                    client.get(Define.SALEMAN_LIST_URL, new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            mActivity.showLoading(false);
+                            Log.d("minh", "SALEMAN_LIST_URL: " + response);
+                            if (Parser.isSuccess(response)) {
+                                mAdapMember.setData(Parser.parseMember(response.optJSONArray("Result"))).notifyDataSetChanged();
+                            } else {
+                                // show error
+                                Toast.makeText(mActivity, Parser.getError(response), Toast.LENGTH_SHORT).show();
+                            }
+                            mMember = (Member) spinnerMember.getSelectedItem();
                         }
-                        mMember = (Member) spinnerMember.getSelectedItem();
-                    }
 
-                    @Override
-                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                        mActivity.showLoading(false);
-                        Toast.makeText(mActivity, responseString, Toast.LENGTH_SHORT).show();
-                        mAdapMember.setData(null);
-                        mAdapMember.notifyDataSetChanged();
-                    }
-                });
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                            mActivity.showLoading(false);
+                            Toast.makeText(mActivity, responseString, Toast.LENGTH_SHORT).show();
+                            mAdapMember.setData(null);
+                            mAdapMember.notifyDataSetChanged();
+                        }
+                    });
+                } else {
+                    mActivity.showLoading(false);
+                    mMember = null;
+                }
                 spinnerKind.setVisibility(View.VISIBLE);
                 mAdapKind.setData(Utility.genPartKind());
                 mAdapKind.notifyDataSetChanged();
-                mMember = (Member) spinnerMember.getSelectedItem();
                 mKind = (Member) spinnerKind.getSelectedItem();
-                }
-                break;
+            }
+            break;
             case SLKH:
                 spinnerCustomer.setVisibility(View.VISIBLE);
                 spinnerKind.setVisibility(View.VISIBLE);
@@ -378,32 +381,37 @@ public class FrgMain extends BaseFrg {
                 mKind = (Member) spinnerMember.getSelectedItem();
                 mActivity.showLoading(false);
                 break;
-            case SLTV:{
-                spinnerMember.setVisibility(View.VISIBLE);
-                AsyncHttpClient client = new AsyncHttpClient();
-                client.setCookieStore(mActivity.getCookieStore());
-                client.get(Define.CHIEF_LIST_URL, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                        mActivity.showLoading(false);
-                        Log.d("minh", "CHIEF_LIST_URL: " + response);
-                        if (Parser.isSuccess(response)) {
-                            mAdapMember.setData(Parser.parseMember(response.optJSONArray("Result"))).notifyDataSetChanged();
-                        } else {
-                            // show error
-                            Toast.makeText(mActivity, Parser.getError(response), Toast.LENGTH_SHORT).show();
+            case SLTV: {
+                if (role != MainActivity.Role.CHIEF) {
+                    spinnerMember.setVisibility(View.VISIBLE);
+                    AsyncHttpClient client = new AsyncHttpClient();
+                    client.setCookieStore(mActivity.getCookieStore());
+                    client.get(Define.CHIEF_LIST_URL, new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            mActivity.showLoading(false);
+                            Log.d("minh", "CHIEF_LIST_URL: " + response);
+                            if (Parser.isSuccess(response)) {
+                                mAdapMember.setData(Parser.parseMember(response.optJSONArray("Result"))).notifyDataSetChanged();
+                            } else {
+                                // show error
+                                Toast.makeText(mActivity, Parser.getError(response), Toast.LENGTH_SHORT).show();
+                            }
+                            mMember = (Member) spinnerMember.getSelectedItem();
                         }
-                        mMember = (Member) spinnerMember.getSelectedItem();
-                    }
 
-                    @Override
-                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                        mActivity.showLoading(false);
-                        Log.d("minh", "CHIEF_LIST_URL- error: " + responseString);
-                        mAdapMember.setData(null);
-                        mAdapMember.notifyDataSetChanged();
-                    }
-                });
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                            mActivity.showLoading(false);
+                            Log.d("minh", "CHIEF_LIST_URL- error: " + responseString);
+                            mAdapMember.setData(null);
+                            mAdapMember.notifyDataSetChanged();
+                        }
+                    });
+                } else {
+                    mActivity.showLoading(false);
+                    mMember = null;
+                }
                 spinnerCustomer.setVisibility(View.VISIBLE);
                 mAdapCus.setData(Utility.genCustType());
                 spinnerKind.setVisibility(View.VISIBLE);
@@ -413,7 +421,7 @@ public class FrgMain extends BaseFrg {
                 mCustomer = (Customer) spinnerCustomer.getSelectedItem();
                 mKind = (Member) spinnerKind.getSelectedItem();
             }
-                break;
+            break;
         }
     }
 
@@ -436,7 +444,7 @@ public class FrgMain extends BaseFrg {
                         mActivity.addFragment(new FrgSLTTReport().setData(mMember, mKind, txDateFrom.getText() + "", txDateTo.getText() + ""), true);
                         break;
                     case SLTV:
-                        mActivity.addFragment(new FrgSLTVReport().setData(mCustomer, mMember,mKind, txDateFrom.getText() + "", txDateTo.getText() + ""), true);
+                        mActivity.addFragment(new FrgSLTVReport().setData(mCustomer, mMember, mKind, txDateFrom.getText() + "", txDateTo.getText() + ""), true);
                         break;
                 }
             }
@@ -462,7 +470,7 @@ public class FrgMain extends BaseFrg {
         txDateFrom.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if(event.getAction() == MotionEvent.ACTION_DOWN){
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     toDatePickerDialog.show();
                 }
                 return false;
@@ -500,5 +508,9 @@ public class FrgMain extends BaseFrg {
     @Override
     protected int defineLayout() {
         return R.layout.frg_main;
+    }
+
+    public enum Reports {
+        NONE, SLTV, SLGD, SLKH, SLTT
     }
 }
