@@ -1,13 +1,15 @@
 package com.app.restfulapp.reports;
 
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.restfulapp.R;
+import com.app.restfulapp.models.Customer;
+import com.app.restfulapp.models.Member;
+import com.app.restfulapp.ultis.Define;
 import com.app.restfulapp.ultis.Parser;
 import com.app.restfulapp.ultis.ReportLayout;
-import com.app.restfulapp.ultis.Define;
-import com.app.restfulapp.ultis.Utility;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -20,29 +22,35 @@ import cz.msebera.android.httpclient.Header;
  */
 public class FrgSLGDReport extends FrgReport {
 
+
+    private String[] args;
+
     @Override
     protected void requestData() {
 //        if(customer == null){
 //            Toast.makeText(mActivity,"customer not define",Toast.LENGTH_SHORT).show();
 //            return;
 //        }
+        //{ cust_type, label_flag, p_1, p_2, product_no, tc_date, PeriodType }
         mActivity.showLoading(true);
         AsyncHttpClient client = new AsyncHttpClient();
         client.setCookieStore(mActivity.getCookieStore());
-        client.get(String.format(Define.SLGD_URL, Utility.convertSimpleDate(toDate),customer.getCustName(),member.getCode()), new JsonHttpResponseHandler() {
+
+        client.get(String.format(Define.SLGD_URL, args[0], args[1], "", "", "",
+                        args[5], args[6]), new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                         super.onSuccess(statusCode, headers, response);
                         mActivity.showLoading(false);
                         Log.d("minh", response.toString());
                         //success request
-                        if(Parser.isSuccess(response)){
+                        if (Parser.isSuccess(response)) {
                             try {
                                 reportLayout.setDataAndLayout(Parser.parseSLGD(response.optJSONObject("Result")));
-                            }catch (ReportLayout.DataFormatException e){
+                            } catch (ReportLayout.DataFormatException e) {
                                 e.printStackTrace();
                             }
-                        }else{
+                        } else {
                             // show error
                             Toast.makeText(mActivity, Parser.getError(response), Toast.LENGTH_SHORT).show();
                         }
@@ -52,14 +60,36 @@ public class FrgSLGDReport extends FrgReport {
                     public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                         super.onFailure(statusCode, headers, responseString, throwable);
                         mActivity.showLoading(false);
-                        Toast.makeText(mActivity,responseString,Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mActivity, responseString, Toast.LENGTH_SHORT).show();
                     }
                 }
         );
     }
 
+
     @Override
     protected int defineLayout() {
         return R.layout.frg_report_slgd;
+    }
+
+    public FrgReport setData(String[] args) {
+        this.args = args;
+        return this;
+    }
+
+    @Override
+    protected void initView() {
+        super.initView();
+        if(args ==null || args.length !=7) return;
+        ((TextView)findViewById(R.id.tx_time)).setText(args[6]);
+    }
+
+    public enum PeriodType {
+        None,
+        Daily,
+        Weekly,
+        Monthly,
+        Quarterly,
+        Annualy
     }
 }

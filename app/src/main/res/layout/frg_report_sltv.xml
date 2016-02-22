@@ -8,6 +8,13 @@
         android:gravity="center"
         android:textSize="20sp"
         android:text="TIÊU THỤ CỦA ĐẠI LÝ TRONG NĂM"/>
+    <TextView
+        android:id="@+id/tx_area"
+        style="@style/TitleStyle"
+        android:gravity="left"
+        android:layout_marginLeft="5dp"
+        android:textSize="14sp"
+        android:text="TIÊU THỤ CỦA ĐẠI LÝ TRONG NĂM"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

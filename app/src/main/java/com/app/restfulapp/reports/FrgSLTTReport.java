@@ -5,6 +5,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.restfulapp.R;
+import com.app.restfulapp.models.Customer;
+import com.app.restfulapp.models.Member;
 import com.app.restfulapp.ultis.Parser;
 import com.app.restfulapp.ultis.ReportLayout;
 import com.app.restfulapp.ultis.Define;
@@ -21,6 +23,8 @@ import cz.msebera.android.httpclient.Header;
  */
 public class FrgSLTTReport extends FrgReport {
 
+    private Member kind;
+
     @Override
     protected void initView() {
         super.initView();
@@ -29,7 +33,11 @@ public class FrgSLTTReport extends FrgReport {
 
         TextView txDate = (TextView) findViewById(R.id.txdate);
 
-        txDate.setText(Utility.convertSimpleDate(fromDate) + " - " + Utility.convertSimpleDate(toDate));
+        txDate.setText(fromDate + " - " + toDate);
+
+        if(kind == null) return;
+        ((TextView) findViewById(R.id.tx_kind)).setText(kind.getName());
+
     }
 
     @Override
@@ -39,15 +47,20 @@ public class FrgSLTTReport extends FrgReport {
 
     @Override
     protected void requestData() {
-        if(customer == null){
-            Toast.makeText(mActivity,"customer not define",Toast.LENGTH_SHORT).show();
+        if(member == null){
+            Toast.makeText(mActivity,"sale man not define",Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(kind == null){
+            Toast.makeText(mActivity,"part kind not define",Toast.LENGTH_SHORT).show();
             return;
         }
         mActivity.showLoading(true);
         AsyncHttpClient client = new AsyncHttpClient();
         client.setCookieStore(mActivity.getCookieStore());
-        client.get(String.format(Define.SLTT_URL, customer.getSaleNo(),
-                        Utility.convertSimpleDate(fromDate), Utility.convertSimpleDate(toDate)), new JsonHttpResponseHandler() {
+        ////sale_no: "6073", part_kind: "A", tc_date1: "2012-09-01", tc_date2: "2015-09-01"}
+        client.get(String.format(Define.SLTT_URL, member.getCode(),kind.getCode(),
+                        fromDate, toDate), new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                         super.onSuccess(statusCode, headers, response);
@@ -76,5 +89,11 @@ public class FrgSLTTReport extends FrgReport {
                     }
                 }
         );
+    }
+
+    public FrgReport setData(Member member,Member kind, String fromDate, String toDate) {
+        super.setData(null, member, fromDate, toDate);
+        this.kind = kind;
+        return this;
     }
 }

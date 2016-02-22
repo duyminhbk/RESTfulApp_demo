@@ -25,10 +25,8 @@ import com.app.restfulapp.ultis.Define;
 import com.app.restfulapp.ultis.Parser;
 import com.app.restfulapp.ultis.Utility;
 import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -59,13 +57,47 @@ public class FrgMain extends BaseFrg {
     private Spinner spinnerReport;
     private Spinner spinnerMember;
     private Spinner spinnerCustomer;
+    private Spinner spinnerKind;
     private Reports reportType = Reports.NONE;
-    private AdapMember mAdapMember;
-    private Member mMember;
-    private AdapCustomer mAdapCus;
-    private Customer mCustomer;
 
+    private AdapMember mAdapMember;
+    private AdapMember mAdapKind;
+    private AdapCustomer mAdapCus;
+    private AdapMember mAdapProduct;
+    private AdapMember mAdapP1;
+    private AdapMember mAdapP2;
+
+    private Member mMember;
+    private Customer mCustomer;
+    private Member mKind;
     private MainActivity.Role role;
+    private Spinner spinnerP1;
+    private Spinner spinnerP2;
+    private Spinner spinnerProduct;
+
+    private Member mProduct;
+    private Member mP2;
+    private Member mP1;
+
+    public String[] getGDArg() {
+        //{ cust_type, label_flag, p_1, p_2, product_no, tc_date, PeriodType }
+        String[] result = new String[8];
+        mAdapCus.setData(Utility.genCustType());
+        mAdapMember.setData(Utility.genFlag());
+        mAdapKind.setData(Utility.genPeriodType());
+        mAdapProduct.setData(Utility.genProduct());
+        mAdapP1.setData(Utility.genP1());
+        mAdapP2.setData(Utility.genP2());
+
+        result[0] = mCustomer.getCustName();
+        result[1] = mMember.getCode();
+        result[2] = mP1.getCode();
+        result[3] = mP2.getCode();
+        result[4] = mProduct.getName();
+        result[5] = txDateFrom.getText()+"";
+        result[6] = mKind.getName();
+        return result;
+    }
 
     public enum Reports{
         NONE,SLTV,SLGD,SLKH,SLTT
@@ -92,6 +124,10 @@ public class FrgMain extends BaseFrg {
         spinnerReport = (Spinner)findViewById(R.id.sp_report);
         spinnerMember = (Spinner)findViewById(R.id.sp_member);
         spinnerCustomer = (Spinner)findViewById(R.id.sp_customer);
+        spinnerKind = (Spinner)findViewById(R.id.sp_kind);
+        spinnerP1 = (Spinner)findViewById(R.id.sp_p1);
+        spinnerP2 = (Spinner)findViewById(R.id.sp_p2);
+        spinnerProduct = (Spinner)findViewById(R.id.sp_product);
 
         txtSaleName = (TextView) rootView.findViewById(R.id.txtSaleName);
         txtSaleName.setText(Utility.getString(mActivity, "saleName"));
@@ -198,24 +234,108 @@ public class FrgMain extends BaseFrg {
             }
         });
 
+        //init spinner kind
+        mAdapKind = new AdapMember(mActivity);
+        spinnerKind.setAdapter(mAdapKind);
+        spinnerKind.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mKind = (Member) parent.getSelectedItem();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        //init spinner p1
+        mAdapP1 = new AdapMember(mActivity);
+        spinnerP1.setAdapter(mAdapP1);
+        spinnerP1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mP1 = (Member) parent.getSelectedItem();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        //init spinner kind
+        mAdapP2 = new AdapMember(mActivity);
+        spinnerP2.setAdapter(mAdapP2);
+        spinnerP2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mP2 = (Member) parent.getSelectedItem();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        //init spinner kind
+        mAdapProduct = new AdapMember(mActivity);
+        spinnerProduct.setAdapter(mAdapProduct);
+        spinnerProduct.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mProduct = (Member) parent.getSelectedItem();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
 
     }
 
     private void updateMember() {
         mMember = null;
+        mKind = null;
         spinnerCustomer.setVisibility(View.GONE);
         spinnerMember.setVisibility(View.GONE);
+        spinnerKind.setVisibility(View.GONE);
+        spinnerProduct.setVisibility(View.GONE);
+        spinnerP1.setVisibility(View.GONE);
+        spinnerP2.setVisibility(View.GONE);
+        mActivity.showLoading(true);
         switch (reportType){
             // reuse spinner customer and member to define cust_type and label_flag
             case SLGD:
                 spinnerCustomer.setVisibility(View.VISIBLE);
                 spinnerMember.setVisibility(View.VISIBLE);
+                spinnerKind.setVisibility(View.VISIBLE);
+                spinnerProduct.setVisibility(View.VISIBLE);
+                spinnerP1.setVisibility(View.VISIBLE);
+                spinnerP2.setVisibility(View.VISIBLE);
+
                 mAdapCus.setData(Utility.genCustType());
-                mAdapMember.setData(Utility.getFlag());
+                mAdapMember.setData(Utility.genFlag());
+                mAdapKind.setData(Utility.genPeriodType());
+                mAdapProduct.setData(Utility.genProduct());
+                mAdapP1.setData(Utility.genP1());
+                mAdapP2.setData(Utility.genP2());
+
                 mAdapMember.notifyDataSetChanged();
                 mAdapCus.notifyDataSetChanged();
+                mAdapKind.notifyDataSetChanged();
+                mAdapProduct.notifyDataSetChanged();
+                mAdapP1.notifyDataSetChanged();
+                mAdapP2.notifyDataSetChanged();
+
                 mMember = (Member) spinnerMember.getSelectedItem();
                 mCustomer = (Customer) spinnerCustomer.getSelectedItem();
+                mKind = (Member) spinnerKind.getSelectedItem();
+                mProduct = (Member) spinnerProduct.getSelectedItem();
+                mP1 = (Member) spinnerP1.getSelectedItem();
+                mP2 = (Member) spinnerP2.getSelectedItem();
+
+                mActivity.showLoading(false);
                 break;
             case SLTT:{
                 spinnerMember.setVisibility(View.VISIBLE);
@@ -226,11 +346,11 @@ public class FrgMain extends BaseFrg {
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                         mActivity.showLoading(false);
                         Log.d("minh", "SALEMAN_LIST_URL: " + response);
-                        if(Parser.isSuccess(response)){
+                        if (Parser.isSuccess(response)) {
                             mAdapMember.setData(Parser.parseMember(response.optJSONArray("Result"))).notifyDataSetChanged();
-                        }else{
+                        } else {
                             // show error
-                            Toast.makeText(mActivity,Parser.getError(response),Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mActivity, Parser.getError(response), Toast.LENGTH_SHORT).show();
                         }
                         mMember = (Member) spinnerMember.getSelectedItem();
                     }
@@ -238,18 +358,25 @@ public class FrgMain extends BaseFrg {
                     @Override
                     public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                         mActivity.showLoading(false);
-                        Toast.makeText(mActivity, responseString,Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mActivity, responseString, Toast.LENGTH_SHORT).show();
                         mAdapMember.setData(null);
                         mAdapMember.notifyDataSetChanged();
                     }
                 });
+                spinnerKind.setVisibility(View.VISIBLE);
+                mAdapKind.setData(Utility.genPartKind());
+                mAdapKind.notifyDataSetChanged();
+                mMember = (Member) spinnerMember.getSelectedItem();
+                mKind = (Member) spinnerKind.getSelectedItem();
                 }
                 break;
             case SLKH:
                 spinnerCustomer.setVisibility(View.VISIBLE);
-                spinnerMember.setVisibility(View.GONE);
-                mAdapMember.setData(null);
-                mAdapMember.notifyDataSetChanged();
+                spinnerKind.setVisibility(View.VISIBLE);
+                mAdapKind.setData(Utility.genPartKind());
+                mAdapKind.notifyDataSetChanged();
+                mKind = (Member) spinnerMember.getSelectedItem();
+                mActivity.showLoading(false);
                 break;
             case SLTV:{
                 spinnerMember.setVisibility(View.VISIBLE);
@@ -260,11 +387,11 @@ public class FrgMain extends BaseFrg {
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                         mActivity.showLoading(false);
                         Log.d("minh", "CHIEF_LIST_URL: " + response);
-                        if(Parser.isSuccess(response)){
+                        if (Parser.isSuccess(response)) {
                             mAdapMember.setData(Parser.parseMember(response.optJSONArray("Result"))).notifyDataSetChanged();
-                        }else{
+                        } else {
                             // show error
-                            Toast.makeText(mActivity,Parser.getError(response),Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mActivity, Parser.getError(response), Toast.LENGTH_SHORT).show();
                         }
                         mMember = (Member) spinnerMember.getSelectedItem();
                     }
@@ -277,6 +404,14 @@ public class FrgMain extends BaseFrg {
                         mAdapMember.notifyDataSetChanged();
                     }
                 });
+                spinnerCustomer.setVisibility(View.VISIBLE);
+                mAdapCus.setData(Utility.genCustType());
+                spinnerKind.setVisibility(View.VISIBLE);
+                mAdapKind.setData(Utility.genFlag());
+                mAdapKind.notifyDataSetChanged();
+                mAdapCus.notifyDataSetChanged();
+                mCustomer = (Customer) spinnerCustomer.getSelectedItem();
+                mKind = (Member) spinnerKind.getSelectedItem();
             }
                 break;
         }
@@ -287,21 +422,21 @@ public class FrgMain extends BaseFrg {
             @Override
             public void onClick(View v) {
                 if (TextUtils.isEmpty(txDateFrom.getText()) || TextUtils.isEmpty(txDateTo.getText())) {
-                    Toast.makeText(mActivity,"Date field not empty",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mActivity, "Date field not empty", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                switch (reportType){
+                switch (reportType) {
                     case SLGD:
-                        mActivity.addFragment(new FrgSLGDReport().setData(mCustomer,mMember,txDateFrom.getText()+"",txDateTo.getText()+""),true);
+                        mActivity.addFragment(new FrgSLGDReport().setData(getGDArg()), true);
                         break;
                     case SLKH:
-                        mActivity.addFragment(new FrgSLKHReport().setData(mCustomer,mMember,txDateFrom.getText()+"",txDateTo.getText()+""),true);
+                        mActivity.addFragment(new FrgSLKHReport().setData(mCustomer, mKind, txDateFrom.getText() + "", txDateTo.getText() + ""), true);
                         break;
                     case SLTT:
-                        mActivity.addFragment(new FrgSLTTReport().setData(mCustomer,mMember,txDateFrom.getText()+"",txDateTo.getText()+""),true);
+                        mActivity.addFragment(new FrgSLTTReport().setData(mMember, mKind, txDateFrom.getText() + "", txDateTo.getText() + ""), true);
                         break;
                     case SLTV:
-                        mActivity.addFragment(new FrgSLTVReport().setData(mCustomer,mMember,txDateFrom.getText()+"",txDateTo.getText()+""),true);
+                        mActivity.addFragment(new FrgSLTVReport().setData(mCustomer, mMember,mKind, txDateFrom.getText() + "", txDateTo.getText() + ""), true);
                         break;
                 }
             }
@@ -317,7 +452,7 @@ public class FrgMain extends BaseFrg {
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 Calendar newDate = Calendar.getInstance();
                 newDate.set(year, monthOfYear, dayOfMonth);
-                txDateFrom.setText(Utility.convertFullDate(newDate.getTime()));
+                txDateFrom.setText(Utility.convertDate(newDate.getTime()));
             }
 
         }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
@@ -339,7 +474,7 @@ public class FrgMain extends BaseFrg {
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 Calendar newDate = Calendar.getInstance();
                 newDate.set(year, monthOfYear, dayOfMonth);
-                txDateTo.setText(Utility.convertFullDate(newDate.getTime()));
+                txDateTo.setText(Utility.convertDate(newDate.getTime()));
             }
 
         }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
@@ -356,31 +491,6 @@ public class FrgMain extends BaseFrg {
             }
         });
     }
-
-//    private void initList() {
-//        mData = new ArrayList<String>();
-//        listAdapter = new ArrayAdapter<String>(mActivity, android.R.layout.simple_list_item_1, mData);
-//        lvContent.setAdapter(listAdapter);
-//        lvContent.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                switch (reportType){
-//                    case SLGD:
-//                        mActivity.addFragment(new FrgSLGDReport().setData(Parser.getID(listAdapter.getItem(position)),txDateFrom.getText()+"",txDateTo.getText()+""),true);
-//                        break;
-//                    case SLKH:
-//                        mActivity.addFragment(new FrgSLKHReport().setData(Parser.getID(listAdapter.getItem(position)),txDateFrom.getText()+"",txDateTo.getText()+""),true);
-//                        break;
-//                    case SLTT:
-//                        mActivity.addFragment(new FrgSLTTReport().setData(mMember.getCode(),txDateFrom.getText()+"",txDateTo.getText()+""),true);
-//                        break;
-//                    case SLTV:
-//                        mActivity.addFragment(new FrgSLTVReport().setData(Parser.getID(listAdapter.getItem(position)),txDateFrom.getText()+"",txDateTo.getText()+""),true);
-//                        break;
-//                }
-//            }
-//        });
-//    }
 
     @Override
     public String getName() {
