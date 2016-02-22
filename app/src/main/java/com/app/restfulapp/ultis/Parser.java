@@ -9,6 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -130,9 +131,9 @@ public class Parser {
          "part_kind":"B"
       }
     * */
-    public static List<Member> parseProduct(JSONArray arr) {
+    public static List<Product> parseProduct(JSONArray arr) {
         if(arr == null || arr.length() ==0) return null;
-        List<Member> result = new ArrayList<>();
+        List<Product> result = new ArrayList<>();
         for(int i=0;i<arr.length();i++){
             JSONObject temp = arr.optJSONObject(i);
             Product pro = new Product(temp.optString("product_vname"),temp.optString("product_no"));
@@ -141,7 +142,7 @@ public class Parser {
             pro.setPartKind(temp.optString("part_kind"));
             result.add(pro);
         }
-        result.add(0,new Member("All",""));
+        result.add(0,new Product("All",""));
         return result;
     }
     /*
@@ -161,8 +162,9 @@ public class Parser {
     public static List<Member> parseP1(JSONObject json) {
         if(json == null ) return null;
         List<Member> result = new ArrayList<>();
-        while (json.keys().hasNext()){
-            String key = json.keys().next();
+        Iterator<String> inter = json.keys();
+        while (inter.hasNext()){
+            String key = inter.next();
             result.add(new Member(json.optString(key),key));
         }
         result.add(0,new Member("All",""));

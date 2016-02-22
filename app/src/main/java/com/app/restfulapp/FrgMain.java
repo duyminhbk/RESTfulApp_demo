@@ -64,7 +64,7 @@ public class FrgMain extends BaseFrg {
     private AdapMember mAdapMember;
     private AdapMember mAdapKind;
     private AdapCustomer mAdapCus;
-    private AdapMember mAdapProduct;
+    private AdapProduct mAdapProduct;
     private AdapMember mAdapP1;
     private AdapMember mAdapP2;
 
@@ -83,18 +83,11 @@ public class FrgMain extends BaseFrg {
     public String[] getGDArg() {
         //{ cust_type, label_flag, p_1, p_2, product_no, tc_date, PeriodType }
         String[] result = new String[8];
-        mAdapCus.setData(Utility.genCustType());
-        mAdapMember.setData(Utility.genFlag());
-        mAdapKind.setData(Utility.genPeriodType());
-        mAdapProduct.setData(Utility.genProduct());
-        mAdapP1.setData(Utility.genP1());
-        mAdapP2.setData(Utility.genP2());
-
         result[0] = mCustomer.getCustName();
         result[1] = mMember.getCode();
         result[2] = mP1.getCode();
         result[3] = mP2.getCode();
-        result[4] = mProduct.getName();
+        result[4] = mProduct.getCode();
         result[5] = txDateFrom.getText() + "";
         result[6] = mKind.getName();
         return result;
@@ -195,7 +188,7 @@ public class FrgMain extends BaseFrg {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 setReport((String) parent.getItemAtPosition(position));
-                updateMember();
+                updateSpinner();
             }
 
             @Override
@@ -255,7 +248,7 @@ public class FrgMain extends BaseFrg {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 mP1 = (Member) parent.getSelectedItem();
-                if("Alert".equalsIgnoreCase(mP1.getCode())) return;
+                if("Alert".equalsIgnoreCase(mP1.getCode())||"".equalsIgnoreCase(mP1.getCode())) return;
                 updateP2();
             }
 
@@ -271,7 +264,7 @@ public class FrgMain extends BaseFrg {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 mP2 = (Member) parent.getSelectedItem();
-                if("Alert".equalsIgnoreCase(mP2.getCode())) return;
+                if("Alert".equalsIgnoreCase(mP2.getCode())||"".equalsIgnoreCase(mP2.getCode())) return;
                 updateProduct();
             }
 
@@ -281,7 +274,7 @@ public class FrgMain extends BaseFrg {
             }
         });
         //init spinner product
-        mAdapProduct = new AdapMember(mActivity);
+        mAdapProduct = new AdapProduct(mActivity);
         spinnerProduct.setAdapter(mAdapProduct);
         spinnerProduct.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -343,7 +336,7 @@ public class FrgMain extends BaseFrg {
                     // show error
                     Toast.makeText(mActivity, Parser.getError(response), Toast.LENGTH_SHORT).show();
                 }
-                mProduct = (Product) spinnerProduct.getSelectedItem();
+                mProduct = (Product) mAdapProduct.getItem(0);
                 mActivity.showLoading(false);
             }
 
@@ -357,7 +350,7 @@ public class FrgMain extends BaseFrg {
         });
     }
 
-    private void updateMember() {
+    private void updateSpinner() {
         mMember = null;
         mKind = null;
         spinnerCustomer.setVisibility(View.GONE);
@@ -393,8 +386,9 @@ public class FrgMain extends BaseFrg {
                             // show error
                             Toast.makeText(mActivity, Parser.getError(response), Toast.LENGTH_SHORT).show();
                         }
-                        mP1 = (Product) spinnerP1.getSelectedItem();
+                        mP1 = (Member) spinnerP1.getSelectedItem();
                         mActivity.showLoading(false);
+
                         updateP2();
                     }
 
@@ -410,7 +404,7 @@ public class FrgMain extends BaseFrg {
                 mAdapCus.notifyDataSetChanged();
                 mAdapKind.notifyDataSetChanged();
                 mAdapP1.notifyDataSetChanged();
-
+                spinnerKind.setSelection(1);
                 mMember = (Member) spinnerMember.getSelectedItem();
                 mCustomer = (Customer) spinnerCustomer.getSelectedItem();
                 mKind = (Member) spinnerKind.getSelectedItem();
