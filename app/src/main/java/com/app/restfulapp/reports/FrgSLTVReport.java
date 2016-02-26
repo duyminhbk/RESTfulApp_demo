@@ -28,7 +28,9 @@ public class FrgSLTVReport extends FrgReport {
     @Override
     protected void initView() {
         super.initView();
-        ((TextView)findViewById(R.id.tx_area)).setText(String.format(getString(R.string.area_label),customer.getCustNo()));
+        ((TextView)findViewById(R.id.tx_area)).setText(String.format(getString(R.string.area_label), customer.getCustName()));
+        TextView txDate = (TextView) findViewById(R.id.txdate);
+        txDate.setText(fromDate + " - " + toDate);
     }
 
     @Override
@@ -54,7 +56,7 @@ public class FrgSLTVReport extends FrgReport {
         AsyncHttpClient client = new AsyncHttpClient();
         client.setCookieStore(mActivity.getCookieStore());
         // {chief_no: "6073", cust_type: "1", label_flag: "1", tc_date: "2015-01-01"}
-        client.get(String.format(Define.SLTV_URL,member != null ? member.getCode():"",customer.getCustName(),kind.getCode(), fromDate), new JsonHttpResponseHandler() {
+        client.get(String.format(Define.SLTV_URL,member != null ? member.getCode():Utility.getString(mActivity,"saleNo"),customer.getCustName(),kind.getCode(), "2015-02-27"), new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                     super.onSuccess(statusCode, headers, response);

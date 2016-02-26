@@ -7,6 +7,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.app.restfulapp.ultis.Define;
@@ -60,6 +63,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void DoAutoLogin() {
+        if(!Utility.isOnline(this)){
+            Toast.makeText(this, "Please connect Internet to login", Toast.LENGTH_SHORT).show();
+            addFragment(new FrgLogin(), false);
+        }
         String email = Utility.getString(this, "email");
         String pass = Utility.getString(this, "pass");
         String para = String.format("?Email=%s&Password=%s", email, pass);
@@ -112,6 +119,27 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case R.id.logout:
+                Utility.saveBool(this,"auto",false);
+                addFragment(new FrgLogin(), false);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    //rest of app
     }
 
     public void showLoading(boolean flag) {

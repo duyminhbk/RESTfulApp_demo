@@ -21,10 +21,26 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 @SuppressWarnings("ResourceType")
+/*
+	NOTE:
+  |---------------------------------|
+  |-TableA|-------TableB------------|
+  |---------------------------------|
+  |-------|-------------------------|
+  |-------|-------------------------|
+  |-------|-------------------------|
+  |-TableC|-------TableD------------|
+  |-------|-------------------------|
+  |-------|-------------------------|
+  |-------|-------------------------|
+  |-------|-------------------------|
+ */
 public class ReportLayout extends RelativeLayout {
 
 	public final String TAG = "TableMainLayout.java";
@@ -34,7 +50,6 @@ public class ReportLayout extends RelativeLayout {
 	TableLayout tableB;
 	TableLayout tableC;
 	TableLayout tableD;
-
 	HorizontalScrollView horizontalScrollViewB;
 	HorizontalScrollView horizontalScrollViewD;
 
@@ -48,13 +63,21 @@ public class ReportLayout extends RelativeLayout {
 	private String[] index;
 	private Object[] tableData;
 	private JSONObject mData;
+	private int headerBg = Color.parseColor("#5B9BD5");
+	private int headerTextColor = Color.parseColor("#FFFFFF");
+	private int firstColBg = Color.parseColor("#BDD7EE");
+	private int firstColTextColor = Color.parseColor("#000000");
+	private int lastRowBg = Color.parseColor("#af5B9BD5");
+	private int lastRowTextColor = Color.parseColor("#FFFFFF");
+	private int bodyBg = Color.parseColor("#afBDD7EE");
+	private int bodyTextColor= Color.parseColor("#000000");
 
 	public ReportLayout(Context context, AttributeSet attrs) {
 		this(context,attrs,0);
 	}
 
 	public ReportLayout(Context context, AttributeSet attrs, int defStyleAttr) {
-		super(context,attrs,defStyleAttr);
+		super(context, attrs, defStyleAttr);
 		this.context = context;
 
 		// initialize the main components (TableLayouts, HorizontalScrollView, ScrollView)
@@ -74,6 +97,7 @@ public class ReportLayout extends RelativeLayout {
 		// add the components to be part of the main layout
 		this.addComponentToMainLayout();
 		this.setBackgroundColor(Color.parseColor("#dadada"));
+
 	}
 
 	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -116,6 +140,30 @@ public class ReportLayout extends RelativeLayout {
 	public void doLayout() throws DataFormatException {
 		setDataAndLayout(mData);
 		mData = null;
+	}
+
+	public ReportLayout makeUpHeader(int backgroundColor,int textColor){
+		this.headerBg = backgroundColor;
+		this.headerTextColor = textColor;
+		return this;
+	}
+
+	public ReportLayout makeUpLeftColumn(int backgroundColor,int textColor){
+		this.firstColBg = backgroundColor;
+		this.firstColTextColor = textColor;
+		return this;
+	}
+
+	public ReportLayout makeUpLastRow(int backgroundColor,int textColor){
+		this.lastRowBg = backgroundColor;
+		this.lastRowTextColor = textColor;
+		return this;
+	}
+
+	public ReportLayout makeUpBody(int backgroundColor,int textColor){
+		this.bodyBg = backgroundColor;
+		this.bodyTextColor = textColor;
+		return this;
 	}
 
 	// data struct
@@ -240,6 +288,8 @@ public class ReportLayout extends RelativeLayout {
 	private void addDataToTableA(){
 		TableRow componentATableRow = new TableRow(this.context);
 		TextView textView = this.headerTextView(index[0]);
+		textView.setBackgroundColor(headerBg);
+		textView.setTextColor(headerTextColor);
 		if(headerCellsWidth != null) {
 			textView.setWidth(headerCellsWidth[0]);
 		}
@@ -259,6 +309,8 @@ public class ReportLayout extends RelativeLayout {
 			}
 			params.setMargins(2, 0, 0, 0);
 			TextView textView = this.headerTextView(this.index[x]);
+			textView.setTextColor(headerTextColor);
+			textView.setBackgroundColor(headerBg);
 			textView.setLayoutParams(params);
 			componentBTableRow.addView(textView);
 		}
@@ -267,12 +319,13 @@ public class ReportLayout extends RelativeLayout {
 
 	// generate table row of table C and table D
 	private void addDataToTableCAndTableD(){
-		for(Object object : tableData){
-			TableRow tableRowForTableC = this.tableRowForTableC((String[])object);
-			TableRow taleRowForTableD = this.taleRowForTableD((String[])object);
+		for(int i=0;i<tableData.length;i++){
+			Object object = tableData[i];
+			TableRow tableRowForTableC;
+			TableRow taleRowForTableD;
 
-			tableRowForTableC.setBackgroundColor(Color.LTGRAY);
-			taleRowForTableD.setBackgroundColor(Color.LTGRAY);
+			tableRowForTableC = this.tableRowForTableC((String[]) object,i == tableData.length-1);
+			taleRowForTableD = this.taleRowForTableD((String[]) object,i == tableData.length-1);
 
 			this.tableC.addView(tableRowForTableC);
 			this.tableD.addView(taleRowForTableD);
@@ -281,19 +334,27 @@ public class ReportLayout extends RelativeLayout {
 	}
 
 	// a TableRow for table C
-	TableRow tableRowForTableC(String[] data){
+	TableRow tableRowForTableC(String[] data, boolean isLast){
 		int width = this.viewWidth(((TableRow) this.tableA.getChildAt(0)).getChildAt(0));
 		TableRow.LayoutParams params = new TableRow.LayoutParams( width, LayoutParams.MATCH_PARENT);
 		params.setMargins(0, 2, 0, 0);
 
 		TableRow tableRowForTableC = new TableRow(this.context);
 		TextView textView = this.bodyTextView(data[0]);
-		tableRowForTableC.addView(textView,params);
+		if(isLast){
+			textView.setTextColor(lastRowTextColor);
+			textView.setBackgroundColor(lastRowBg);
+			textView.setText(Html.fromHtml("<b>" + data[0] + "</b>"));
+		} else {
+			textView.setTextColor(firstColTextColor);
+			textView.setBackgroundColor(firstColBg);
+		}
+		tableRowForTableC.addView(textView, params);
 
 		return tableRowForTableC;
 	}
 
-	TableRow taleRowForTableD(String[] data){
+	TableRow taleRowForTableD(String[] data, boolean isLast){
 
 		TableRow taleRowForTableD = new TableRow(this.context);
 		TableRow.LayoutParams params;
@@ -305,6 +366,15 @@ public class ReportLayout extends RelativeLayout {
 			}
 			params.setMargins(2, 2, 0, 0);
 			TextView textViewB = this.bodyTextView(data[x]);
+			if(isLast){
+				textViewB.setTextColor(lastRowTextColor);
+				textViewB.setBackgroundColor(lastRowBg);
+				textViewB.setText(Html.fromHtml("<b>" + data[x] + "</b>"));
+			} else {
+				textViewB.setTextColor(bodyTextColor);
+				textViewB.setBackgroundColor(bodyBg);
+			}
+			textViewB.setTextColor(bodyTextColor);
 			taleRowForTableD.addView(textViewB,params);
 		}
 

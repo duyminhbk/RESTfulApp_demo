@@ -1,5 +1,6 @@
 package com.app.restfulapp.reports;
 
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,6 +54,7 @@ public class FrgSLKHReport extends FrgReport {
                         toDate,kind.getCode()), new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                        Log.d("SLKH_URL",response+"");
                         mActivity.showLoading(false);
                         if (Parser.isSuccess(response)) {
                             try {

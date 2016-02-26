@@ -5,8 +5,10 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -79,6 +81,7 @@ public class FrgMain extends BaseFrg {
     private Product mProduct;
     private Member mP2;
     private Member mP1;
+    private View lnDate;
 
     public String[] getGDArg() {
         //{ cust_type, label_flag, p_1, p_2, product_no, tc_date, PeriodType }
@@ -100,10 +103,12 @@ public class FrgMain extends BaseFrg {
             reportType = Reports.SLTV;
         } else if (getString(R.string.sltt_title).equals(kind)) {
             reportType = Reports.SLTT;
-        }
-        if (getString(R.string.slgd_title).equals(kind)) {
+        }else if (getString(R.string.slgd_title).equals(kind)) {
             reportType = Reports.SLGD;
+        }else{
+            reportType = Reports.NONE;
         }
+
     }
 
     @Override
@@ -112,6 +117,7 @@ public class FrgMain extends BaseFrg {
         // find view
         txDateFrom = (TextView) rootView.findViewById(R.id.ed_date_from);
         txDateTo = (TextView) rootView.findViewById(R.id.ed_date_to);
+        lnDate = findViewById(R.id.ln_date);
         etName = (EditText) findViewById(R.id.ed_member_name);
 
         spinnerReport = (Spinner) findViewById(R.id.sp_report);
@@ -135,11 +141,11 @@ public class FrgMain extends BaseFrg {
 //        initList();
         initDatePicker();
         initSpinner();
-        getCustomer();
         handleSubmit();
     }
 
     private void getCustomer() {
+        mActivity.showLoading(true);
         AsyncHttpClient client = new AsyncHttpClient();
         client.setCookieStore(mActivity.getCookieStore());
         client.get(Define.GET_CUSTOMERS_URL, new JsonHttpResponseHandler() {
@@ -150,6 +156,31 @@ public class FrgMain extends BaseFrg {
                 if (Parser.isSuccess(response)) {
 
                     mAdapCus.setData(Parser.parseCustomers(response.optJSONArray("Result"))).notifyDataSetChanged();
+                } else {
+                    // show error
+                    Toast.makeText(mActivity, Parser.getError(response), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                mActivity.showLoading(false);
+                Toast.makeText(mActivity, responseString, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    private void getLabelFlags(final AdapMember adapter) {
+        mActivity.showLoading(true);
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.setCookieStore(mActivity.getCookieStore());
+        client.get(Define.GET_LABEL_FLAGS, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                mActivity.showLoading(false);
+                Log.d("minh", "GET_CUSTOMERS_URL: " + response);
+                if (Parser.isSuccess(response)) {
+
+                    adapter.setData(Parser.parseLabelFlag(response.optJSONObject("Result"))).notifyDataSetChanged();
                 } else {
                     // show error
                     Toast.makeText(mActivity, Parser.getError(response), Toast.LENGTH_SHORT).show();
@@ -303,13 +334,13 @@ public class FrgMain extends BaseFrg {
                 Log.d("minh", "GET_P2: " + response);
                 if (Parser.isSuccess(response)) {
                     mAdapP2.setData(Parser.parseP2(response.optJSONArray("Result"))).notifyDataSetChanged();
+                    mP2 = (Member) spinnerP2.getSelectedItem();
+                    updateProduct();
                 } else {
                     // show error
                     Toast.makeText(mActivity, Parser.getError(response), Toast.LENGTH_SHORT).show();
                 }
-                mP2 = (Member) spinnerP2.getSelectedItem();
                 mActivity.showLoading(false);
-                updateProduct();
             }
 
             @Override
@@ -350,30 +381,35 @@ public class FrgMain extends BaseFrg {
         });
     }
 
+    private void visibleSpinner(boolean flag,Spinner... spinners){
+        if(spinners == null || spinners.length == 0) return;
+        for(Spinner temp : spinners){
+            temp.setVisibility(flag?View.VISIBLE:View.GONE);
+            temp.setSelection(0);
+        }
+    }
+
+    private void notifyDataChange(BaseAdapter... adaps){
+        if(adaps == null || adaps.length == 0) return;
+        for(BaseAdapter adap : adaps){
+            adap.notifyDataSetChanged();
+        }
+    }
+
     private void updateSpinner() {
         mMember = null;
         mKind = null;
-        spinnerCustomer.setVisibility(View.GONE);
-        spinnerMember.setVisibility(View.GONE);
-        spinnerKind.setVisibility(View.GONE);
-        spinnerProduct.setVisibility(View.GONE);
-        spinnerP1.setVisibility(View.GONE);
-        spinnerP2.setVisibility(View.GONE);
-        mActivity.showLoading(true);
+        visibleSpinner(false, spinnerCustomer, spinnerMember, spinnerKind, spinnerProduct, spinnerP1, spinnerP2);
+        lnDate.setVisibility(View.VISIBLE);
         switch (reportType) {
             // reuse spinner customer and member to define cust_type and label_flag
             case SLGD: {
-                spinnerCustomer.setVisibility(View.VISIBLE);
-                spinnerMember.setVisibility(View.VISIBLE);
-                spinnerKind.setVisibility(View.VISIBLE);
-                spinnerProduct.setVisibility(View.VISIBLE);
-                spinnerP1.setVisibility(View.VISIBLE);
-                spinnerP2.setVisibility(View.VISIBLE);
-
+                visibleSpinner(true, spinnerCustomer, spinnerMember, spinnerKind, spinnerProduct, spinnerP1, spinnerP2);
                 mAdapCus.setData(Utility.genCustType());
-                mAdapMember.setData(Utility.genFlag());
+                getLabelFlags(mAdapMember);
                 mAdapKind.setData(Utility.genPeriodType());
                 //update P1
+                mActivity.showLoading(true);
                 AsyncHttpClient client = new AsyncHttpClient();
                 client.setCookieStore(mActivity.getCookieStore());
                 client.get(Define.GET_P1, new JsonHttpResponseHandler() {
@@ -382,14 +418,14 @@ public class FrgMain extends BaseFrg {
                         Log.d("minh", "GET_P1: " + response);
                         if (Parser.isSuccess(response)) {
                             mAdapP1.setData(Parser.parseP1(response.optJSONObject("Result"))).notifyDataSetChanged();
+                            spinnerP1.setSelection(0);
+                            mActivity.showLoading(false);
+                            updateP2();
                         } else {
                             // show error
                             Toast.makeText(mActivity, Parser.getError(response), Toast.LENGTH_SHORT).show();
                         }
-                        mP1 = (Member) spinnerP1.getSelectedItem();
-                        mActivity.showLoading(false);
 
-                        updateP2();
                     }
 
                     @Override
@@ -400,22 +436,20 @@ public class FrgMain extends BaseFrg {
                         mAdapP1.notifyDataSetChanged();
                     }
                 });
-                mAdapMember.notifyDataSetChanged();
-                mAdapCus.notifyDataSetChanged();
-                mAdapKind.notifyDataSetChanged();
-                mAdapP1.notifyDataSetChanged();
-                spinnerKind.setSelection(1);
-                mMember = (Member) spinnerMember.getSelectedItem();
-                mCustomer = (Customer) spinnerCustomer.getSelectedItem();
-                mKind = (Member) spinnerKind.getSelectedItem();
-                mP1 = (Member) spinnerP1.getSelectedItem();
 
+                notifyDataChange(mAdapMember, mAdapCus, mAdapKind);
+
+                spinnerKind.setSelection(1);
+                mMember = (Member) mAdapMember.getItem(0);
+                mCustomer = (Customer) mAdapCus.getItem(0);
+                mKind = (Member) mAdapKind.getItem(0);
                 mActivity.showLoading(false);
             }
             break;
             case SLTT: {
                 if (role != MainActivity.Role.SALE) {
-                    spinnerMember.setVisibility(View.VISIBLE);
+                    visibleSpinner(true, spinnerMember);
+                    mActivity.showLoading(true);
                     AsyncHttpClient client = new AsyncHttpClient();
                     client.setCookieStore(mActivity.getCookieStore());
                     client.get(Define.SALEMAN_LIST_URL, new JsonHttpResponseHandler() {
@@ -425,11 +459,11 @@ public class FrgMain extends BaseFrg {
                             Log.d("minh", "SALEMAN_LIST_URL: " + response);
                             if (Parser.isSuccess(response)) {
                                 mAdapMember.setData(Parser.parseMember(response.optJSONArray("Result"))).notifyDataSetChanged();
+                                mMember = (Member) mAdapMember.getItem(0);
                             } else {
                                 // show error
                                 Toast.makeText(mActivity, Parser.getError(response), Toast.LENGTH_SHORT).show();
                             }
-                            mMember = (Member) spinnerMember.getSelectedItem();
                         }
 
                         @Override
@@ -444,23 +478,25 @@ public class FrgMain extends BaseFrg {
                     mActivity.showLoading(false);
                     mMember = null;
                 }
-                spinnerKind.setVisibility(View.VISIBLE);
+                visibleSpinner(true, spinnerKind);
                 mAdapKind.setData(Utility.genPartKind());
                 mAdapKind.notifyDataSetChanged();
-                mKind = (Member) spinnerKind.getSelectedItem();
+                mKind = (Member) mAdapKind.getItem(0);
             }
             break;
             case SLKH:
-                spinnerCustomer.setVisibility(View.VISIBLE);
-                spinnerKind.setVisibility(View.VISIBLE);
+                visibleSpinner(true, spinnerCustomer, spinnerKind);
+                getCustomer();
                 mAdapKind.setData(Utility.genPartKind());
-                mAdapKind.notifyDataSetChanged();
-                mKind = (Member) spinnerMember.getSelectedItem();
+                notifyDataChange(mAdapKind);
+                mKind =(Member)mAdapKind.getItem(0);
                 mActivity.showLoading(false);
                 break;
             case SLTV: {
+                lnDate.setVisibility(View.GONE);
+                visibleSpinner(true, spinnerMember);
                 if (role != MainActivity.Role.CHIEF) {
-                    spinnerMember.setVisibility(View.VISIBLE);
+                    mActivity.showLoading(true);
                     AsyncHttpClient client = new AsyncHttpClient();
                     client.setCookieStore(mActivity.getCookieStore());
                     client.get(Define.CHIEF_LIST_URL, new JsonHttpResponseHandler() {
@@ -470,11 +506,11 @@ public class FrgMain extends BaseFrg {
                             Log.d("minh", "CHIEF_LIST_URL: " + response);
                             if (Parser.isSuccess(response)) {
                                 mAdapMember.setData(Parser.parseMember(response.optJSONArray("Result"))).notifyDataSetChanged();
+                                mMember = (Member) mAdapMember.getItem(0);
                             } else {
                                 // show error
                                 Toast.makeText(mActivity, Parser.getError(response), Toast.LENGTH_SHORT).show();
                             }
-                            mMember = (Member) spinnerMember.getSelectedItem();
                         }
 
                         @Override
@@ -486,19 +522,25 @@ public class FrgMain extends BaseFrg {
                         }
                     });
                 } else {
-                    mActivity.showLoading(false);
-                    mMember = null;
+                    ArrayList<Member> temp = new ArrayList<>();
+                    temp.add(new Member("Me",Utility.getString(mActivity,"saleNo")));
+                    mAdapMember.setData(temp).notifyDataSetChanged();
+                    mMember = (Member) mAdapMember.getItem(0);
                 }
-                spinnerCustomer.setVisibility(View.VISIBLE);
+                visibleSpinner(true, spinnerCustomer, spinnerKind);
                 mAdapCus.setData(Utility.genCustType());
-                spinnerKind.setVisibility(View.VISIBLE);
-                mAdapKind.setData(Utility.genFlag());
-                mAdapKind.notifyDataSetChanged();
-                mAdapCus.notifyDataSetChanged();
-                mCustomer = (Customer) spinnerCustomer.getSelectedItem();
-                mKind = (Member) spinnerKind.getSelectedItem();
+                getLabelFlags(mAdapKind);
+                notifyDataChange(mAdapKind, mAdapCus);
+                mCustomer = (Customer) mAdapCus.getItem(0);
+                mKind = (Member) mAdapKind.getItem(0);
             }
             break;
+            default:{
+                mMember = null;
+                mKind = null;
+                visibleSpinner(false, spinnerCustomer, spinnerMember, spinnerKind, spinnerProduct, spinnerP1, spinnerP2);
+                break;
+            }
         }
     }
 
@@ -506,8 +548,16 @@ public class FrgMain extends BaseFrg {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (TextUtils.isEmpty(txDateFrom.getText()) || TextUtils.isEmpty(txDateTo.getText())) {
+                if(!Utility.isOnline(mActivity)){
+                    Toast.makeText(mActivity, "Please connect Internet to submit data.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if ((TextUtils.isEmpty(txDateFrom.getText()) || TextUtils.isEmpty(txDateTo.getText())) && reportType != Reports.SLTV) {
                     Toast.makeText(mActivity, "Date field not empty", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if(!Utility.isGreater(txDateTo.getText()+"",txDateFrom.getText()+"")){
+                    Toast.makeText(mActivity, "To date should greater than From date", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if(reportType == Reports.NONE){

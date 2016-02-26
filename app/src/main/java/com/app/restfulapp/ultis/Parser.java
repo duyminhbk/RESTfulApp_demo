@@ -170,4 +170,27 @@ public class Parser {
         result.add(0,new Member("All",""));
         return result;
     }
+    /*
+        {
+          "0":"Type 0",
+          "1":"Nupak",
+          "2":"Nutrition",
+          "3":"Dachan",
+          "4":"Type 4",
+          "5":"Redstar",
+          "6":"Type 6",
+          "8":"Type 8",
+          "9":"Type 9"
+       }
+     */
+    public static List<Member> parseLabelFlag(JSONObject json) {
+        if(json == null ) return null;
+        List<Member> result = new ArrayList<>();
+        Iterator<String> inter = json.keys();
+        while (inter.hasNext()){
+            String key = inter.next();
+            result.add(new Member(json.optString(key),key));
+        }
+        return result;
+    }
 }

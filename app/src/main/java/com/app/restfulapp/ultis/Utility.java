@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Point;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -14,6 +16,7 @@ import com.app.restfulapp.models.Customer;
 import com.app.restfulapp.models.Member;
 import com.app.restfulapp.reports.FrgSLGDReport;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -120,7 +123,12 @@ public class Utility {
         return result;
     }
 
-
+    public static boolean isOnline(Context context) {
+        ConnectivityManager cm =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
 
     public static List<Member> genProduct() {
         //V101, V801D, V801R, V801N
@@ -164,9 +172,44 @@ public class Utility {
     }
     // hide keyboard
     public static void hideKeyboard(Activity activity) {
-        Log.d("--->","hideKeyboard");
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = activity.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(activity);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    public static Date convertStringToDate(String sDate){
+        String dateString = "03/26/2012 11:49:00 AM";
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss aa");
+        Date convertedDate = new Date();
+        try {
+            convertedDate = dateFormat.parse(dateString);
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+       return convertedDate;
+    }
+
+    public static boolean isGreater(String sDateRight,String sDateLeft){
+        try{
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            Date date1 = formatter.parse(sDateRight);
+            Date date2 = formatter.parse(sDateLeft);
+
+            if (date1.compareTo(date2)<0)
+            {
+                return false;
+            }
+
+        }catch (ParseException e1){
+            e1.printStackTrace();
+        }
+        return true;
     }
 
 }

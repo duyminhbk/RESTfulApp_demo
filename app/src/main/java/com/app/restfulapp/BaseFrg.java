@@ -41,8 +41,9 @@ public abstract class BaseFrg extends Fragment {
     protected abstract int defineLayout();
 
     @Override
-    public void onStop() {
-        super.onStop();
-        Utility.hideKeyboard(mActivity);
+    public void onPause() {
+        super.onPause();
+//        Utility.hideKeyboard(mActivity);
     }
+
 }

@@ -143,14 +143,17 @@ public class FrgLogin extends BaseFrg implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-
+        Utility.hideKeyboard(mActivity);
 //        goHomeScreen();
         // Get Email Edit View Value
         String email = emailET.getText().toString();
 
         // Get Password Edit View Value
         String password = pwdET.getText().toString();
-
+        if(!Utility.isOnline(mActivity)){
+            Toast.makeText(mActivity, "Please connect Internet to login", Toast.LENGTH_SHORT).show();
+            return;
+        }
         // When Email Edit View and Password Edit View have values other than Null
         if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
             String para = String.format(params, email, password);

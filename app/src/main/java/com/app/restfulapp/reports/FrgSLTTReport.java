@@ -1,5 +1,6 @@
 package com.app.restfulapp.reports;
 
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -69,7 +70,9 @@ public class FrgSLTTReport extends FrgReport {
                         if(Parser.isSuccess(response)){
                             try {
                                 TextView txName = (TextView) findViewById(R.id.tx_name);
-                                txName.setText(response.optJSONObject("Result").optString("sale_ename"));
+                                if(!TextUtils.isEmpty(response.optJSONObject("Result").optString("sale_ename"))){
+                                    txName.setText(response.optJSONObject("Result").optString("sale_ename"));
+                                }
                                 reportLayout.setDataAndLayout(Parser.parseSLTT(response.optJSONObject("Result")));
                             }catch (ReportLayout.DataFormatException e){
                                 e.printStackTrace();
