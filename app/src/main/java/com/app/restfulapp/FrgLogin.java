@@ -3,6 +3,7 @@ package com.app.restfulapp;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +30,7 @@ public class FrgLogin extends BaseFrg implements View.OnClickListener {
     private EditText emailET;
     private EditText pwdET;
     private Button btnLogin;
+    private CheckBox cbAuto;
 
     @Override
     protected void initView() {
@@ -41,6 +43,8 @@ public class FrgLogin extends BaseFrg implements View.OnClickListener {
         // Find login button
         btnLogin = (Button) rootView.findViewById(R.id.btnLogin);
         btnLogin.setOnClickListener(this);
+
+        cbAuto = (CheckBox)findViewById(R.id.cb_auto);
     }
 
     /**
@@ -89,6 +93,10 @@ public class FrgLogin extends BaseFrg implements View.OnClickListener {
                     Utility.saveString(mActivity, "saleName", saleName);
                     mActivity.setRole(obj.optString("role"));
 
+                    Utility.saveString(mActivity, "email", emailET.getText() + "");
+                    Utility.saveString(mActivity, "pass", pwdET.getText() + "");
+                    Utility.saveBool(mActivity,"auto",cbAuto.isChecked());
+
                     goHomeScreen();
 
                 } catch (JSONException e) {
@@ -104,7 +112,7 @@ public class FrgLogin extends BaseFrg implements View.OnClickListener {
                 mActivity.showLoading(false);
                 // When Http response code is '404'
                 if (statusCode == 404) {
-                    Toast.makeText(mActivity, "Requested resource not found", Toast.LENGTH_LONG).show();
+                    Toast.makeText(mActivity, "Username or password is incorrect", Toast.LENGTH_LONG).show();
                 }
                 // When Http response code is '500'
                 else if (statusCode == 500) {

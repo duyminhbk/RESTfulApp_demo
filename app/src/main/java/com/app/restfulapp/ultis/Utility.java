@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.util.DisplayMetrics;
 
+import com.app.restfulapp.MainActivity;
 import com.app.restfulapp.models.Customer;
 import com.app.restfulapp.models.Member;
 import com.app.restfulapp.reports.FrgSLGDReport;
@@ -46,6 +47,17 @@ public class Utility {
     public static String getString(Context context, String fref) {
         SharedPreferences savedValue = context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE);
         return savedValue.getString(fref, "");
+    }
+
+    public static Boolean getBoolean(Context context, String key) {
+        SharedPreferences savedValue = context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE);
+        return savedValue.getBoolean(key,false);
+    }
+
+    public static void saveBool(Context context, String key, boolean val) {
+        SharedPreferences.Editor editor = context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE).edit();
+        editor.putBoolean(key, val);
+        editor.commit();
     }
 
     public static boolean saveString(Context context, String fref, String value) {
@@ -137,7 +149,7 @@ public class Utility {
         //0301: Gà con; 0302: Gà hậu bị
         ArrayList<Member> result = new ArrayList<>();
         result.add(new Member("Gà con","0301"));
-        result.add(new Member("Gà hậu bị","0302"));
+        result.add(new Member("Gà hậu bị", "0302"));
         return result;
     }
 
@@ -147,4 +159,5 @@ public class Utility {
 
         return new Point(metrics.widthPixels,metrics.heightPixels);
     }
+
 }
