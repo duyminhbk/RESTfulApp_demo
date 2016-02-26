@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import com.app.restfulapp.models.Customer;
 import com.app.restfulapp.models.Member;
+import com.app.restfulapp.ultis.Utility;
 
 /**
  * Created by minhpham on 12/16/15.
@@ -38,4 +39,10 @@ public abstract class BaseFrg extends Fragment {
     }
 
     protected abstract int defineLayout();
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Utility.hideKeyboard(mActivity);
+    }
 }

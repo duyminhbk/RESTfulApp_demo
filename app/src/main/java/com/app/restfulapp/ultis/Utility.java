@@ -5,6 +5,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import com.app.restfulapp.MainActivity;
 import com.app.restfulapp.models.Customer;
@@ -51,7 +54,7 @@ public class Utility {
 
     public static Boolean getBoolean(Context context, String key) {
         SharedPreferences savedValue = context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE);
-        return savedValue.getBoolean(key,false);
+        return savedValue.getBoolean(key, false);
     }
 
     public static void saveBool(Context context, String key, boolean val) {
@@ -158,6 +161,12 @@ public class Utility {
         context.getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
         return new Point(metrics.widthPixels,metrics.heightPixels);
+    }
+    // hide keyboard
+    public static void hideKeyboard(Activity activity) {
+        Log.d("--->","hideKeyboard");
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
 
 }
