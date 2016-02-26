@@ -510,6 +510,10 @@ public class FrgMain extends BaseFrg {
                     Toast.makeText(mActivity, "Date field not empty", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                if(reportType == Reports.NONE){
+                    Toast.makeText(mActivity, "Please choose kind of report", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 switch (reportType) {
                     case SLGD:
                         mActivity.addFragment(new FrgSLGDReport().setData(getGDArg()), true);
