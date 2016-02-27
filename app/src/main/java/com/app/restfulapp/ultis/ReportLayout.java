@@ -291,7 +291,7 @@ public class ReportLayout extends RelativeLayout {
 		textView.setBackgroundColor(headerBg);
 		textView.setTextColor(headerTextColor);
 		if(headerCellsWidth != null) {
-			textView.setWidth(headerCellsWidth[0]);
+			textView.setWidth(headerCellsWidth[0]-70);
 		}
 		componentATableRow.addView(textView);
 		this.tableA.addView(componentATableRow);

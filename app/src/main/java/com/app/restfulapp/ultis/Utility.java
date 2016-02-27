@@ -100,20 +100,29 @@ public class Utility {
 
     public static ArrayList<Customer> genCustType(){
         ArrayList<Customer> result = new ArrayList<>();
+
+        result.add(new Customer("All",""));
+        result.add(new Customer("Area","1"));
         result.add(new Customer("Area","1"));
         result.add(new Customer("Area","2"));
         result.add(new Customer("Area","3"));
         result.add(new Customer("Area","4"));
+        result.add(new Customer("Area","5"));
+        result.add(new Customer("Area","6"));
+        result.add(new Customer("Area","7"));
+        result.add(new Customer("Area","8"));
+        result.add(new Customer("Area","9"));
+        result.add(new Customer("Area","10"));
+        result.add(new Customer("Area","11"));
+        result.add(new Customer("Area","12"));
+        result.add(new Customer("Area","13"));
+        result.add(new Customer("Area","14"));
+        result.add(new Customer("Area","15"));
+        result.add(new Customer("Area","16"));
+        result.add(new Customer("Area","17"));
         return result;
     }
-    //1: nupak; 3: Dachan; 5:Redstar
-    public static ArrayList<Member> genFlag(){
-        ArrayList<Member> result = new ArrayList<>();
-        result.add(new Member("nupak","1"));
-        result.add(new Member("Dachan","3"));
-        result.add(new Member("Redstar","5"));
-        return result;
-    }
+
     //part_kind: A (Hỗn hợp), B (Đậm đặc)
     public static ArrayList<Member> genPartKind(){
         ArrayList<Member> result = new ArrayList<>();
@@ -130,37 +139,11 @@ public class Utility {
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
-    public static List<Member> genProduct() {
-        //V101, V801D, V801R, V801N
-        ArrayList<Member> result = new ArrayList<>();
-        result.add(new Member("V101","Product NO."));
-        result.add(new Member("V801D","Product NO."));
-        result.add(new Member("V801R","Product NO."));
-        result.add(new Member("V801R","Product NO."));
-        return result;
-    }
-
     public static List<Member> genPeriodType() {
         ArrayList<Member> result = new ArrayList<>();
         for(int i=0;i<FrgSLGDReport.PeriodType.values().length;i++){
             result.add(new Member(FrgSLGDReport.PeriodType.values()[i].name(),""+i));
         }
-        return result;
-    }
-    public static List<Member> genP1() {
-        //00: Hỗn hợp, 03: Gà; 04: Cút
-        ArrayList<Member> result = new ArrayList<>();
-        result.add(new Member("Hỗn hợp","00"));
-        result.add(new Member("Gà","03"));
-        result.add(new Member("Cút","04"));
-        return result;
-    }
-
-    public static List<Member> genP2() {
-        //0301: Gà con; 0302: Gà hậu bị
-        ArrayList<Member> result = new ArrayList<>();
-        result.add(new Member("Gà con","0301"));
-        result.add(new Member("Gà hậu bị", "0302"));
         return result;
     }
 

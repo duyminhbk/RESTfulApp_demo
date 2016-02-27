@@ -1,6 +1,9 @@
 package com.app.restfulapp;
 
+import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -161,5 +164,18 @@ public class FrgLogin extends BaseFrg implements View.OnClickListener {
         } else {
             Toast.makeText(mActivity, "Please fill the form, don't leave any field blank", Toast.LENGTH_LONG).show();
         }
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+
+        super.onPrepareOptionsMenu(menu);
+        menu.findItem(R.id.logout).setVisible(false);
     }
 }

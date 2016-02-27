@@ -85,12 +85,12 @@ public class FrgMain extends BaseFrg {
 
     public String[] getGDArg() {
         //{ cust_type, label_flag, p_1, p_2, product_no, tc_date, PeriodType }
-        String[] result = new String[8];
+        String[] result = new String[7];
         result[0] = mCustomer.getCustName();
         result[1] = mMember.getCode();
         result[2] = mP1.getCode();
-        result[3] = mP2.getCode();
-        result[4] = mProduct.getCode();
+        result[3] = mP2.getCode().equalsIgnoreCase("alert")?"":mP2.getCode();
+        result[4] = mProduct.getCode().equalsIgnoreCase("alert")?"":mProduct.getCode();
         result[5] = txDateFrom.getText() + "";
         result[6] = mKind.getName();
         return result;
@@ -141,6 +141,7 @@ public class FrgMain extends BaseFrg {
 //        initList();
         initDatePicker();
         initSpinner();
+
         handleSubmit();
     }
 
@@ -227,6 +228,7 @@ public class FrgMain extends BaseFrg {
 
             }
         });
+        spinnerReport.setSelection(0);
 
         //init spinner member
         mAdapMember = new AdapMember(mActivity);
@@ -334,11 +336,17 @@ public class FrgMain extends BaseFrg {
                 Log.d("minh", "GET_P2: " + response);
                 if (Parser.isSuccess(response)) {
                     mAdapP2.setData(Parser.parseP2(response.optJSONArray("Result"))).notifyDataSetChanged();
-                    mP2 = (Member) spinnerP2.getSelectedItem();
-                    updateProduct();
+                    if(mAdapP2.getCount()>1) {
+                        visibleSpinner(true,spinnerP2);
+                        mP2 = (Member) spinnerP2.getSelectedItem();
+                        updateProduct();
+                    }else{
+                        spinnerP2.setVisibility(View.GONE);
+                    }
                 } else {
                     // show error
                     Toast.makeText(mActivity, Parser.getError(response), Toast.LENGTH_SHORT).show();
+                    spinnerP2.setVisibility(View.GONE);
                 }
                 mActivity.showLoading(false);
             }
@@ -346,9 +354,9 @@ public class FrgMain extends BaseFrg {
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 mActivity.showLoading(false);
+                spinnerP2.setVisibility(View.GONE);
                 Toast.makeText(mActivity, responseString, Toast.LENGTH_SHORT).show();
                 mAdapP2.setData(null);
-                mAdapP2.notifyDataSetChanged();
             }
         });
     }
@@ -363,8 +371,14 @@ public class FrgMain extends BaseFrg {
                 Log.d("minh", "GET_PRODUCT: " + response);
                 if (Parser.isSuccess(response)) {
                     mAdapProduct.setData(Parser.parseProduct(response.optJSONArray("Result"))).notifyDataSetChanged();
+                    if(mAdapProduct.getCount()>1){
+                        visibleSpinner(true,spinnerProduct);
+                    }else{
+                        spinnerProduct.setVisibility(View.GONE);
+                    }
                 } else {
                     // show error
+                    spinnerProduct.setVisibility(View.GONE);
                     Toast.makeText(mActivity, Parser.getError(response), Toast.LENGTH_SHORT).show();
                 }
                 mProduct = (Product) mAdapProduct.getItem(0);
@@ -376,7 +390,7 @@ public class FrgMain extends BaseFrg {
                 mActivity.showLoading(false);
                 Toast.makeText(mActivity, responseString, Toast.LENGTH_SHORT).show();
                 mAdapProduct.setData(null);
-                mAdapProduct.notifyDataSetChanged();
+                spinnerProduct.setVisibility(View.GONE);
             }
         });
     }
@@ -404,7 +418,7 @@ public class FrgMain extends BaseFrg {
         switch (reportType) {
             // reuse spinner customer and member to define cust_type and label_flag
             case SLGD: {
-                visibleSpinner(true, spinnerCustomer, spinnerMember, spinnerKind, spinnerProduct, spinnerP1, spinnerP2);
+                visibleSpinner(true, spinnerCustomer, spinnerMember, spinnerKind,spinnerP1);
                 mAdapCus.setData(Utility.genCustType());
                 getLabelFlags(mAdapMember);
                 mAdapKind.setData(Utility.genPeriodType());
@@ -642,6 +656,6 @@ public class FrgMain extends BaseFrg {
     }
 
     public enum Reports {
-        NONE, SLTV, SLGD, SLKH, SLTT
+        NONE,SLKH, SLTT, SLTV, SLGD
     }
 }

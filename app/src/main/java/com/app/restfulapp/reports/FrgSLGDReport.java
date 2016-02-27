@@ -35,8 +35,8 @@ public class FrgSLGDReport extends FrgReport {
         mActivity.showLoading(true);
         AsyncHttpClient client = new AsyncHttpClient();
         client.setCookieStore(mActivity.getCookieStore());
-
-        client.get(String.format(Define.SLGD_URL, args[0], args[1], "", "", "",
+        //{ cust_type, label_flag, p_1, p_2, product_no, tc_date, PeriodType }
+        client.get(String.format(Define.SLGD_URL, args[0], args[1], args[2], args[3], args[4],
                         args[5], args[6]), new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -81,7 +81,7 @@ public class FrgSLGDReport extends FrgReport {
     protected void initView() {
         super.initView();
         if(args ==null || args.length !=7) return;
-        ((TextView)findViewById(R.id.tx_time)).setText(args[6]);
+        ((TextView)findViewById(R.id.tx_time)).setText(mActivity.getString(R.string.time_label)+" "+args[5]);
     }
 
     public enum PeriodType {

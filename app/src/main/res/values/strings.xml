@@ -20,4 +20,5 @@
     <string name="member_name">Member\'s name</string>
     <string name="sltt_report_title">THỐNG KÊ TIÊU THỤ CỦA TIẾP THỊ</string>
     <string name="area_label" format="true">Khu vực: %s</string>
+    <string name="time_label" >Từ ngày: </string>
 </resources>

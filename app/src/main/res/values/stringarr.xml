@@ -12,17 +12,17 @@
 
     <array name="report_type_dir">
         <item>Choose kind of report</item>
-        <item>@string/sltv_title</item>
-        <item>@string/slgd_title</item>
         <item>@string/slkh_title</item>
         <item>@string/sltt_title</item>
+        <item>@string/sltv_title</item>
+        <item>@string/slgd_title</item>
     </array>
 
     <array name="report_type_chief">
         <item>Choose kind of report</item>
-        <item>@string/sltv_title</item>
         <item>@string/slkh_title</item>
         <item>@string/sltt_title</item>
+        <item>@string/sltv_title</item>
     </array>
 
     <array name="report_type_sale">

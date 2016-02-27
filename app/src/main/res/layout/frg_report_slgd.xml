@@ -13,7 +13,8 @@
         android:gravity="center"
         android:textSize="14sp"
         android:text="Từ ngày 01 đến ngày 18"
-        android:id="@+id/tx_time" />
+        android:id="@+id/tx_time"
+        android:visibility="visible"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
