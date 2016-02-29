@@ -126,9 +126,9 @@ public class Utility {
     //part_kind: A (Hỗn hợp), B (Đậm đặc)
     public static ArrayList<Member> genPartKind(){
         ArrayList<Member> result = new ArrayList<>();
+        result.add(new Member("Hỗn hợp & Đậm đặc",""));
         result.add(new Member("Hỗn hợp","A"));
         result.add(new Member("Đậm đặc","B"));
-        result.add(new Member("Hỗn hợp & Đậm đặc",""));
         return result;
     }
 

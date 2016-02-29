@@ -1,6 +1,7 @@
 package com.app.restfulapp;
 
 import android.app.DatePickerDialog;
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -34,6 +35,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -82,6 +84,10 @@ public class FrgMain extends BaseFrg {
     private Member mP2;
     private Member mP1;
     private View lnDate;
+
+    public FrgMain() {
+        setArguments(new Bundle());
+    }
 
     public String[] getGDArg() {
         //{ cust_type, label_flag, p_1, p_2, product_no, tc_date, PeriodType }
@@ -132,7 +138,6 @@ public class FrgMain extends BaseFrg {
         txtSaleName.setText(Utility.getString(mActivity, "saleName"));
 
         btnSubmit = (Button) rootView.findViewById(R.id.btnSubmit);
-
 //        etSal = (EditText) rootView.findViewById(R.id.ed_sal);
 //        txtTotal = (TextView) rootView.findViewById(R.id.txtTotal);
 //        lvContent = (ListView) rootView.findViewById(R.id.lv_content);
@@ -152,7 +157,6 @@ public class FrgMain extends BaseFrg {
         client.get(Define.GET_CUSTOMERS_URL, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                mActivity.showLoading(false);
                 Log.d("minh", "GET_CUSTOMERS_URL: " + response);
                 if (Parser.isSuccess(response)) {
 
@@ -161,6 +165,7 @@ public class FrgMain extends BaseFrg {
                     // show error
                     Toast.makeText(mActivity, Parser.getError(response), Toast.LENGTH_SHORT).show();
                 }
+                mActivity.showLoading(false);
             }
 
             @Override
@@ -562,7 +567,7 @@ public class FrgMain extends BaseFrg {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!Utility.isOnline(mActivity)){
+                if (!Utility.isOnline(mActivity)) {
                     Toast.makeText(mActivity, "Please connect Internet to submit data.", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -570,11 +575,11 @@ public class FrgMain extends BaseFrg {
                     Toast.makeText(mActivity, "Date field not empty", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if(!Utility.isGreater(txDateTo.getText()+"",txDateFrom.getText()+"")){
+                if (!Utility.isGreater(txDateTo.getText() + "", txDateFrom.getText() + "")) {
                     Toast.makeText(mActivity, "To date should greater than From date", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if(reportType == Reports.NONE){
+                if (reportType == Reports.NONE) {
                     Toast.makeText(mActivity, "Please choose kind of report", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -657,5 +662,26 @@ public class FrgMain extends BaseFrg {
 
     public enum Reports {
         NONE,SLKH, SLTT, SLTV, SLGD
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getArguments().putString("from", txDateFrom.getText() + "");
+        getArguments().putString("to", txDateTo.getText() + "");
+    }
+
+
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if(!TextUtils.isEmpty(getArguments().getString("from"))){
+           txDateFrom.setText(getArguments().getString("from"));
+           txDateTo.setText(getArguments().getString("to"));
+        }else{
+            txDateFrom.setText(Utility.convertDate(new Date()));
+            txDateTo.setText(Utility.convertDate(new Date()));
+        }
     }
 }
