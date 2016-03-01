@@ -93,8 +93,8 @@ public class FrgMain extends BaseFrg {
         //{ cust_type, label_flag, p_1, p_2, product_no, tc_date, PeriodType }
         String[] result = new String[7];
         result[0] = mCustomer.getCustName();
-        result[1] = mMember.getCode();
-        result[2] = mP1.getCode();
+        result[1] = mMember.getCode().equalsIgnoreCase("alert")?"":mMember.getCode();
+        result[2] = mP1.getCode().equalsIgnoreCase("alert")?"":mP1.getCode();
         result[3] = mP2.getCode().equalsIgnoreCase("alert")?"":mP2.getCode();
         result[4] = mProduct.getCode().equalsIgnoreCase("alert")?"":mProduct.getCode();
         result[5] = txDateFrom.getText() + "";
