@@ -95,8 +95,8 @@ public class FrgMain extends BaseFrg {
         result[0] = mCustomer.getCustName();
         result[1] = mMember.getCode();
         result[2] = mP1.getCode();
-        result[3] = mP2.getCode();
-        result[4] = mProduct.getCode();
+        result[3] = mP2.getCode().equalsIgnoreCase("alert")?"":mP2.getCode();
+        result[4] = mProduct.getCode().equalsIgnoreCase("alert")?"":mProduct.getCode();
         result[5] = txDateFrom.getText() + "";
         result[6] = mKind.getName();
         return result;
@@ -286,7 +286,7 @@ public class FrgMain extends BaseFrg {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 mP1 = (Member) parent.getSelectedItem();
-                if("".equalsIgnoreCase(mP1.getCode())) return;
+                if("Alert".equalsIgnoreCase(mP1.getCode())||"".equalsIgnoreCase(mP1.getCode())) return;
                 updateP2();
             }
 
@@ -302,7 +302,7 @@ public class FrgMain extends BaseFrg {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 mP2 = (Member) parent.getSelectedItem();
-                if("".equalsIgnoreCase(mP2.getCode())) return;
+                if("Alert".equalsIgnoreCase(mP2.getCode())||"".equalsIgnoreCase(mP2.getCode())) return;
                 updateProduct();
             }
 
@@ -509,7 +509,7 @@ public class FrgMain extends BaseFrg {
                 mAdapKind.setData(Utility.genPartKind());
                 notifyDataChange(mAdapKind);
                 mKind =(Member)mAdapKind.getItem(0);
-//                mActivity.showLoading(false);
+                mActivity.showLoading(false);
                 break;
             case SLTV: {
                 lnDate.setVisibility(View.GONE);
