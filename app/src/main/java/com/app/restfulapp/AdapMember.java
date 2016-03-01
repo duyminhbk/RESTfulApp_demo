@@ -28,7 +28,7 @@ public class AdapMember extends BaseAdapter {
 
     private void genNoData() {
         mData = new ArrayList<Member>();
-        mData.add(new Member("No Data","Alert"));
+        mData.add(new Member("Alert - No Data",""));
     }
 
     public AdapMember setData(List<Member> data){
