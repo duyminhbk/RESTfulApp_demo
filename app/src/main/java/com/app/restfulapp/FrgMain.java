@@ -167,12 +167,12 @@ public class FrgMain extends BaseFrg {
                 }
                 mActivity.showLoading(false);
             }
-
             @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 mActivity.showLoading(false);
-                Toast.makeText(mActivity, responseString, Toast.LENGTH_SHORT).show();
+                Toast.makeText(mActivity,"status :"+statusCode+" error: "+errorResponse+"",Toast.LENGTH_SHORT).show();
             }
+
         });
     }
     private void getLabelFlags(final AdapMember adapter) {
@@ -194,9 +194,9 @@ public class FrgMain extends BaseFrg {
             }
 
             @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 mActivity.showLoading(false);
-                Toast.makeText(mActivity, responseString, Toast.LENGTH_SHORT).show();
+                Toast.makeText(mActivity,"status :"+statusCode+" error: "+errorResponse+"",Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -346,7 +346,7 @@ public class FrgMain extends BaseFrg {
                         mP2 = (Member) spinnerP2.getSelectedItem();
                         updateProduct();
                     }else{
-                        spinnerP2.setVisibility(View.GONE);
+                        visibleSpinner(false, spinnerP2);
                     }
                 } else {
                     // show error
@@ -355,12 +355,11 @@ public class FrgMain extends BaseFrg {
                 }
                 mActivity.showLoading(false);
             }
-
             @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 mActivity.showLoading(false);
-                spinnerP2.setVisibility(View.GONE);
-                Toast.makeText(mActivity, responseString, Toast.LENGTH_SHORT).show();
+                Toast.makeText(mActivity,"status :"+statusCode+" error: "+errorResponse+"",Toast.LENGTH_SHORT).show();
+                visibleSpinner(false, spinnerP2);
                 mAdapP2.setData(null);
             }
         });
@@ -379,23 +378,22 @@ public class FrgMain extends BaseFrg {
                     if(mAdapProduct.getCount()>1){
                         visibleSpinner(true,spinnerProduct);
                     }else{
-                        spinnerProduct.setVisibility(View.GONE);
+                        visibleSpinner(false, spinnerProduct);
                     }
                 } else {
                     // show error
-                    spinnerProduct.setVisibility(View.GONE);
+                    visibleSpinner(false, spinnerProduct);
                     Toast.makeText(mActivity, Parser.getError(response), Toast.LENGTH_SHORT).show();
                 }
                 mProduct = (Product) mAdapProduct.getItem(0);
                 mActivity.showLoading(false);
             }
-
             @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 mActivity.showLoading(false);
-                Toast.makeText(mActivity, responseString, Toast.LENGTH_SHORT).show();
+                Toast.makeText(mActivity,"status :"+statusCode+" error: "+errorResponse+"",Toast.LENGTH_SHORT).show();
                 mAdapProduct.setData(null);
-                spinnerProduct.setVisibility(View.GONE);
+                visibleSpinner(false, spinnerProduct);
             }
         });
     }
@@ -419,7 +417,7 @@ public class FrgMain extends BaseFrg {
         mMember = null;
         mKind = null;
         visibleSpinner(false, spinnerCustomer, spinnerMember, spinnerKind, spinnerProduct, spinnerP1, spinnerP2);
-        lnDate.setVisibility(View.VISIBLE);
+        txDateTo.setVisibility(View.VISIBLE);
         switch (reportType) {
             // reuse spinner customer and member to define cust_type and label_flag
             case SLGD: {
@@ -446,14 +444,15 @@ public class FrgMain extends BaseFrg {
                         }
 
                     }
-
                     @Override
-                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                         mActivity.showLoading(false);
-                        Toast.makeText(mActivity, responseString, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mActivity,"status :"+statusCode+" error: "+errorResponse+"",Toast.LENGTH_SHORT).show();
                         mAdapP1.setData(null);
                         mAdapP1.notifyDataSetChanged();
                     }
+
+
                 });
 
                 notifyDataChange(mAdapMember, mAdapCus, mAdapKind);
@@ -484,14 +483,14 @@ public class FrgMain extends BaseFrg {
                                 Toast.makeText(mActivity, Parser.getError(response), Toast.LENGTH_SHORT).show();
                             }
                         }
-
                         @Override
-                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                             mActivity.showLoading(false);
-                            Toast.makeText(mActivity, responseString, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mActivity,"status :"+statusCode+" error: "+errorResponse+"",Toast.LENGTH_SHORT).show();
                             mAdapMember.setData(null);
                             mAdapMember.notifyDataSetChanged();
                         }
+
                     });
                 } else {
                     mActivity.showLoading(false);
@@ -511,7 +510,7 @@ public class FrgMain extends BaseFrg {
                 mKind =(Member)mAdapKind.getItem(0);
                 break;
             case SLTV: {
-                lnDate.setVisibility(View.GONE);
+                txDateTo.setVisibility(View.GONE);
                 visibleSpinner(true, spinnerMember);
                 if (role != MainActivity.Role.CHIEF) {
                     mActivity.showLoading(true);
@@ -532,9 +531,9 @@ public class FrgMain extends BaseFrg {
                         }
 
                         @Override
-                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                             mActivity.showLoading(false);
-                            Log.d("minh", "CHIEF_LIST_URL- error: " + responseString);
+                            Toast.makeText(mActivity,"status :"+statusCode+" error: "+errorResponse+"",Toast.LENGTH_SHORT).show();
                             mAdapMember.setData(null);
                             mAdapMember.notifyDataSetChanged();
                         }
@@ -570,7 +569,7 @@ public class FrgMain extends BaseFrg {
                     Toast.makeText(mActivity, "Please connect Internet to submit data.", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if ((TextUtils.isEmpty(txDateFrom.getText()) || TextUtils.isEmpty(txDateTo.getText())) && reportType != Reports.SLTV) {
+                if (TextUtils.isEmpty(txDateFrom.getText()) || (reportType != Reports.SLTV && TextUtils.isEmpty(txDateTo.getText()))) {
                     Toast.makeText(mActivity, "Date field not empty", Toast.LENGTH_SHORT).show();
                     return;
                 }

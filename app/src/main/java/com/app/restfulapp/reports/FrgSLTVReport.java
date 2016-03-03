@@ -56,7 +56,7 @@ public class FrgSLTVReport extends FrgReport {
         AsyncHttpClient client = new AsyncHttpClient();
         client.setCookieStore(mActivity.getCookieStore());
         // {chief_no: "6073", cust_type: "1", label_flag: "1", tc_date: "2015-01-01"}
-        client.get(String.format(Define.SLTV_URL,member != null ? member.getCode():Utility.getString(mActivity,"saleNo"),customer.getCustName(),kind.getCode(), "2015-02-27"), new JsonHttpResponseHandler() {
+        client.get(String.format(Define.SLTV_URL,member != null ? member.getCode():Utility.getString(mActivity,"saleNo"),customer.getCustName(),kind.getCode(), fromDate), new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                     super.onSuccess(statusCode, headers, response);
@@ -74,12 +74,10 @@ public class FrgSLTVReport extends FrgReport {
                         Toast.makeText(mActivity, Parser.getError(response), Toast.LENGTH_SHORT).show();
                     }
                 }
-
                 @Override
-                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                    super.onFailure(statusCode, headers, responseString, throwable);
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                     mActivity.showLoading(false);
-                    Toast.makeText(mActivity,responseString,Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mActivity,"status :"+statusCode+" error: "+errorResponse+"",Toast.LENGTH_SHORT).show();
                 }
             }
         );

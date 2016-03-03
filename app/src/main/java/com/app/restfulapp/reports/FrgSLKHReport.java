@@ -71,10 +71,9 @@ public class FrgSLKHReport extends FrgReport {
                     }
 
                     @Override
-                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                        super.onFailure(statusCode, headers, responseString, throwable);
+                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                         mActivity.showLoading(false);
-                        Toast.makeText(mActivity, responseString, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mActivity,"status :"+statusCode+" error: "+errorResponse+"",Toast.LENGTH_SHORT).show();
                     }
                 }
         );

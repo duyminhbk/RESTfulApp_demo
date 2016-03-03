@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.text.Html;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -201,7 +202,18 @@ public class ReportLayout extends RelativeLayout {
 				for(int i = 0; i<arr.length();i++){
 					temp[i] = arr.optString(i);
 				}
-				tableData[n] = temp;
+				Integer ind = null;
+				try{
+					ind = Integer.parseInt(key);
+					Log.d("data index: ",ind.toString());
+				}catch (Exception e){
+					ind = null;
+				}
+				if(ind !=null && ind <= tableData.length){
+					tableData[ind-1] = temp;
+				}else {
+					tableData[n] = temp;
+				}
 				n++;
 			}
 		}

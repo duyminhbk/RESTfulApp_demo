@@ -28,7 +28,7 @@ public class AdapProduct extends BaseAdapter {
 
     private void genNoData() {
         mData = new ArrayList<Product>();
-        mData.add(new Product("No Data","Alert"));
+        mData.add(new Product("Alert - No Data",""));
     }
 
     public AdapProduct setData(List<Product> data){

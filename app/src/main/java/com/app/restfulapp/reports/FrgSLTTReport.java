@@ -63,7 +63,7 @@ public class FrgSLTTReport extends FrgReport {
                         fromDate, toDate), new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                        super.onSuccess(statusCode, headers, response);
+//                        super.onSuccess(statusCode, headers, response);
                         mActivity.showLoading(false);
                         Log.d("minh", response.toString());
                         //success request
@@ -84,10 +84,9 @@ public class FrgSLTTReport extends FrgReport {
                     }
 
                     @Override
-                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                        super.onFailure(statusCode, headers, responseString, throwable);
+                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                         mActivity.showLoading(false);
-                        Toast.makeText(mActivity,responseString,Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mActivity,"status :"+statusCode+" error: "+errorResponse+"",Toast.LENGTH_SHORT).show();
                     }
                 }
         );
