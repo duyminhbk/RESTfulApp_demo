@@ -44,6 +44,9 @@ import java.util.Objects;
  */
 public class ReportLayout extends RelativeLayout {
 
+	private static final int WIDTT_DEFAULT = 310;
+	private static final int DEFAUL_PADDING = 4;
+	private static final int DEFAUL_BODY_PADDING = 4;
 	public final String TAG = "TableMainLayout.java";
 
 
@@ -129,7 +132,7 @@ public class ReportLayout extends RelativeLayout {
 		if(mData.optJSONArray("index").length() ==0) return null;
 		int [] result = new int[mData.optJSONArray("index").length()];
 		for(int i =0;i<result.length;i++){
-			result[i] = 400;
+			result[i] = WIDTT_DEFAULT;
 		}
 		return result;
 	}
@@ -303,7 +306,7 @@ public class ReportLayout extends RelativeLayout {
 		textView.setBackgroundColor(headerBg);
 		textView.setTextColor(headerTextColor);
 		if(headerCellsWidth != null) {
-			textView.setWidth(headerCellsWidth[0]-70);
+			textView.setWidth(headerCellsWidth[0]*2/3);
 		}
 		componentATableRow.addView(textView);
 		this.tableA.addView(componentATableRow);
@@ -401,7 +404,7 @@ public class ReportLayout extends RelativeLayout {
 		bodyTextView.setBackgroundColor(Color.WHITE);
 		bodyTextView.setText(Html.fromHtml(label));
 		bodyTextView.setGravity(Gravity.CENTER);
-		bodyTextView.setPadding(5, 5, 5, 5);
+		bodyTextView.setPadding(DEFAUL_BODY_PADDING, DEFAUL_BODY_PADDING, DEFAUL_BODY_PADDING, DEFAUL_BODY_PADDING);
 
 		return bodyTextView;
 	}
@@ -413,7 +416,7 @@ public class ReportLayout extends RelativeLayout {
 		headerTextView.setBackgroundColor(Color.WHITE);
 		headerTextView.setText(Html.fromHtml("<b>" + label + "</b>"));
 		headerTextView.setGravity(Gravity.CENTER);
-		headerTextView.setPadding(5, 5, 5, 5);
+		headerTextView.setPadding(DEFAUL_PADDING, DEFAUL_PADDING, DEFAUL_PADDING, DEFAUL_PADDING);
 
 		return headerTextView;
 	}

@@ -4,6 +4,7 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.restfulapp.MainActivity;
 import com.app.restfulapp.R;
 import com.app.restfulapp.models.Customer;
 import com.app.restfulapp.models.Member;
@@ -28,7 +29,8 @@ public class FrgSLTVReport extends FrgReport {
     @Override
     protected void initView() {
         super.initView();
-        ((TextView)findViewById(R.id.tx_area)).setText(String.format(getString(R.string.area_label), customer.getCustName()));
+        if(customer!=null){
+        ((TextView)findViewById(R.id.tx_area)).setText(String.format(getString(R.string.area_label), customer.getCustName()));}
         TextView txDate = (TextView) findViewById(R.id.txdate);
         txDate.setText(fromDate + " - " + toDate);
     }
@@ -40,7 +42,7 @@ public class FrgSLTVReport extends FrgReport {
 
     @Override
     protected void requestData() {
-        if(customer == null){
+        if(customer == null && mActivity.getRole() != MainActivity.Role.CHIEF){
             Toast.makeText(mActivity,"customer area not define",Toast.LENGTH_SHORT).show();
             return;
         }
@@ -56,7 +58,7 @@ public class FrgSLTVReport extends FrgReport {
         AsyncHttpClient client = new AsyncHttpClient();
         client.setCookieStore(mActivity.getCookieStore());
         // {chief_no: "6073", cust_type: "1", label_flag: "1", tc_date: "2015-01-01"}
-        client.get(String.format(Define.SLTV_URL,member != null ? member.getCode():Utility.getString(mActivity,"saleNo"),customer.getCustName(),kind.getCode(), fromDate), new JsonHttpResponseHandler() {
+        client.get(String.format(Define.SLTV_URL,member != null ? member.getCode():Utility.getString(mActivity,"saleNo"),customer!=null ?customer.getCustName():"",kind.getCode(), fromDate), new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                     super.onSuccess(statusCode, headers, response);

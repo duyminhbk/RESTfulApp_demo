@@ -29,7 +29,7 @@ public class FrgSLKHReport extends FrgReport {
     protected void initView() {
         super.initView();
         int unit = Utility.getMaxScreen(mActivity)/11;
-        reportLayout.setColumnWidth(new int[]{unit * 2, unit * 3, unit * 2, unit * 2, unit * 2});
+//        reportLayout.setColumnWidth(new int[]{unit * 2, unit * 3, unit * 2, unit * 2, unit * 2});
 
         TextView txDate = (TextView) findViewById(R.id.txdate);
         txDate.setText(fromDate+" - "+ toDate);

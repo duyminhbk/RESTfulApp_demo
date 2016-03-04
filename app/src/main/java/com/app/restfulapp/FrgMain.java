@@ -533,22 +533,23 @@ public class FrgMain extends BaseFrg {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                             mActivity.showLoading(false);
-                            Toast.makeText(mActivity,"status :"+statusCode+" error: "+errorResponse+"",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mActivity, "status :" + statusCode + " error: " + errorResponse + "", Toast.LENGTH_SHORT).show();
                             mAdapMember.setData(null);
                             mAdapMember.notifyDataSetChanged();
                         }
                     });
+                    mAdapCus.setData(Utility.genCustType());
+                    visibleSpinner(true, spinnerCustomer);
+                    mCustomer = (Customer) mAdapCus.getItem(0);
                 } else {
                     ArrayList<Member> temp = new ArrayList<>();
                     temp.add(new Member("Me",Utility.getString(mActivity,"saleNo")));
                     mAdapMember.setData(temp).notifyDataSetChanged();
                     mMember = (Member) mAdapMember.getItem(0);
                 }
-                visibleSpinner(true, spinnerCustomer, spinnerKind);
-                mAdapCus.setData(Utility.genCustType());
+                visibleSpinner(true, spinnerKind);
                 getLabelFlags(mAdapKind);
                 notifyDataChange(mAdapKind, mAdapCus);
-                mCustomer = (Customer) mAdapCus.getItem(0);
                 mKind = (Member) mAdapKind.getItem(0);
             }
             break;
