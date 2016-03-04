@@ -7,36 +7,41 @@
         style="@style/TitleStyle"
         android:gravity="center"
         android:textSize="20sp"
-        android:text="BẢNG XẾP HẠNG CỦA TIẾP THỊ"/>
+        android:text="BẢNG XẾP HẠNG CỦA TIẾP THỊ"
+        android:visibility="gone" />
     <TextView
         style="@style/TitleStyle"
         android:gravity="center"
         android:textSize="14sp"
         android:text="Từ ngày 01 đến ngày 18"
         android:id="@+id/tx_time"
-        android:visibility="visible"/>
+        android:visibility="gone"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="gone">
         <TextView
             android:layout_width="wrap_content"
-            android:layout_gravity="left"
             android:layout_height="wrap_content"
-            android:text="Brand loại lớn - loại trung"/>
+            android:text="Brand loại lớn - loại trung"
+            android:visibility="invisible"
+            android:layout_gravity="bottom" />
         <TextView
             android:layout_width="match_parent"
-            android:layout_gravity="right"
+            android:layout_gravity="bottom"
             android:gravity="right"
             android:layout_height="wrap_content"
-            android:text="Mix:AH"/>
+            android:text="Mix:AH"
+            android:visibility="invisible" />
     </LinearLayout>
     <com.app.restfulapp.ultis.ReportLayout
         android:id="@+id/rp_sample"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingBottom="5dp">
+        android:layout_height="fill_parent"
+        android:paddingBottom="5dp"
+        android:layout_gravity="top">
 
     </com.app.restfulapp.ultis.ReportLayout>
 </LinearLayout>
