@@ -2,6 +2,7 @@ package com.app.restfulapp.ultis;
 
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
@@ -10,7 +11,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -21,11 +21,7 @@ import android.widget.TextView;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
 
 @SuppressWarnings("ResourceType")
 /*
@@ -44,7 +40,7 @@ import java.util.Objects;
  */
 public class ReportLayout extends RelativeLayout {
 
-	private static final int WIDTT_DEFAULT = 310;
+	private static final int WIDTH_DEFAULT = 250;
 	private static final int DEFAUL_PADDING = 4;
 	private static final int DEFAUL_BODY_PADDING = 4;
 	public final String TAG = "TableMainLayout.java";
@@ -131,8 +127,16 @@ public class ReportLayout extends RelativeLayout {
 		}
 		if(mData.optJSONArray("index").length() ==0) return null;
 		int [] result = new int[mData.optJSONArray("index").length()];
-		for(int i =0;i<result.length;i++){
-			result[i] = WIDTT_DEFAULT;
+		int screenWidth =  Utility.getScreenSize((Activity) getContext()).x;
+		int widthBaseOnScreen = screenWidth/result.length;
+		int width = WIDTH_DEFAULT;
+		if(widthBaseOnScreen > WIDTH_DEFAULT){
+			width = widthBaseOnScreen;
+		}
+		result[0] = width*2/3;
+		int widthOtherCol = width+(width-result[0])/(result.length-1);
+		for(int i =1;i<result.length;i++){
+			result[i] = widthOtherCol;
 		}
 		return result;
 	}
@@ -186,10 +190,9 @@ public class ReportLayout extends RelativeLayout {
 		if(indexTemp.length() == 0 || indexTemp.toString() == "[]"){
 			throw new DataFormatException("index must not empty");
 		}
-
-        if(headerCellsWidth == null){
-            headerCellsWidth = getHeaderWidth();
-        }
+		if(headerCellsWidth ==null) {
+			headerCellsWidth = getHeaderWidth();
+		}
 		for(int i = 0; i<indexTemp.length();i++){
 			index[i] = indexTemp.optString(i);
 		}
@@ -306,7 +309,7 @@ public class ReportLayout extends RelativeLayout {
 		textView.setBackgroundColor(headerBg);
 		textView.setTextColor(headerTextColor);
 		if(headerCellsWidth != null) {
-			textView.setWidth(headerCellsWidth[0]*2/3);
+			textView.setWidth(headerCellsWidth[0]);
 		}
 		componentATableRow.addView(textView);
 		this.tableA.addView(componentATableRow);
@@ -432,8 +435,8 @@ public class ReportLayout extends RelativeLayout {
 
 		int finalHeight = rowAHeight > rowBHeight ? rowAHeight : rowBHeight;
 
-		this.matchLayoutHeight(productNameHeaderTableRow, finalHeight>=100?finalHeight:100);
-		this.matchLayoutHeight(productInfoTableRow, finalHeight>=100?finalHeight:100);
+		this.matchLayoutHeight(productNameHeaderTableRow, finalHeight >= 100 ? finalHeight : 100);
+		this.matchLayoutHeight(productInfoTableRow, finalHeight >= 100 ? finalHeight : 100);
 	}
 
 	// resize body table row height
@@ -518,6 +521,27 @@ public class ReportLayout extends RelativeLayout {
 	private int viewWidth(View view) {
 		view.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
 		return view.getMeasuredWidth() ;
+	}
+
+	public void reLayout() {
+		clearLayout();
+		try {
+			setDataAndLayout(mData);
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	private void clearLayout() {
+		headerCellsWidth = null;
+		removeTableChild(tableA, tableD, tableB, tableC);
+	}
+
+	private void removeTableChild(TableLayout... tables) {
+		if(tables == null || tables.length ==0) return;
+		for (TableLayout table: tables) {
+			table.removeAllViewsInLayout();
+		}
 	}
 
 	// horizontal scroll view custom class
