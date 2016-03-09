@@ -1,6 +1,8 @@
 package com.app.restfulapp;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,17 +30,18 @@ import cz.msebera.android.httpclient.Header;
 public class FrgLogin extends BaseFrg implements View.OnClickListener {
 
     //private static final String LOGIN_URL = "http://192.168.1.103:83/Home/Login";
-    private String params = "?Email=%s&Password=%s";
     private TextView errorMsg;
     private EditText emailET;
     private EditText pwdET;
     private Button btnLogin;
     private CheckBox cbAuto;
+    private TextView txDeviceID;
 
     @Override
     protected void initView() {
         // Find Error Msg Text View control by ID
         errorMsg = (TextView) rootView.findViewById(R.id.login_error);
+        txDeviceID = (TextView) rootView.findViewById(R.id.tx_deviceId);
         // Find Email Edit View control by ID
         emailET = (EditText) rootView.findViewById(R.id.loginEmail);
         // Find Password Edit View control by ID
@@ -46,6 +49,23 @@ public class FrgLogin extends BaseFrg implements View.OnClickListener {
         // Find login button
         btnLogin = (Button) rootView.findViewById(R.id.btnLogin);
         btnLogin.setOnClickListener(this);
+        txDeviceID.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(mActivity)
+                        .setTitle("Your device ID")
+                        .setMessage(Utility.getDeviceId(mActivity))
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+
+                        })
+                        .show();
+            }
+        });
 
         cbAuto = (CheckBox)findViewById(R.id.cb_auto);
     }
@@ -53,9 +73,10 @@ public class FrgLogin extends BaseFrg implements View.OnClickListener {
     /**
      * Method that performs RESTful webservice invocations
      *
-     * @param params
+     * @param email
+     * @param pass
      */
-    public void invokeWS(String params) {
+    public void invokeWS(String email,String pass) {
         // Show Progress Dialog
         mActivity.showLoading(true);
         // Make RESTful webservice call using AsyncHttpClient object
@@ -65,7 +86,7 @@ public class FrgLogin extends BaseFrg implements View.OnClickListener {
         myCookieStore.clear();
         // set the new cookie
         client.setCookieStore(myCookieStore);
-        client.get(Define.LOGIN_URL + params, new AsyncHttpResponseHandler() {
+        client.get(String.format(Define.LOGIN_URL,email,pass,email), new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 String response = new String(responseBody);
@@ -77,20 +98,6 @@ public class FrgLogin extends BaseFrg implements View.OnClickListener {
                     // JSON Object
                     JSONObject obj = new JSONObject(response);
                     String saleName = obj.optString("sale_ename");
-
-//
-//                    // When the JSON response has status boolean value assigned with true
-//                    if(obj.getBoolean("status")){
-//                        Toast.makeText(mActivity, "You are successfully logged in!", Toast.LENGTH_LONG).show();
-//                        // Navigate to Home screen
-//                        goHomeScreen();
-//                    }
-//                    // Else display error message
-//                    else{
-//                        errorMsg.setText(obj.optString("error_msg"));
-//                        Toast.makeText(mActivity, obj.optString("error_msg"), Toast.LENGTH_LONG).show();
-//                    }
-
                     Utility.saveSecurity(mActivity, new String(headers[0].getValue()));
                     Utility.saveString(mActivity, "saleNo", emailET.getText().toString());
                     Utility.saveString(mActivity, "saleName", saleName);
@@ -154,13 +161,12 @@ public class FrgLogin extends BaseFrg implements View.OnClickListener {
         // Get Password Edit View Value
         String password = pwdET.getText().toString();
         if(!Utility.isOnline(mActivity)){
-            Toast.makeText(mActivity, "Please connect Internet to login", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mActivity, R.string.connect_warning, Toast.LENGTH_SHORT).show();
             return;
         }
         // When Email Edit View and Password Edit View have values other than Null
         if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
-            String para = String.format(params, email, password);
-            invokeWS(para);
+            invokeWS(email, password);
         } else {
             Toast.makeText(mActivity, "Please fill the form, don't leave any field blank", Toast.LENGTH_LONG).show();
         }
@@ -177,5 +183,6 @@ public class FrgLogin extends BaseFrg implements View.OnClickListener {
 
         super.onPrepareOptionsMenu(menu);
         menu.findItem(R.id.logout).setVisible(false);
+        menu.findItem(R.id.setting).setVisible(false);
     }
 }

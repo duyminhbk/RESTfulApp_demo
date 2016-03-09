@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -193,6 +194,17 @@ public class Utility {
             e1.printStackTrace();
         }
         return true;
+    }
+
+    public static String getDeviceId(Context context) {
+        String deviceIdStr = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+        if (deviceIdStr == null) {
+            long rand = Double.doubleToRawLongBits(Math.random() * Long.MAX_VALUE);
+            Log.w("deviceID", "No device ID found - created random ID " + rand);
+            return rand+"";
+        } else {
+            return deviceIdStr;
+        }
     }
 
 }

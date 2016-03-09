@@ -567,7 +567,7 @@ public class FrgMain extends BaseFrg {
             @Override
             public void onClick(View v) {
                 if (!Utility.isOnline(mActivity)) {
-                    Toast.makeText(mActivity, "Please connect Internet to submit data.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mActivity, R.string.connect_warning, Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (TextUtils.isEmpty(txDateFrom.getText()) || (reportType != Reports.SLTV && TextUtils.isEmpty(txDateTo.getText()))) {

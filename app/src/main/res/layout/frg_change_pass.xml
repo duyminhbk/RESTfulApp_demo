@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dip">
+
+    <TextView
+        style="@style/TitleStyle"
+        android:layout_marginBottom="10dip"
+        android:text="@string/change_pass" />
+
+    <com.app.restfulapp.ultis.ShowHidePasswordEditText
+        android:id="@+id/et_pass"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Current Password"
+        android:inputType="textPassword" />
+    <com.app.restfulapp.ultis.ShowHidePasswordEditText
+        android:id="@+id/et_new_pass"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter New Password"
+        android:inputType="textPassword" />
+    <com.app.restfulapp.ultis.ShowHidePasswordEditText
+        android:id="@+id/et_confirm_pass"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="Confirm New Password"
+        android:inputType="textPassword" />
+
+    <Button
+        android:id="@+id/bt_submit"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:background="#ff6347"
+        android:text="Submit"
+        android:textColor="#fff" />
+</LinearLayout>

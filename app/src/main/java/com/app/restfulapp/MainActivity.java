@@ -64,12 +64,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void DoAutoLogin() {
         if(!Utility.isOnline(this)){
-            Toast.makeText(this, "Please connect Internet to login", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.connect_warning, Toast.LENGTH_SHORT).show();
             addFragment(new FrgLogin(), false);
         }
         String email = Utility.getString(this, "email");
         String pass = Utility.getString(this, "pass");
-        String para = String.format("?Email=%s&Password=%s", email, pass);
         showLoading(true);
         // Make RESTful webservice call using AsyncHttpClient object
         AsyncHttpClient client = new AsyncHttpClient();
@@ -78,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
         myCookieStore.clear();
         // set the new cookie
         client.setCookieStore(myCookieStore);
-        client.get(Define.LOGIN_URL + para, new AsyncHttpResponseHandler() {
+        client.get(String.format(Define.LOGIN_URL,email,pass,email), new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 String response = new String(responseBody);
@@ -135,6 +134,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.logout:
                 Utility.saveBool(this,"auto",false);
                 addFragment(new FrgLogin(), false);
+                return true;
+            case R.id.setting:
+                addFragment(new FrgChangePassword(), true);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
