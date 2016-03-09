@@ -132,8 +132,8 @@ public class ShowHidePasswordEditText extends AppCompatEditText {
       final int x = (int) event.getX();
 
       //check if the touch is within bounds of drawableEnd icon
-      if ((leftToRight && (x >= (this.getRight() - bounds.width()))) ||
-              (!leftToRight &&  (x <= (this.getLeft() + bounds.width())))){
+      if ((leftToRight && (x >= (this.getRight() - bounds.width()-40))) ||
+              (!leftToRight &&  (x <= (this.getLeft() + bounds.width()+40)))){
           togglePasswordVisability();
           //use this to prevent the keyboard from coming up
           event.setAction(MotionEvent.ACTION_CANCEL);
