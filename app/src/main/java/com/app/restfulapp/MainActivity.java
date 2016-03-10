@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
         myCookieStore.clear();
         // set the new cookie
         client.setCookieStore(myCookieStore);
-        client.get(String.format(Define.LOGIN_URL,email,pass,email), new AsyncHttpResponseHandler() {
+        client.get(String.format(Define.LOGIN_URL, email, pass, email), new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 String response = new String(responseBody);
@@ -153,6 +153,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void addFragment(BaseFrg frg, boolean shouldAdd) {
+        if(frg instanceof FrgLogin){
+            FragmentManager fm =getSupportFragmentManager();
+            for(int i = 0; i < fm.getBackStackEntryCount(); ++i) {
+                fm.popBackStack();
+            }
+        }
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.main_container, frg, frg.getTag());
