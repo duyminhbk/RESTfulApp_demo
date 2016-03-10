@@ -47,7 +47,7 @@ public class FrgChangePassword extends BaseFrg {
 
     private boolean validateAndAlert() {
         String pass = Utility.getString(mActivity, "pass");
-        if(!pass.equals(txPass.getText())){
+        if(!pass.equals(txPass.getText()+"")){
             Toast.makeText(mActivity,"Please input the right current password",Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -66,9 +66,10 @@ public class FrgChangePassword extends BaseFrg {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Log.d("minh", "GET_CUSTOMERS_URL: " + response);
-                Utility.saveString(mActivity, "pass",txNewPass.getText()+"");
-                if (Parser.isSuccess(response)) {
 
+                if (Parser.isSuccess(response)) {
+                    Utility.saveString(mActivity, "pass",txNewPass.getText()+"");
+                    Toast.makeText(mActivity,"Update password sucessfully", Toast.LENGTH_SHORT).show();
                 } else {
                     // show error
                     Toast.makeText(mActivity, Parser.getError(response), Toast.LENGTH_SHORT).show();

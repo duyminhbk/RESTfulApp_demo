@@ -10,7 +10,7 @@ public final class Define {
     public static final String SALEMAN_LIST_URL = SERVICE+"/Home/GetSalemanList";
     public static final String CHIEF_LIST_URL = SERVICE+"/Home/GetChiefList";
     public static final String GET_CUSTOMERS_URL = SERVICE+"/Home/GetCustomerList";
-    public static final String LOGIN_URL = SERVICE+"/Home/Login?Email=%s&Password=%s";
+    public static final String LOGIN_URL = SERVICE+"/Home/Login?Email=%s&Password=%s&Imei=%s";
     public static final String GET_LABEL_FLAGS = SERVICE+"/Home/GetLabelFlags";
     public static final String GET_P1 = SERVICE+"/Home/GetP1List";
     public static final String GET_P2 = SERVICE+"/Home/GetP2List?p1=%s";
