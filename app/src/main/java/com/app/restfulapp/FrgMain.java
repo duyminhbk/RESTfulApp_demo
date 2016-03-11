@@ -43,7 +43,6 @@ import cz.msebera.android.httpclient.Header;
  * Created by minhpham on 12/16/15.
  */
 public class FrgMain extends BaseFrg {
-    private String params = "?SaleNo=%s&Date=%s";
     private TextView txDateFrom;
     private TextView txDateTo;
     private Button btnSubmit;
@@ -204,6 +203,7 @@ public class FrgMain extends BaseFrg {
     private void initSpinner() {
         // init spinner report
         int reportKinds;
+
         switch (role) {
             case DIR:
                 reportKinds = R.array.report_type_dir;

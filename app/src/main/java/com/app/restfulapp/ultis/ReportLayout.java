@@ -4,6 +4,7 @@ package com.app.restfulapp.ultis;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Build;
 import android.text.Html;
@@ -17,6 +18,8 @@ import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+
+import com.app.restfulapp.R;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -44,6 +47,8 @@ public class ReportLayout extends RelativeLayout {
 	private static final int DEFAUL_PADDING = 4;
 	private static final int DEFAUL_BODY_PADDING = 4;
 	public final String TAG = "TableMainLayout.java";
+
+	private int fixColumn =1;
 
 
 	TableLayout tableA;
@@ -78,6 +83,7 @@ public class ReportLayout extends RelativeLayout {
 
 	public ReportLayout(Context context, AttributeSet attrs, int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
+		getFixedColumn(attrs);
 		this.context = context;
 
 		// initialize the main components (TableLayouts, HorizontalScrollView, ScrollView)
@@ -305,13 +311,16 @@ public class ReportLayout extends RelativeLayout {
 
 	private void addDataToTableA(){
 		TableRow componentATableRow = new TableRow(this.context);
-		TextView textView = this.headerTextView(index[0]);
-		textView.setBackgroundColor(headerBg);
-		textView.setTextColor(headerTextColor);
-		if(headerCellsWidth != null) {
-			textView.setWidth(headerCellsWidth[0]);
+		for(int i=0;i<fixColumn;i++){
+			TableRow.LayoutParams params = new TableRow.LayoutParams(headerCellsWidth[i], LayoutParams.MATCH_PARENT);
+			params.setMargins(2, 0, 0, 0);
+			TextView textView = this.headerTextView(index[i]);
+			textView.setBackgroundColor(headerBg);
+			textView.setTextColor(headerTextColor);
+			textView.setWidth(headerCellsWidth[i]);
+			componentATableRow.addView(textView,params);
 		}
-		componentATableRow.addView(textView);
+
 		this.tableA.addView(componentATableRow);
 	}
 
@@ -319,7 +328,7 @@ public class ReportLayout extends RelativeLayout {
 
 		TableRow componentBTableRow = new TableRow(this.context);
 		TableRow.LayoutParams params;
-		for(int x=1; x<index.length; x++){
+		for(int x=fixColumn; x<index.length; x++){
 			if(headerCellsWidth == null) {
 				params = new TableRow.LayoutParams(400, LayoutParams.MATCH_PARENT);
 			}else{
@@ -353,21 +362,24 @@ public class ReportLayout extends RelativeLayout {
 
 	// a TableRow for table C
 	TableRow tableRowForTableC(String[] data, boolean isLast){
-		int width = this.viewWidth(((TableRow) this.tableA.getChildAt(0)).getChildAt(0));
-		TableRow.LayoutParams params = new TableRow.LayoutParams( width, LayoutParams.MATCH_PARENT);
-		params.setMargins(0, 2, 0, 0);
 
 		TableRow tableRowForTableC = new TableRow(this.context);
-		TextView textView = this.bodyTextView(data[0]);
-		if(isLast){
-			textView.setTextColor(lastRowTextColor);
-			textView.setBackgroundColor(lastRowBg);
-			textView.setText(Html.fromHtml("<b>" + data[0] + "</b>"));
-		} else {
-			textView.setTextColor(firstColTextColor);
-			textView.setBackgroundColor(firstColBg);
+		for(int i =0;i<fixColumn;i++){
+			int width = viewWidth(((TableRow) this.tableA.getChildAt(0)).getChildAt(i));
+			TableRow.LayoutParams params = new TableRow.LayoutParams( width, LayoutParams.MATCH_PARENT);
+			params.setMargins(0, 2, 2, 0);
+
+			TextView textView = this.bodyTextView(data[i]);
+			if(isLast){
+				textView.setTextColor(lastRowTextColor);
+				textView.setBackgroundColor(lastRowBg);
+				textView.setText(Html.fromHtml("<b>" + data[i] + "</b>"));
+			} else {
+				textView.setTextColor(firstColTextColor);
+				textView.setBackgroundColor(firstColBg);
+			}
+			tableRowForTableC.addView(textView, params);
 		}
-		tableRowForTableC.addView(textView, params);
 
 		return tableRowForTableC;
 	}
@@ -376,7 +388,7 @@ public class ReportLayout extends RelativeLayout {
 
 		TableRow taleRowForTableD = new TableRow(this.context);
 		TableRow.LayoutParams params;
-		for(int x=1 ; x<index.length; x++){
+		for(int x=fixColumn ; x<index.length; x++){
 			if(headerCellsWidth == null){
 				params = new TableRow.LayoutParams(400, LayoutParams.MATCH_PARENT);
 			}else{
@@ -541,6 +553,17 @@ public class ReportLayout extends RelativeLayout {
 		if(tables == null || tables.length ==0) return;
 		for (TableLayout table: tables) {
 			table.removeAllViewsInLayout();
+		}
+	}
+
+	public void getFixedColumn(AttributeSet attrs) {
+		if (attrs != null) {
+			TypedArray attrsArray =
+					getContext().obtainStyledAttributes(attrs, R.styleable.reportLayout);
+
+			fixColumn = attrsArray.getInteger(R.styleable.reportLayout_fixedColumn, 1);
+
+			attrsArray.recycle();
 		}
 	}
 

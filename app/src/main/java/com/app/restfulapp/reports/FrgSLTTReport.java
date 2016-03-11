@@ -34,7 +34,6 @@ public class FrgSLTTReport extends FrgReport {
         TextView txDate = (TextView) findViewById(R.id.txdate);
 
         txDate.setText(fromDate + " - " + toDate);
-
         if(kind == null) return;
         ((TextView) findViewById(R.id.tx_kind)).setText(kind.getName());
 
