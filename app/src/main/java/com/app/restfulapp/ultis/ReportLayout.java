@@ -217,7 +217,7 @@ public class ReportLayout extends RelativeLayout {
 				Integer ind = null;
 				try{
 					ind = Integer.parseInt(key);
-					Log.d("data index: ",ind.toString());
+//					Log.d("data index: ",ind.toString());
 				}catch (Exception e){
 					ind = null;
 				}
