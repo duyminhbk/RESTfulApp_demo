@@ -7,11 +7,11 @@ import android.widget.Toast;
 import com.app.restfulapp.R;
 import com.app.restfulapp.models.Customer;
 import com.app.restfulapp.models.Member;
+import com.app.restfulapp.ultis.AppClientRequest;
 import com.app.restfulapp.ultis.Parser;
 import com.app.restfulapp.ultis.ReportLayout;
 import com.app.restfulapp.ultis.Define;
 import com.app.restfulapp.ultis.Utility;
-import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONObject;
@@ -47,14 +47,12 @@ public class FrgSLKHReport extends FrgReport {
             return;
         }
         mActivity.showLoading(true);
-        AsyncHttpClient client = new AsyncHttpClient();
-        client.setCookieStore(mActivity.getCookieStore());
 //        { cust_no, part_kind, tc_date1, tc_date2 }
-        client.get(String.format(Define.SLKH_URL, customer.getCustNo(), fromDate,
-                        toDate,kind.getCode()), new JsonHttpResponseHandler() {
+        AppClientRequest.get(mActivity,String.format(Define.SLKH_URL, customer.getCustNo(), fromDate,
+                        toDate, kind.getCode()), new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                        Log.d("SLKH_URL",response+"");
+                        Log.d("SLKH_URL", response + "");
                         mActivity.showLoading(false);
                         if (Parser.isSuccess(response)) {
                             try {
@@ -73,7 +71,7 @@ public class FrgSLKHReport extends FrgReport {
                     @Override
                     public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                         mActivity.showLoading(false);
-                        Toast.makeText(mActivity,"status :"+statusCode+" error: "+errorResponse+"",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mActivity, "status :" + statusCode + " error: " + errorResponse + "", Toast.LENGTH_SHORT).show();
                     }
                 }
         );

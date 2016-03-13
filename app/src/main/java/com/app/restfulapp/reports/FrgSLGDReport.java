@@ -7,10 +7,10 @@ import android.widget.Toast;
 import com.app.restfulapp.R;
 import com.app.restfulapp.models.Customer;
 import com.app.restfulapp.models.Member;
+import com.app.restfulapp.ultis.AppClientRequest;
 import com.app.restfulapp.ultis.Define;
 import com.app.restfulapp.ultis.Parser;
 import com.app.restfulapp.ultis.ReportLayout;
-import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONObject;
@@ -33,10 +33,8 @@ public class FrgSLGDReport extends FrgReport {
 //        }
         //{ cust_type, label_flag, p_1, p_2, product_no, tc_date, PeriodType }
         mActivity.showLoading(true);
-        AsyncHttpClient client = new AsyncHttpClient();
-        client.setCookieStore(mActivity.getCookieStore());
         //{ cust_type, label_flag, p_1, p_2, product_no, tc_date, PeriodType }
-        client.get(String.format(Define.SLGD_URL, args[0], args[1], args[2], args[3], args[4],
+        AppClientRequest.get(mActivity,String.format(Define.SLGD_URL, args[0], args[1], args[2], args[3], args[4],
                         args[5], args[6]), new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -59,7 +57,7 @@ public class FrgSLGDReport extends FrgReport {
                     @Override
                     public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                         mActivity.showLoading(false);
-                        Toast.makeText(mActivity,"status :"+statusCode+" error: "+errorResponse+"",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mActivity, "status :" + statusCode + " error: " + errorResponse + "", Toast.LENGTH_SHORT).show();
                     }
 
                 }

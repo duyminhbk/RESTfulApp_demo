@@ -7,11 +7,11 @@ import android.widget.Toast;
 
 import com.app.restfulapp.R;
 import com.app.restfulapp.models.Member;
+import com.app.restfulapp.ultis.AppClientRequest;
 import com.app.restfulapp.ultis.Define;
 import com.app.restfulapp.ultis.Parser;
 import com.app.restfulapp.ultis.ReportLayout;
 import com.app.restfulapp.ultis.Utility;
-import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONObject;
@@ -55,10 +55,8 @@ public class FrgSLTTReport extends FrgReport {
             return;
         }
         mActivity.showLoading(true);
-        AsyncHttpClient client = new AsyncHttpClient();
-        client.setCookieStore(mActivity.getCookieStore());
         ////sale_no: "6073", part_kind: "A", tc_date1: "2012-09-01", tc_date2: "2015-09-01"}
-        client.get(String.format(Define.SLTT_URL,member ==null?"": member.getCode(),kind.getCode(),
+        AppClientRequest.get(mActivity,String.format(Define.SLTT_URL, member == null ? "" : member.getCode(), kind.getCode(),
                         fromDate, toDate), new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -66,17 +64,17 @@ public class FrgSLTTReport extends FrgReport {
                         mActivity.showLoading(false);
                         Log.d("minh", response.toString());
                         //success request
-                        if(Parser.isSuccess(response)){
+                        if (Parser.isSuccess(response)) {
                             try {
                                 TextView txName = (TextView) findViewById(R.id.tx_name);
-                                if(!TextUtils.isEmpty(response.optJSONObject("Result").optString("sale_ename"))){
+                                if (!TextUtils.isEmpty(response.optJSONObject("Result").optString("sale_ename"))) {
                                     txName.setText(response.optJSONObject("Result").optString("sale_ename"));
                                 }
                                 reportLayout.setDataAndLayout(Parser.parseSLTT(response.optJSONObject("Result")));
-                            }catch (ReportLayout.DataFormatException e){
+                            } catch (ReportLayout.DataFormatException e) {
                                 e.printStackTrace();
                             }
-                        }else{
+                        } else {
                             // show error
                             Toast.makeText(mActivity, Parser.getError(response), Toast.LENGTH_SHORT).show();
                         }
@@ -85,7 +83,7 @@ public class FrgSLTTReport extends FrgReport {
                     @Override
                     public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                         mActivity.showLoading(false);
-                        Toast.makeText(mActivity,"status :"+statusCode+" error: "+errorResponse+"",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mActivity, "status :" + statusCode + " error: " + errorResponse + "", Toast.LENGTH_SHORT).show();
                     }
                 }
         );

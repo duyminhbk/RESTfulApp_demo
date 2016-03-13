@@ -12,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.app.restfulapp.ultis.AppClientRequest;
 import com.app.restfulapp.ultis.Define;
 import com.app.restfulapp.ultis.Utility;
 import com.loopj.android.http.AsyncHttpClient;
@@ -71,13 +72,11 @@ public class MainActivity extends AppCompatActivity {
         String pass = Utility.getString(this, "pass");
         showLoading(true);
         // Make RESTful webservice call using AsyncHttpClient object
-        AsyncHttpClient client = new AsyncHttpClient();
         PersistentCookieStore myCookieStore = this.getCookieStore();
         // clear cookie to make the fresh cookie, to ensure the newest cookie is being send
         myCookieStore.clear();
         // set the new cookie
-        client.setCookieStore(myCookieStore);
-        client.get(String.format(Define.LOGIN_URL, email, pass, email), new AsyncHttpResponseHandler() {
+        AppClientRequest.get(this,String.format(Define.LOGIN_URL, email, pass, email), new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 String response = new String(responseBody);

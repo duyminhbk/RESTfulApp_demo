@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.restfulapp.ultis.AppClientRequest;
 import com.app.restfulapp.ultis.Define;
 import com.app.restfulapp.ultis.Utility;
 import com.loopj.android.http.AsyncHttpClient;
@@ -79,14 +80,9 @@ public class FrgLogin extends BaseFrg implements View.OnClickListener {
     public void invokeWS(String email,String pass) {
         // Show Progress Dialog
         mActivity.showLoading(true);
-        // Make RESTful webservice call using AsyncHttpClient object
-        AsyncHttpClient client = new AsyncHttpClient();
-        PersistentCookieStore myCookieStore = mActivity.getCookieStore();
         // clear cookie to make the fresh cookie, to ensure the newest cookie is being send
-        myCookieStore.clear();
-        // set the new cookie
-        client.setCookieStore(myCookieStore);
-        client.get(String.format(Define.LOGIN_URL,email,pass,email), new AsyncHttpResponseHandler() {
+        mActivity.getCookieStore().clear();
+        AppClientRequest.get(mActivity,String.format(Define.LOGIN_URL, email, pass, email), new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 String response = new String(responseBody);
@@ -105,7 +101,7 @@ public class FrgLogin extends BaseFrg implements View.OnClickListener {
 
                     Utility.saveString(mActivity, "email", emailET.getText() + "");
                     Utility.saveString(mActivity, "pass", pwdET.getText() + "");
-                    Utility.saveBool(mActivity,"auto",cbAuto.isChecked());
+                    Utility.saveBool(mActivity, "auto", cbAuto.isChecked());
 
                     goHomeScreen();
 

@@ -25,6 +25,7 @@ import com.app.restfulapp.reports.FrgSLGDReport;
 import com.app.restfulapp.reports.FrgSLKHReport;
 import com.app.restfulapp.reports.FrgSLTTReport;
 import com.app.restfulapp.reports.FrgSLTVReport;
+import com.app.restfulapp.ultis.AppClientRequest;
 import com.app.restfulapp.ultis.Define;
 import com.app.restfulapp.ultis.Parser;
 import com.app.restfulapp.ultis.Utility;
@@ -151,9 +152,7 @@ public class FrgMain extends BaseFrg {
 
     private void getCustomer() {
         mActivity.showLoading(true);
-        AsyncHttpClient client = new AsyncHttpClient();
-        client.setCookieStore(mActivity.getCookieStore());
-        client.get(Define.GET_CUSTOMERS_URL, new JsonHttpResponseHandler() {
+        AppClientRequest.get(mActivity,Define.GET_CUSTOMERS_URL, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Log.d("minh", "GET_CUSTOMERS_URL: " + response);
@@ -166,19 +165,18 @@ public class FrgMain extends BaseFrg {
                 }
                 mActivity.showLoading(false);
             }
+
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 mActivity.showLoading(false);
-                Toast.makeText(mActivity,"status :"+statusCode+" error: "+errorResponse+"",Toast.LENGTH_SHORT).show();
+                Toast.makeText(mActivity, "status :" + statusCode + " error: " + errorResponse + "", Toast.LENGTH_SHORT).show();
             }
 
         });
     }
     private void getLabelFlags(final AdapMember adapter) {
         mActivity.showLoading(true);
-        AsyncHttpClient client = new AsyncHttpClient();
-        client.setCookieStore(mActivity.getCookieStore());
-        client.get(Define.GET_LABEL_FLAGS, new JsonHttpResponseHandler() {
+        AppClientRequest.get(mActivity,Define.GET_LABEL_FLAGS, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 mActivity.showLoading(false);
@@ -195,7 +193,7 @@ public class FrgMain extends BaseFrg {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 mActivity.showLoading(false);
-                Toast.makeText(mActivity,"status :"+statusCode+" error: "+errorResponse+"",Toast.LENGTH_SHORT).show();
+                Toast.makeText(mActivity, "status :" + statusCode + " error: " + errorResponse + "", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -333,9 +331,7 @@ public class FrgMain extends BaseFrg {
 
     private void updateP2() {
         mActivity.showLoading(true);
-        AsyncHttpClient client = new AsyncHttpClient();
-        client.setCookieStore(mActivity.getCookieStore());
-        client.get(String.format(Define.GET_P2, mP1.getCode()), new JsonHttpResponseHandler() {
+        AppClientRequest.get(mActivity,String.format(Define.GET_P2, mP1.getCode()), new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Log.d("minh", "GET_P2: " + response);
@@ -367,9 +363,7 @@ public class FrgMain extends BaseFrg {
 
     private void updateProduct() {
         mActivity.showLoading(true);
-        AsyncHttpClient client = new AsyncHttpClient();
-        client.setCookieStore(mActivity.getCookieStore());
-        client.get(String.format(Define.GET_PRODUCT, mP2.getCode()), new JsonHttpResponseHandler() {
+        AppClientRequest.get(mActivity,String.format(Define.GET_PRODUCT, mP2.getCode()), new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Log.d("minh", "GET_PRODUCT: " + response);
@@ -427,9 +421,7 @@ public class FrgMain extends BaseFrg {
                 mAdapKind.setData(Utility.genPeriodType());
                 //update P1
                 mActivity.showLoading(true);
-                AsyncHttpClient client = new AsyncHttpClient();
-                client.setCookieStore(mActivity.getCookieStore());
-                client.get(Define.GET_P1, new JsonHttpResponseHandler() {
+                AppClientRequest.get(mActivity,Define.GET_P1, new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                         Log.d("minh", "GET_P1: " + response);
@@ -468,9 +460,7 @@ public class FrgMain extends BaseFrg {
                 if (role != MainActivity.Role.SALE) {
                     visibleSpinner(true, spinnerMember);
                     mActivity.showLoading(true);
-                    AsyncHttpClient client = new AsyncHttpClient();
-                    client.setCookieStore(mActivity.getCookieStore());
-                    client.get(Define.SALEMAN_LIST_URL, new JsonHttpResponseHandler() {
+                    AppClientRequest.get(mActivity,Define.SALEMAN_LIST_URL, new JsonHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                             mActivity.showLoading(false);
@@ -483,10 +473,11 @@ public class FrgMain extends BaseFrg {
                                 Toast.makeText(mActivity, Parser.getError(response), Toast.LENGTH_SHORT).show();
                             }
                         }
+
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                             mActivity.showLoading(false);
-                            Toast.makeText(mActivity,"status :"+statusCode+" error: "+errorResponse+"",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mActivity, "status :" + statusCode + " error: " + errorResponse + "", Toast.LENGTH_SHORT).show();
                             mAdapMember.setData(null);
                             mAdapMember.notifyDataSetChanged();
                         }
@@ -514,9 +505,7 @@ public class FrgMain extends BaseFrg {
                 visibleSpinner(true, spinnerMember);
                 if (role != MainActivity.Role.CHIEF) {
                     mActivity.showLoading(true);
-                    AsyncHttpClient client = new AsyncHttpClient();
-                    client.setCookieStore(mActivity.getCookieStore());
-                    client.get(Define.CHIEF_LIST_URL, new JsonHttpResponseHandler() {
+                    AppClientRequest.get(mActivity,Define.CHIEF_LIST_URL, new JsonHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                             mActivity.showLoading(false);

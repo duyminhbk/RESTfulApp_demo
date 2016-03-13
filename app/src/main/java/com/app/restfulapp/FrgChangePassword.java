@@ -6,10 +6,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.restfulapp.ultis.AppClientRequest;
 import com.app.restfulapp.ultis.Define;
 import com.app.restfulapp.ultis.Parser;
 import com.app.restfulapp.ultis.Utility;
-import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONObject;
@@ -60,26 +60,25 @@ public class FrgChangePassword extends BaseFrg {
 
     private void doSubmit(String oldpass,String newpass) {
         mActivity.showLoading(true);
-        AsyncHttpClient client = new AsyncHttpClient();
-        client.setCookieStore(mActivity.getCookieStore());
-        client.get(String.format(Define.CHANGE_PASS,oldpass,newpass), new JsonHttpResponseHandler() {
+        AppClientRequest.get(mActivity,String.format(Define.CHANGE_PASS, oldpass, newpass), new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Log.d("minh", "GET_CUSTOMERS_URL: " + response);
 
                 if (Parser.isSuccess(response)) {
-                    Utility.saveString(mActivity, "pass",txNewPass.getText()+"");
-                    Toast.makeText(mActivity,"Update password sucessfully", Toast.LENGTH_SHORT).show();
+                    Utility.saveString(mActivity, "pass", txNewPass.getText() + "");
+                    Toast.makeText(mActivity, "Update password sucessfully", Toast.LENGTH_SHORT).show();
                 } else {
                     // show error
                     Toast.makeText(mActivity, Parser.getError(response), Toast.LENGTH_SHORT).show();
                 }
                 mActivity.showLoading(false);
             }
+
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 mActivity.showLoading(false);
-                Toast.makeText(mActivity,"status :"+statusCode+" error: "+errorResponse+"",Toast.LENGTH_SHORT).show();
+                Toast.makeText(mActivity, "status :" + statusCode + " error: " + errorResponse + "", Toast.LENGTH_SHORT).show();
             }
 
         });

@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
-import com.app.restfulapp.MainActivity;
 import com.app.restfulapp.models.Customer;
 import com.app.restfulapp.models.Member;
 import com.app.restfulapp.reports.FrgSLGDReport;
