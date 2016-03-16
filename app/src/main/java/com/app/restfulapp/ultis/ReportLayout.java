@@ -9,7 +9,6 @@ import android.graphics.Color;
 import android.os.Build;
 import android.text.Html;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.HorizontalScrollView;
@@ -43,7 +42,8 @@ import java.util.Iterator;
  */
 public class ReportLayout extends RelativeLayout {
 
-	private static final int WIDTH_DEFAULT = 250;
+	private int columnWidth = 250;
+	private final int WIDTH_DEFAULT = 250;
 	private static final int DEFAUL_PADDING = 4;
 	private static final int DEFAUL_BODY_PADDING = 4;
 	public final String TAG = "TableMainLayout.java";
@@ -83,7 +83,7 @@ public class ReportLayout extends RelativeLayout {
 
 	public ReportLayout(Context context, AttributeSet attrs, int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
-		getFixedColumn(attrs);
+		getAttrs(attrs);
 		this.context = context;
 
 		// initialize the main components (TableLayouts, HorizontalScrollView, ScrollView)
@@ -135,8 +135,8 @@ public class ReportLayout extends RelativeLayout {
 		int [] result = new int[mData.optJSONArray("index").length()];
 		int screenWidth =  Utility.getScreenSize((Activity) getContext()).x;
 		int widthBaseOnScreen = screenWidth/result.length;
-		int width = WIDTH_DEFAULT;
-		if(widthBaseOnScreen > WIDTH_DEFAULT){
+		int width = columnWidth;
+		if(widthBaseOnScreen > columnWidth){
 			width = widthBaseOnScreen;
 		}
 		result[0] = width*2/3;
@@ -556,12 +556,13 @@ public class ReportLayout extends RelativeLayout {
 		}
 	}
 
-	public void getFixedColumn(AttributeSet attrs) {
+	public void getAttrs(AttributeSet attrs) {
 		if (attrs != null) {
 			TypedArray attrsArray =
 					getContext().obtainStyledAttributes(attrs, R.styleable.reportLayout);
 
 			fixColumn = attrsArray.getInteger(R.styleable.reportLayout_fixedColumn, 1);
+			columnWidth = attrsArray.getDimensionPixelSize(R.styleable.reportLayout_widthColumn, WIDTH_DEFAULT);
 
 			attrsArray.recycle();
 		}

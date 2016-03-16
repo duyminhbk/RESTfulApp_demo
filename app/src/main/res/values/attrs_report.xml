@@ -2,5 +2,6 @@
 <resources>
     <declare-styleable name="reportLayout">
         <attr name="fixedColumn" format="integer" />
+        <attr name="widthColumn" format="dimension" />
     </declare-styleable>
 </resources>

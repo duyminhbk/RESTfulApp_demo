@@ -5,7 +5,7 @@ package com.app.restfulapp.ultis;
  */
 public final class Define {
     private static String SERVICE = "http://visitme.cloudapp.net:83";
-//    private static String SERVICE = "http://113.161.145.161:80";
+//    private static String SERVICE = "http://113.161.145.161";
     public static final String SUBMIT_DATA_URL = SERVICE+"/Home/GetSaleData?SaleNo=%s&Date=%s";
     public static final String SALEMAN_LIST_URL = SERVICE+"/Home/GetSalemanList";
     public static final String CHIEF_LIST_URL = SERVICE+"/Home/GetChiefList";
