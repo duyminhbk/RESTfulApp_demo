@@ -36,7 +36,7 @@
         android:layout_height="match_parent"
         android:paddingBottom="5dp"
         app:fixedColumn="4"
-        app:widthColumn="65dp">
+        app:widthColumn="40dp">
 
     </com.app.restfulapp.ultis.ReportLayout>
 </LinearLayout>
