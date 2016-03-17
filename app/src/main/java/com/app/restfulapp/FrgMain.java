@@ -415,7 +415,9 @@ public class FrgMain extends BaseFrg {
         switch (reportType) {
             // reuse spinner customer and member to define cust_type and label_flag
             case SLGD: {
-                visibleSpinner(true, spinnerCustomer, spinnerMember, spinnerKind,spinnerP1);
+                // visibleSpinner(true, spinnerCustomer, spinnerMember, spinnerKind, spinnerP1);
+                visibleSpinner(true, spinnerCustomer, spinnerKind, spinnerP1);
+                txDateTo.setVisibility(View.GONE);
                 mAdapCus.setData(Utility.genCustType());
                 getLabelFlags(mAdapMember);
                 mAdapKind.setData(Utility.genPeriodType());

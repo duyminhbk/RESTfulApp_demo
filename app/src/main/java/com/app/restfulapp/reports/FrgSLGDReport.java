@@ -22,7 +22,6 @@ import cz.msebera.android.httpclient.Header;
  */
 public class FrgSLGDReport extends FrgReport {
 
-
     private String[] args;
 
     @Override
