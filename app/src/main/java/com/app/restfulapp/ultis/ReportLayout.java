@@ -350,6 +350,7 @@ public class ReportLayout extends RelativeLayout {
 			textView.setTextColor(headerTextColor);
 			textView.setBackgroundColor(headerBg);
 			textView.setLayoutParams(params);
+			textView.setPadding(DEFAUL_PADDING, DEFAUL_PADDING, 2, DEFAUL_PADDING);
 			textView.setGravity(Gravity.RIGHT);
 			componentBTableRow.addView(textView);
 		}
