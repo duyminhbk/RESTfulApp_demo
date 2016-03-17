@@ -143,7 +143,7 @@ public class ReportLayout extends RelativeLayout {
 		result[0] = width*2/3;
 
 		// Width of fixed columns except first column (result[0])
-		int fixedColWidth = width;
+		int fixedColWidth = width+(width-result[0])/(result.length-1);
 		// Width other rightist cols
 		int rightColWidth = fixedColWidth + 40;
 
@@ -328,6 +328,7 @@ public class ReportLayout extends RelativeLayout {
 			TextView textView = this.headerTextView(index[i]);
 			textView.setBackgroundColor(headerBg);
 			textView.setTextColor(headerTextColor);
+			textView.setGravity(Gravity.RIGHT);
 			textView.setWidth(headerCellsWidth[i]);
 			componentATableRow.addView(textView,params);
 		}
@@ -350,7 +351,6 @@ public class ReportLayout extends RelativeLayout {
 			textView.setTextColor(headerTextColor);
 			textView.setBackgroundColor(headerBg);
 			textView.setLayoutParams(params);
-			textView.setPadding(DEFAUL_PADDING, DEFAUL_PADDING, 2, DEFAUL_PADDING);
 			textView.setGravity(Gravity.RIGHT);
 			componentBTableRow.addView(textView);
 		}
