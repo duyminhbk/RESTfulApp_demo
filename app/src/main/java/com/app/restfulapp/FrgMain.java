@@ -6,7 +6,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
@@ -29,7 +28,6 @@ import com.app.restfulapp.ultis.AppClientRequest;
 import com.app.restfulapp.ultis.Define;
 import com.app.restfulapp.ultis.Parser;
 import com.app.restfulapp.ultis.Utility;
-import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONObject;
@@ -48,8 +46,8 @@ public class FrgMain extends BaseFrg {
     private TextView txDateTo;
     private Button btnSubmit;
 
+    private DatePickerDialog fromDatePickerDialog;
     private DatePickerDialog toDatePickerDialog;
-    private DatePickerDialog toDatePickerDialog2;
 
     private ListView lvContent;
     private EditText etSal;
@@ -84,6 +82,8 @@ public class FrgMain extends BaseFrg {
     private Member mP2;
     private Member mP1;
     private View lnDate;
+    private boolean isShowingYearOnly =false;
+    private String fromDate;
 
     public FrgMain() {
         setArguments(new Bundle());
@@ -97,7 +97,7 @@ public class FrgMain extends BaseFrg {
         result[2] = mP1.getCode();
         result[3] = mP2.getCode();
         result[4] = mProduct.getCode();
-        result[5] = txDateFrom.getText() + "";
+        result[5] = fromDate;
         result[6] = mKind.getName();
         return result;
     }
@@ -412,6 +412,11 @@ public class FrgMain extends BaseFrg {
         mKind = null;
         visibleSpinner(false, spinnerCustomer, spinnerMember, spinnerKind, spinnerProduct, spinnerP1, spinnerP2);
         txDateTo.setVisibility(View.VISIBLE);
+        if(isShowingYearOnly){
+            Utility.showYearPicker(fromDatePickerDialog, false);
+            isShowingYearOnly = false;
+            txDateFrom.setText(fromDate);
+        }
         switch (reportType) {
             // reuse spinner customer and member to define cust_type and label_flag
             case SLGD: {
@@ -501,6 +506,11 @@ public class FrgMain extends BaseFrg {
                 mKind =(Member)mAdapKind.getItem(0);
                 break;
             case SLTV: {
+                if(!isShowingYearOnly) {
+                    Utility.showYearPicker(fromDatePickerDialog, true);
+                    isShowingYearOnly = true;
+                    txDateFrom.setText(Utility.getYear(fromDate));
+                }
                 txDateTo.setVisibility(View.GONE);
                 visibleSpinner(true, spinnerMember);
                 if (role != MainActivity.Role.CHIEF) {
@@ -576,13 +586,13 @@ public class FrgMain extends BaseFrg {
                         mActivity.addFragment(new FrgSLGDReport().setData(getGDArg()), true);
                         break;
                     case SLKH:
-                        mActivity.addFragment(new FrgSLKHReport().setData(mCustomer, mKind, txDateFrom.getText() + "", txDateTo.getText() + ""), true);
+                        mActivity.addFragment(new FrgSLKHReport().setData(mCustomer, mKind, fromDate, txDateTo.getText() + ""), true);
                         break;
                     case SLTT:
-                        mActivity.addFragment(new FrgSLTTReport().setData(mMember, mKind, txDateFrom.getText() + "", txDateTo.getText() + ""), true);
+                        mActivity.addFragment(new FrgSLTTReport().setData(mMember, mKind, fromDate, txDateTo.getText() + ""), true);
                         break;
                     case SLTV:
-                        mActivity.addFragment(new FrgSLTVReport().setData(mCustomer, mMember, mKind, txDateFrom.getText() + "", txDateTo.getText() + ""), true);
+                        mActivity.addFragment(new FrgSLTVReport().setData(mCustomer, mMember, mKind, fromDate, txDateTo.getText() + ""), true);
                         break;
                 }
             }
@@ -593,12 +603,17 @@ public class FrgMain extends BaseFrg {
         //init date picker
         Calendar newCalendar = Calendar.getInstance();
 
-        toDatePickerDialog = new DatePickerDialog(mActivity, new DatePickerDialog.OnDateSetListener() {
+        fromDatePickerDialog = new DatePickerDialog(mActivity, new DatePickerDialog.OnDateSetListener() {
 
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 Calendar newDate = Calendar.getInstance();
                 newDate.set(year, monthOfYear, dayOfMonth);
-                txDateFrom.setText(Utility.convertDate(newDate.getTime()));
+                fromDate = Utility.convertDate(newDate.getTime());
+                if(isShowingYearOnly){
+                    txDateFrom.setText(year+"");
+                }else {
+                    txDateFrom.setText(Utility.convertDate(newDate.getTime()));
+                }
             }
 
         }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
@@ -609,13 +624,13 @@ public class FrgMain extends BaseFrg {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    toDatePickerDialog.show();
+                    fromDatePickerDialog.show();
                 }
                 return false;
             }
         });
 
-        toDatePickerDialog2 = new DatePickerDialog(mActivity, new DatePickerDialog.OnDateSetListener() {
+        toDatePickerDialog = new DatePickerDialog(mActivity, new DatePickerDialog.OnDateSetListener() {
 
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 Calendar newDate = Calendar.getInstance();
@@ -631,7 +646,7 @@ public class FrgMain extends BaseFrg {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    toDatePickerDialog2.show();
+                    toDatePickerDialog.show();
                 }
                 return false;
             }
@@ -655,7 +670,7 @@ public class FrgMain extends BaseFrg {
     @Override
     public void onPause() {
         super.onPause();
-        getArguments().putString("from", txDateFrom.getText() + "");
+        getArguments().putString("from", fromDate);
         getArguments().putString("to", txDateTo.getText() + "");
     }
 
@@ -668,7 +683,8 @@ public class FrgMain extends BaseFrg {
            txDateFrom.setText(getArguments().getString("from"));
            txDateTo.setText(getArguments().getString("to"));
         }else{
-            txDateFrom.setText(Utility.convertDate(new Date()));
+            fromDate = Utility.convertDate(new Date());
+            txDateFrom.setText(fromDate);
             txDateTo.setText(Utility.convertDate(new Date()));
         }
     }

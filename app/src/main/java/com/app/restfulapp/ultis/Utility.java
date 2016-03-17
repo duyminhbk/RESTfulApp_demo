@@ -1,21 +1,26 @@
 package com.app.restfulapp.ultis;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.DatePicker;
 
 import com.app.restfulapp.models.Customer;
 import com.app.restfulapp.models.Member;
 import com.app.restfulapp.reports.FrgSLGDReport;
 
+import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -96,6 +101,9 @@ public class Utility {
 
     public static String convertSimpleDate(String fulldate){
         return fulldate.substring(0, fulldate.indexOf('T') > 0 ? fulldate.indexOf('T') : fulldate.length());
+    }
+    public static String getYear(String fulldate){
+        return fulldate.substring(0, fulldate.indexOf('-') > 0 ? fulldate.indexOf('-') : fulldate.length());
     }
 
     public static ArrayList<Customer> genCustType(){
@@ -203,6 +211,58 @@ public class Utility {
             return rand+"";
         } else {
             return deviceIdStr;
+        }
+    }
+    public static void showYearPicker(DatePickerDialog datepicker,boolean flag){
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB){
+            findAndHideField(datepicker, "mDayPicker",flag);
+            findAndHideField(datepicker, "mMonthPicker",flag);
+        }else if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
+            findAndHideField(datepicker, "mDaySpinner",flag);
+            findAndHideField(datepicker, "mMonthSpinner",flag);
+        }else{
+            final Object mDatePickerDelegate = findFieldInstance((DatePicker) findField(datepicker, "mDatePicker"), "mDelegate");
+//            findAndHideField(mDatePickerDelegate, "mDaySpinner",flag);
+            findAndHideField(mDatePickerDelegate, "mHeaderMonthDay",flag);
+            findAndHideField(mDatePickerDelegate, "mYearPickerView",!flag);
+            findField(mDatePickerDelegate, "mYearPickerView").setBackgroundColor(Color.parseColor(flag?"#ffffff":"#00ffffff"));
+        }
+
+    }
+
+    /** find a member field by given name and hide it */
+    private static void findAndHideField(Object object, String name,boolean flag) {
+        try {
+            final Field field = object.getClass().getDeclaredField(name);
+            field.setAccessible(true);
+            final View fieldInstance = (View) field.get(object);
+            fieldInstance.setVisibility(flag?View.GONE:View.VISIBLE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    /** find a member field by given name and hide it */
+    private static View findField(Object object, String name) {
+        try {
+            final Field field = object.getClass().getDeclaredField(name);
+            field.setAccessible(true);
+            final View fieldInstance = (View) field.get(object);
+            return fieldInstance;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /** find a member field by given name and return its instance value */
+    private static Object findFieldInstance(DatePicker datepicker, String name) {
+        try {
+            final Field field = DatePicker.class.getDeclaredField(name);
+            field.setAccessible(true);
+            return field.get(datepicker);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
