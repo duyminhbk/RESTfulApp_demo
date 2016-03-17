@@ -135,14 +135,25 @@ public class ReportLayout extends RelativeLayout {
 		int [] result = new int[mData.optJSONArray("index").length()];
 		int screenWidth =  Utility.getScreenSize((Activity) getContext()).x;
 		int widthBaseOnScreen = screenWidth/result.length;
+		// columnWidth is actually preferred fixed cols width
 		int width = columnWidth;
 		if(widthBaseOnScreen > columnWidth){
 			width = widthBaseOnScreen;
 		}
 		result[0] = width*2/3;
-		int widthOtherCol = width+(width-result[0])/(result.length-1);
-		for(int i =1;i<result.length;i++){
-			result[i] = widthOtherCol;
+
+		// Width of fixed columns except first column (result[0])
+		int fixedColWidth = width;
+		// Width other rightist cols
+		int rightColWidth = fixedColWidth + 40;
+
+		// int widthOtherCol = width+(width-result[0])/(result.length-1);
+		for(int i = 1; i<result.length; i++){
+			// result[i] = widthOtherCol;
+			if(i < fixColumn)
+				result[i] = fixedColWidth;
+			else
+				result[i] = rightColWidth;
 		}
 		return result;
 	}
@@ -339,6 +350,7 @@ public class ReportLayout extends RelativeLayout {
 			textView.setTextColor(headerTextColor);
 			textView.setBackgroundColor(headerBg);
 			textView.setLayoutParams(params);
+			textView.setGravity(Gravity.RIGHT);
 			componentBTableRow.addView(textView);
 		}
 		this.tableB.addView(componentBTableRow);
