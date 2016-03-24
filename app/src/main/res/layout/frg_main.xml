@@ -12,7 +12,14 @@
         android:orientation="vertical"
         android:padding="20dip"
         android:weightSum="1">
-
+        <TextView
+            android:id="@+id/txtSaleName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:text="SaleName"
+            android:textSize="15sp"
+            android:visibility="gone"/>
         <Spinner
             android:id="@+id/sp_report"
             android:layout_width="match_parent"
@@ -86,17 +93,6 @@
                 android:layout_weight="1"
                 android:hint="To Date" />
         </LinearLayout>
-
-
-        <TextView
-            android:id="@+id/txtSaleName"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:gravity="left"
-            android:text="SaleName"
-            android:textSize="15sp"
-            android:visibility="gone" />
 
         <ListView
             android:id="@+id/lv_content"
