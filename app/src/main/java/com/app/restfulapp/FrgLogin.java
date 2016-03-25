@@ -82,7 +82,7 @@ public class FrgLogin extends BaseFrg implements View.OnClickListener {
         mActivity.showLoading(true);
         // clear cookie to make the fresh cookie, to ensure the newest cookie is being send
         mActivity.getCookieStore().clear();
-        AppClientRequest.get(mActivity,String.format(Define.LOGIN_URL, email, pass, email), new AsyncHttpResponseHandler() {
+        AppClientRequest.get(mActivity,String.format(Define.LOGIN_URL, email, pass, Utility.getDeviceId(mActivity)), new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 String response = new String(responseBody);
