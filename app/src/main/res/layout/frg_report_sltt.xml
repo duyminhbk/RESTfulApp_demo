@@ -15,8 +15,7 @@
         style="@style/TitleStyle"
         android:id="@+id/txdate"
         android:gravity="center"
-        android:textSize="20sp"
-        android:visibility="gone" />
+        android:textSize="20sp" />
     <TextView style="@style/TitleStyle"
         android:id="@+id/tx_kind"
         android:layout_gravity="left"

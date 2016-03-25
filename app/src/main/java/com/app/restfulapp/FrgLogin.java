@@ -67,7 +67,7 @@ public class FrgLogin extends BaseFrg implements View.OnClickListener {
                         .show();
             }
         });
-
+        mActivity.getSupportActionBar().setTitle(R.string.app_name);
         cbAuto = (CheckBox)findViewById(R.id.cb_auto);
     }
 
@@ -98,7 +98,6 @@ public class FrgLogin extends BaseFrg implements View.OnClickListener {
                     Utility.saveString(mActivity, "saleNo", emailET.getText().toString());
                     Utility.saveString(mActivity, "saleName", saleName);
                     mActivity.setRole(obj.optString("role"));
-
                     Utility.saveString(mActivity, "email", emailET.getText() + "");
                     Utility.saveString(mActivity, "pass", pwdET.getText() + "");
                     Utility.saveBool(mActivity, "auto", cbAuto.isChecked());

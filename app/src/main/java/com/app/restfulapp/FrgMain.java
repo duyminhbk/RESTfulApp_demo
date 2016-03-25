@@ -138,6 +138,7 @@ public class FrgMain extends BaseFrg {
         txtSaleName.setText(Utility.getString(mActivity, "saleName"));
 
         btnSubmit = (Button) rootView.findViewById(R.id.btnSubmit);
+        mActivity.getSupportActionBar().setTitle(Utility.getString(mActivity, "saleName"));
 //        etSal = (EditText) rootView.findViewById(R.id.ed_sal);
 //        txtTotal = (TextView) rootView.findViewById(R.id.txtTotal);
 //        lvContent = (ListView) rootView.findViewById(R.id.lv_content);
@@ -575,7 +576,7 @@ public class FrgMain extends BaseFrg {
                     Toast.makeText(mActivity, "Date field not empty", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (!Utility.isGreater(txDateTo.getText() + "", txDateFrom.getText() + "")) {
+                if (!Utility.isGreater(txDateTo.getText() + "", txDateFrom.getText() + "") && (reportType != Reports.SLGD && reportType!= Reports.SLTV)) {
                     Toast.makeText(mActivity, "To date should greater than From date", Toast.LENGTH_SHORT).show();
                     return;
                 }

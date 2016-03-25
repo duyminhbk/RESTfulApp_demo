@@ -11,4 +11,5 @@
         android:title="Logout"
         android:orderInCategory="100"
         yourapp:showAsAction="always" />
+
 </menu>
