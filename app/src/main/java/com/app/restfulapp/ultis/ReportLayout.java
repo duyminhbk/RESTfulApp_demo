@@ -19,6 +19,10 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.app.restfulapp.R;
+import com.app.restfulapp.reports.FrgSLGDReport;
+import com.app.restfulapp.reports.FrgSLKHReport;
+import com.app.restfulapp.reports.FrgSLTTReport;
+import com.app.restfulapp.reports.FrgSLTVReport;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -42,14 +46,20 @@ import java.util.Iterator;
  */
 public class ReportLayout extends RelativeLayout {
 
+	public String reportType = null;
+
 	private int columnWidth = 250;
 	private final int WIDTH_DEFAULT = 250;
 	private static final int DEFAUL_PADDING = 4;
 	private static final int DEFAUL_BODY_PADDING = 4;
 	public final String TAG = "TableMainLayout.java";
 
-	private int fixColumn =1;
+	private final String RptTypeCustomer = FrgSLKHReport.class.getSimpleName();
+	private final String RptTypeSaleman = FrgSLTTReport.class.getSimpleName();
+	private final String RptTypeChief = FrgSLTVReport.class.getSimpleName();
+	private final String RptTypeDirector = FrgSLGDReport.class.getSimpleName();
 
+	private int fixColumn = 1;
 
 	TableLayout tableA;
 	TableLayout tableB;
@@ -63,7 +73,6 @@ public class ReportLayout extends RelativeLayout {
 
 	Context context;
 
-
 	int headerCellsWidth[] ;
 	private String[] index;
 	private Object[] tableData;
@@ -72,6 +81,9 @@ public class ReportLayout extends RelativeLayout {
 	private int headerTextColor = Color.parseColor("#FFFFFF");
 	private int firstColBg = Color.parseColor("#BDD7EE");
 	private int firstColTextColor = Color.parseColor("#000000");
+	// L1 = P1, L2 = P2
+	private int SumL2Bg = Color.parseColor("#DDDD00");
+	private int SumL1Bg = Color.parseColor("#FFFF00");
 	private int lastRowBg = Color.parseColor("#af5B9BD5");
 	private int lastRowTextColor = Color.parseColor("#FFFFFF");
 	private int bodyBg = Color.parseColor("#afBDD7EE");
@@ -404,6 +416,38 @@ public class ReportLayout extends RelativeLayout {
 
 		TableRow taleRowForTableD = new TableRow(this.context);
 		TableRow.LayoutParams params;
+
+		int rowBg = bodyBg;
+		int rowTextColor = bodyTextColor;
+
+		// Normal lines
+		if(reportType.equals(RptTypeCustomer)) {
+			if("Total of P2".equals(data[0])) {
+				rowBg = SumL2Bg;
+			}
+			else if("Total of P1".equals(data[0])) {
+				rowBg = SumL1Bg;
+			}
+		}
+		else if(reportType.equals(RptTypeSaleman)) {
+			if(data[1] != null && data[1].endsWith(" Total")) {
+				rowBg = SumL2Bg;
+			}
+			else if(data[0] != null && data[0].endsWith(" Total")) {
+				rowBg = SumL1Bg;
+			}
+		}
+		else if(reportType.equals(RptTypeChief)) {
+			if("Total".equals(data[1])) {
+				rowBg = SumL1Bg;
+			}
+		}
+		else if(reportType.equals(RptTypeDirector)) {
+			if(data[0] != null && !data[0].equals("")) {
+				rowBg = SumL1Bg;
+			}
+		}
+
 		for(int x=fixColumn ; x<index.length; x++){
 			if(headerCellsWidth == null){
 				params = new TableRow.LayoutParams(400, LayoutParams.MATCH_PARENT);
@@ -412,15 +456,17 @@ public class ReportLayout extends RelativeLayout {
 			}
 			params.setMargins(2, 2, 0, 0);
 			TextView textViewB = this.bodyTextView(data[x]);
+
 			if(isLast){
 				textViewB.setTextColor(lastRowTextColor);
 				textViewB.setBackgroundColor(lastRowBg);
 				textViewB.setText(Html.fromHtml("<b>" + data[x] + "</b>"));
 			} else {
-				textViewB.setTextColor(bodyTextColor);
-				textViewB.setBackgroundColor(bodyBg);
+				//textViewB.setTextColor(bodyTextColor);
+				//textViewB.setBackgroundColor(bodyBg);
+				textViewB.setTextColor(rowTextColor);
+				textViewB.setBackgroundColor(rowBg);
 			}
-			textViewB.setTextColor(bodyTextColor);
 			textViewB.setPadding(DEFAUL_PADDING, DEFAUL_PADDING, 2, DEFAUL_PADDING);
 			textViewB.setGravity(Gravity.RIGHT);
 			taleRowForTableD.addView(textViewB,params);

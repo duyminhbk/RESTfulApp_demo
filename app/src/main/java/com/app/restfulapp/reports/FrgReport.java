@@ -24,6 +24,7 @@ public abstract class FrgReport extends BaseFrg {
     @Override
     protected void initView() {
         reportLayout = (ReportLayout)findViewById(R.id.rp_sample);
+        reportLayout.reportType = this.getClass().getSimpleName();
         requestData();
     }
 
