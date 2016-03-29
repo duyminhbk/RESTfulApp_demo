@@ -686,7 +686,9 @@ public class FrgMain extends BaseFrg {
            txDateFrom.setText(getArguments().getString("from"));
            txDateTo.setText(getArguments().getString("to"));
         }else{
-            fromDate = Utility.convertDate(new Date());
+            Date date = new Date();
+            date.setDate(1);
+            fromDate = Utility.convertDate(date);
             txDateFrom.setText(fromDate);
             txDateTo.setText(Utility.convertDate(new Date()));
         }
