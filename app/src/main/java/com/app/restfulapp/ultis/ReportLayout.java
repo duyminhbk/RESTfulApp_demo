@@ -82,7 +82,7 @@ public class ReportLayout extends RelativeLayout {
 	private int firstColBg = Color.parseColor("#BDD7EE");
 	private int firstColTextColor = Color.parseColor("#000000");
 	// L1 = P1, L2 = P2
-	private int SumL2Bg = Color.parseColor("#DDDD00");
+	private int SumL2Bg = Color.parseColor("#0000DD");
 	private int SumL1Bg = Color.parseColor("#FFFF00");
 	private int lastRowBg = Color.parseColor("#af5B9BD5");
 	private int lastRowTextColor = Color.parseColor("#FFFFFF");
