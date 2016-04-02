@@ -17,6 +17,7 @@ import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.graphics.Typeface;
 
 import com.app.restfulapp.R;
 import com.app.restfulapp.reports.FrgSLGDReport;
@@ -83,6 +84,7 @@ public class ReportLayout extends RelativeLayout {
 	private int firstColTextColor = Color.parseColor("#000000");
 	// L1 = P1, L2 = P2
 	private int SumL2Bg = Color.parseColor("#0000DD");
+	private int SumL2Text = Color.parseColor("#0000DD");
 	private int SumL1Bg = Color.parseColor("#FFFF00");
 	private int lastRowBg = Color.parseColor("#af5B9BD5");
 	private int lastRowTextColor = Color.parseColor("#FFFFFF");
@@ -344,7 +346,7 @@ public class ReportLayout extends RelativeLayout {
 			TextView textView = this.headerTextView(index[i]);
 			textView.setBackgroundColor(headerBg);
 			textView.setTextColor(headerTextColor);
-			textView.setGravity(Gravity.RIGHT);
+			textView.setGravity(Gravity.CENTER);
 			textView.setWidth(headerCellsWidth[i]);
 			componentATableRow.addView(textView,params);
 		}
@@ -365,6 +367,7 @@ public class ReportLayout extends RelativeLayout {
 			params.setMargins(2, 0, 0, 0);
 			TextView textView = this.headerTextView(this.index[x]);
 			textView.setTextColor(headerTextColor);
+			textView.setGravity(Gravity.CENTER);
 			textView.setBackgroundColor(headerBg);
 			textView.setLayoutParams(params);
 			componentBTableRow.addView(textView);
@@ -377,13 +380,13 @@ public class ReportLayout extends RelativeLayout {
 		for(int i=0;i<tableData.length;i++){
 			Object object = tableData[i];
 			TableRow tableRowForTableC;
-			TableRow taleRowForTableD;
+			TableRow tableRowForTableD;
 
-			tableRowForTableC = this.tableRowForTableC((String[]) object,i == tableData.length-1);
-			taleRowForTableD = this.taleRowForTableD((String[]) object,i == tableData.length-1);
+			tableRowForTableC = this.tableRowForTableC((String[]) object, i == tableData.length - 1);
+			tableRowForTableD = this.tableRowForTableD((String[]) object, i == tableData.length - 1);
 
 			this.tableC.addView(tableRowForTableC);
-			this.tableD.addView(taleRowForTableD);
+			this.tableD.addView(tableRowForTableD);
 
 		}
 	}
@@ -412,18 +415,20 @@ public class ReportLayout extends RelativeLayout {
 		return tableRowForTableC;
 	}
 
-	TableRow taleRowForTableD(String[] data, boolean isLast){
+	TableRow tableRowForTableD(String[] data, boolean isLast){
 
 		TableRow taleRowForTableD = new TableRow(this.context);
 		TableRow.LayoutParams params;
 
 		int rowBg = bodyBg;
 		int rowTextColor = bodyTextColor;
+		boolean L2 = false;
 
 		// Normal lines
 		if(reportType.equals(RptTypeCustomer)) {
 			if("Total of P2".equals(data[0])) {
 				rowBg = SumL2Bg;
+				L2 = true;
 			}
 			else if("Total of P1".equals(data[0])) {
 				rowBg = SumL1Bg;
@@ -432,6 +437,7 @@ public class ReportLayout extends RelativeLayout {
 		else if(reportType.equals(RptTypeSaleman)) {
 			if(data[1] != null && data[1].endsWith(" Total")) {
 				rowBg = SumL2Bg;
+				L2 = true;
 			}
 			else if(data[0] != null && data[0].endsWith(" Total")) {
 				rowBg = SumL1Bg;
@@ -466,6 +472,9 @@ public class ReportLayout extends RelativeLayout {
 				//textViewB.setBackgroundColor(bodyBg);
 				textViewB.setTextColor(rowTextColor);
 				textViewB.setBackgroundColor(rowBg);
+				if(L2) {
+					textViewB.setTypeface(null, Typeface.BOLD);
+				}
 			}
 			textViewB.setPadding(DEFAUL_PADDING, DEFAUL_PADDING, 2, DEFAUL_PADDING);
 			textViewB.setGravity(Gravity.RIGHT);
