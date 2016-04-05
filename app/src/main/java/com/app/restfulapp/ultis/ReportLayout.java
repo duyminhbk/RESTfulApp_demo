@@ -47,7 +47,7 @@ import java.util.Iterator;
  */
 public class ReportLayout extends RelativeLayout {
 
-	public String reportType = null;
+	public String reportType = "";
 
 	private int columnWidth = 250;
 	private final int WIDTH_DEFAULT = 250;
@@ -85,11 +85,13 @@ public class ReportLayout extends RelativeLayout {
 	// L1 = P1, L2 = P2
 	private int SumL2Bg = Color.parseColor("#0000DD");
 	private int SumL2Text = Color.parseColor("#0000DD");
-	private int SumL1Bg = Color.parseColor("#FFFF00");
+	private int SumL1Bg = firstColBg; // Color.parseColor("#FFFF00");
 	private int lastRowBg = Color.parseColor("#af5B9BD5");
 	private int lastRowTextColor = Color.parseColor("#FFFFFF");
 	private int bodyBg = Color.parseColor("#afBDD7EE");
 	private int bodyTextColor= Color.parseColor("#000000");
+
+	private float[] CustomerReportColumnPercents = new float[]{0.29f, 0.11f, 0.10f, 0.14f, 0.35f};
 
 	public ReportLayout(Context context, AttributeSet attrs) {
 		this(context,attrs,0);
@@ -124,6 +126,7 @@ public class ReportLayout extends RelativeLayout {
 	public ReportLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
 		this(context, attrs, defStyleAttr);
 	}
+
 	public ReportLayout(Context context) {
 		super(context, null, 0);
 	}
@@ -145,12 +148,34 @@ public class ReportLayout extends RelativeLayout {
 		if( mData.isNull("index") ||mData.optJSONArray("index") == null ){
 			throw new DataFormatException("bad format data");
 		}
-		if(mData.optJSONArray("index").length() ==0) return null;
+
+		if(mData.optJSONArray("index").length() == 0) return null;
 		int [] result = new int[mData.optJSONArray("index").length()];
 		int screenWidth =  Utility.getScreenSize((Activity) getContext()).x;
 		int widthBaseOnScreen = screenWidth/result.length;
 		// columnWidth is actually preferred fixed cols width
 		int width = columnWidth;
+
+		// Special code for Customer Report
+		if(reportType.equals(RptTypeCustomer)) {
+
+			if(result.length < CustomerReportColumnPercents.length)
+				return result;
+
+			int total = 0;
+			for(int i=0; i<CustomerReportColumnPercents.length; i++) {
+				if(i<CustomerReportColumnPercents.length - 1) {
+					result[i] = (int)(screenWidth * CustomerReportColumnPercents[i]);
+					total += result[i];
+				}
+				else {
+					result[i] = screenWidth - total;
+				}
+			}
+
+			return result;
+		}
+
 		if(widthBaseOnScreen > columnWidth){
 			width = widthBaseOnScreen;
 		}
@@ -225,7 +250,7 @@ public class ReportLayout extends RelativeLayout {
 		if(indexTemp.length() == 0 || indexTemp.toString() == "[]"){
 			throw new DataFormatException("index must not empty");
 		}
-		if(headerCellsWidth ==null) {
+		if(headerCellsWidth == null) {
 			headerCellsWidth = getHeaderWidth();
 		}
 		for(int i = 0; i<indexTemp.length();i++){
@@ -333,13 +358,11 @@ public class ReportLayout extends RelativeLayout {
 		this.addView(this.horizontalScrollViewB, componentB_Params);
 		this.addView(this.scrollViewC, componentC_Params);
 		this.addView(this.scrollViewD, componentD_Params);
-
 	}
-
-
 
 	private void addDataToTableA(){
 		TableRow componentATableRow = new TableRow(this.context);
+
 		for(int i=0;i<fixColumn;i++){
 			TableRow.LayoutParams params = new TableRow.LayoutParams(headerCellsWidth[i], LayoutParams.MATCH_PARENT);
 			params.setMargins(2, 0, 0, 0);
@@ -347,7 +370,13 @@ public class ReportLayout extends RelativeLayout {
 			textView.setBackgroundColor(headerBg);
 			textView.setTextColor(headerTextColor);
 			textView.setGravity(Gravity.CENTER);
-			textView.setWidth(headerCellsWidth[i]);
+
+			//if(reportType.equals(RptTypeCustomer)) {
+			//	textView.setWidth(CustomerReportColumns[i]);
+			//}
+			//else {
+				textView.setWidth(headerCellsWidth[i]);
+			//}
 			componentATableRow.addView(textView,params);
 		}
 
@@ -370,6 +399,9 @@ public class ReportLayout extends RelativeLayout {
 			textView.setGravity(Gravity.CENTER);
 			textView.setBackgroundColor(headerBg);
 			textView.setLayoutParams(params);
+			//if(reportType.equals(RptTypeCustomer)) {
+			//	textView.setWidth(CustomerReportColumns[x]);
+			//}
 			componentBTableRow.addView(textView);
 		}
 		this.tableB.addView(componentBTableRow);
@@ -427,7 +459,7 @@ public class ReportLayout extends RelativeLayout {
 		// Normal lines
 		if(reportType.equals(RptTypeCustomer)) {
 			if("Total of P2".equals(data[0])) {
-				rowBg = SumL2Bg;
+				// rowBg = SumL2Bg;
 				L2 = true;
 			}
 			else if("Total of P1".equals(data[0])) {
@@ -436,7 +468,7 @@ public class ReportLayout extends RelativeLayout {
 		}
 		else if(reportType.equals(RptTypeSaleman)) {
 			if(data[1] != null && data[1].endsWith(" Total")) {
-				rowBg = SumL2Bg;
+				// rowBg = SumL2Bg;
 				L2 = true;
 			}
 			else if(data[0] != null && data[0].endsWith(" Total")) {
@@ -687,6 +719,4 @@ public class ReportLayout extends RelativeLayout {
 			super(s);
 		}
 	}
-
-	
 }
