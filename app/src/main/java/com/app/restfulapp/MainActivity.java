@@ -54,7 +54,9 @@ public class MainActivity extends AppCompatActivity {
         // Set Cancelable as False
         prgDialog.setCancelable(false);
         cookieStore = new PersistentCookieStore(this);
-        Boolean isAutoLogin = Utility.getBoolean(this, "auto");
+        // Boolean isAutoLogin = Utility.getBoolean(this, "auto");
+        Boolean isAutoLogin = false;
+
         if(!isAutoLogin) {
             addFragment(new FrgLogin(), false);
         }else{
