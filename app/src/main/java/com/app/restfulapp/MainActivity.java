@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     public enum Role {UNKNOW,DIR,CHIEF,LEAD,SALE};
 
     private Role role;
+    private FrgMain frgMain;
 
     public void setRole(String txRole){
         if(TextUtils.isEmpty(txRole)) role = Role.UNKNOW;
@@ -91,7 +92,8 @@ public class MainActivity extends AppCompatActivity {
                     Utility.saveString(MainActivity.this, "saleName", saleName);
                     setRole(obj.optString("role"));
                     // jump to home screen
-                    addFragment(new FrgMain(), false);
+                    frgMain = new FrgMain();
+                    addFragment(frgMain, false);
 
                 } catch (JSONException e) {
                     // TODO Auto-generated catch block

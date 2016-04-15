@@ -35,6 +35,26 @@ public class FrgSLKHReport extends FrgReport {
         txDate.setText(fromDate+" - "+ toDate);
         if(kind ==null) return;
         ((TextView) findViewById(R.id.tx_kind)).setText(kind.getName());
+
+        mActivity.getSupportActionBar().setTitle(customer.getCustNo() + ": " + getInitials(customer.getCustName()));
+    }
+
+    protected String getInitials(String userName) {
+        String[] parts = userName.split(" ");
+        String result = "";
+        for(int i=0; i<parts.length; i++) {
+            String part = parts[i];
+            if(i < parts.length - 1) {
+                if(part.length() > 0) {
+                    result += part.substring(0, 1) + ".";
+                }
+            }
+            else {
+                result += part;
+            }
+        }
+
+        return result;
     }
 
     @Override

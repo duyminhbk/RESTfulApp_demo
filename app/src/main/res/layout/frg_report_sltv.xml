@@ -46,7 +46,7 @@
         android:id="@+id/rp_sample"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-		app:fixedColumn="4"
+		app:fixedColumn="2"
         app:widthColumn="80dp">
 
     </com.app.restfulapp.ultis.ReportLayout>
