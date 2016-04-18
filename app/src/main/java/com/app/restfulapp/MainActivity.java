@@ -1,7 +1,6 @@
 package com.app.restfulapp;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -15,7 +14,6 @@ import android.widget.Toast;
 import com.app.restfulapp.ultis.AppClientRequest;
 import com.app.restfulapp.ultis.Define;
 import com.app.restfulapp.ultis.Utility;
-import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.PersistentCookieStore;
 
@@ -29,12 +27,12 @@ public class MainActivity extends AppCompatActivity {
     private ProgressDialog prgDialog;
     private PersistentCookieStore cookieStore;
 
-    public enum Role {UNKNOW,DIR,CHIEF,LEAD,SALE};
+    public enum Role {GEN, DIR, CHIEF, LEAD, SALE};
 
     private Role role;
 
     public void setRole(String txRole){
-        if(TextUtils.isEmpty(txRole)) role = Role.UNKNOW;
+        if(TextUtils.isEmpty(txRole)) role = Role.SALE;
         role = Role.values()[Integer.parseInt(txRole)];
     }
 

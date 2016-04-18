@@ -71,7 +71,11 @@ public class FrgSLKHReport extends FrgReport {
                     @Override
                     public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                         mActivity.showLoading(false);
-                        Toast.makeText(mActivity, "status :" + statusCode + " error: " + responseString + "", Toast.LENGTH_SHORT).show();
+
+                        if(statusCode == 401 || statusCode == 404)
+                            Toast.makeText(mActivity, "Session timeout. Please re-login and try again.", Toast.LENGTH_SHORT).show();
+                        else
+                            Toast.makeText(mActivity, "status :" + statusCode + " error: " + responseString + "", Toast.LENGTH_SHORT).show();
                     }
                 }
         );
