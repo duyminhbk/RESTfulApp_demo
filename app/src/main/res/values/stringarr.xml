@@ -31,7 +31,7 @@
         <item>@string/sltt_title</item>
     </array>
     <array name="report_type_default">
-        <item>Limit Role can\'t see any report</item>
+        <item>Limited role - Can\'t see any report</item>
     </array>
 
 </resources>

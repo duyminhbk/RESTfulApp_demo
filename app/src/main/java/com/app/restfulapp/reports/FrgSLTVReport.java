@@ -13,8 +13,10 @@ import com.app.restfulapp.ultis.Parser;
 import com.app.restfulapp.ultis.ReportLayout;
 import com.app.restfulapp.ultis.Define;
 import com.app.restfulapp.ultis.Utility;
+import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import cz.msebera.android.httpclient.Header;
