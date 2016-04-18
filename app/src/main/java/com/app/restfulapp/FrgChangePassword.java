@@ -70,7 +70,10 @@ public class FrgChangePassword extends BaseFrg {
                     Toast.makeText(mActivity, "Update password sucessfully", Toast.LENGTH_SHORT).show();
                 } else {
                     // show error
-                    Toast.makeText(mActivity, Parser.getError(response), Toast.LENGTH_SHORT).show();
+                    if(statusCode == 401 || statusCode == 404)
+                        Toast.makeText(mActivity, "Session timeout. Please re-login and try again.", Toast.LENGTH_SHORT).show();
+                    else
+                        Toast.makeText(mActivity, Parser.getError(response), Toast.LENGTH_SHORT).show();
                 }
                 mActivity.showLoading(false);
             }

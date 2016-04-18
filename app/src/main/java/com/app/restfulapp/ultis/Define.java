@@ -4,13 +4,14 @@ package com.app.restfulapp.ultis;
  * Created by minhpham on 1/20/16.
  */
 public final class Define {
-//    private static String SERVICE = "http://192.168.1.103:83";
+    private static String SERVICE = "http://192.168.1.103:83";
     //private static String SERVICE = "http://visitme.cloudapp.net:83";
-    private static String SERVICE = "http://antvn.vn";
+    //private static String SERVICE = "http://antvn.vn";
 
     public static final String SUBMIT_DATA_URL = SERVICE+"/Home/GetSaleData?SaleNo=%s&Date=%s";
     public static final String SALEMAN_LIST_URL = SERVICE+"/Home/GetSalemanList";
     public static final String CHIEF_LIST_URL = SERVICE+"/Home/GetChiefList";
+    public static final String DIR_LIST_URL = SERVICE+"/Home/GetDirList";
     public static final String GET_CUSTOMERS_URL = SERVICE+"/Home/GetCustomerList";
     public static final String LOGIN_URL = SERVICE+"/Home/Login?Email=%s&Password=%s&Imei=%s";
     public static final String GET_LABEL_FLAGS = SERVICE+"/Home/GetLabelFlags";
@@ -44,4 +45,6 @@ public final class Define {
             "&model.part_kind=%s" +
             "&model.tc_date1=%s" +
             "&model.tc_date2=%s" ;
+
+    public static String AuthenticationCookieName = ".AspNet.ApplicationCookie";
 }

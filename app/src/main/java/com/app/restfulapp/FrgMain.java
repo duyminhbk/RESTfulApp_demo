@@ -170,9 +170,11 @@ public class FrgMain extends BaseFrg {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 mActivity.showLoading(false);
-                Toast.makeText(mActivity, "status :" + statusCode + " error: " + errorResponse + "", Toast.LENGTH_SHORT).show();
+                if(statusCode == 401 || statusCode == 404)
+                    Toast.makeText(mActivity, "Session timeout. Please re-login and try again.", Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(mActivity, "status :" + statusCode + " error: " + errorResponse + "", Toast.LENGTH_SHORT).show();
             }
-
         });
     }
     private void getLabelFlags(final AdapMember adapter) {
@@ -194,7 +196,10 @@ public class FrgMain extends BaseFrg {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 mActivity.showLoading(false);
-                Toast.makeText(mActivity, "status :" + statusCode + " error: " + errorResponse + "", Toast.LENGTH_SHORT).show();
+                if(statusCode == 401 || statusCode == 404)
+                    Toast.makeText(mActivity, "Session timeout. Please re-login and try again.", Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(mActivity, "status :" + statusCode + " error: " + errorResponse + "", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -204,6 +209,7 @@ public class FrgMain extends BaseFrg {
         int reportKinds;
 
         switch (role) {
+            case GEN:
             case DIR:
                 reportKinds = R.array.report_type_dir;
                 break;
@@ -217,6 +223,7 @@ public class FrgMain extends BaseFrg {
                 reportKinds = R.array.report_type_default;
                 break;
         }
+
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(mActivity, reportKinds, android.R.layout.simple_spinner_dropdown_item);
         spinnerReport.setAdapter(adapter);
 
@@ -330,6 +337,39 @@ public class FrgMain extends BaseFrg {
 
     }
 
+    // update P1
+    private void updateP1() {
+
+        mActivity.showLoading(true);
+        AppClientRequest.get(mActivity,Define.GET_P1, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Log.d("minh", "GET_P1: " + response);
+                if (Parser.isSuccess(response)) {
+                    mAdapP1.setData(Parser.parseP1(response.optJSONObject("Result"))).notifyDataSetChanged();
+                    spinnerP1.setSelection(0);
+                    mActivity.showLoading(false);
+                    updateP2();
+                } else {
+                    // show error
+                    Toast.makeText(mActivity, Parser.getError(response), Toast.LENGTH_SHORT).show();
+                }
+            }
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                mActivity.showLoading(false);
+
+                if(statusCode == 401 || statusCode == 404)
+                    Toast.makeText(mActivity, "Session timeout. Please re-login and try again.", Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(mActivity,"status :"+statusCode+" error: "+errorResponse+"",Toast.LENGTH_SHORT).show();
+
+                mAdapP1.setData(null);
+                mAdapP1.notifyDataSetChanged();
+            }
+        });
+    }
+
     private void updateP2() {
         mActivity.showLoading(true);
         AppClientRequest.get(mActivity,String.format(Define.GET_P2, mP1.getCode()), new JsonHttpResponseHandler() {
@@ -352,10 +392,16 @@ public class FrgMain extends BaseFrg {
                 }
                 mActivity.showLoading(false);
             }
+
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 mActivity.showLoading(false);
-                Toast.makeText(mActivity,"status :"+statusCode+" error: "+errorResponse+"",Toast.LENGTH_SHORT).show();
+
+                if(statusCode == 401 || statusCode == 404)
+                    Toast.makeText(mActivity, "Session timeout. Please re-login and try again.", Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(mActivity,"status :"+statusCode+" error: "+errorResponse+"",Toast.LENGTH_SHORT).show();
+
                 visibleSpinner(false, spinnerP2);
                 mAdapP2.setData(null);
             }
@@ -386,14 +432,19 @@ public class FrgMain extends BaseFrg {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 mActivity.showLoading(false);
-                Toast.makeText(mActivity,"status :"+statusCode+" error: "+errorResponse+"",Toast.LENGTH_SHORT).show();
+
+                if(statusCode == 401 || statusCode == 404)
+                    Toast.makeText(mActivity, "Session timeout. Please re-login and try again.", Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(mActivity,"status :"+statusCode+" error: "+errorResponse+"",Toast.LENGTH_SHORT).show();
+
                 mAdapProduct.setData(null);
                 visibleSpinner(false, spinnerProduct);
             }
         });
     }
 
-    private void visibleSpinner(boolean flag,Spinner... spinners){
+    private void visibleSpinner(boolean flag, Spinner... spinners){
         if(spinners == null || spinners.length == 0) return;
         for(Spinner temp : spinners){
             temp.setVisibility(flag?View.VISIBLE:View.GONE);
@@ -420,40 +471,53 @@ public class FrgMain extends BaseFrg {
         }
         switch (reportType) {
             // reuse spinner customer and member to define cust_type and label_flag
-            case SLGD: {
-                // visibleSpinner(true, spinnerCustomer, spinnerMember, spinnerKind, spinnerP1);
-                visibleSpinner(true, spinnerCustomer, spinnerKind, spinnerP1);
+            case SLGD:
+            {
+                if (role == MainActivity.Role.GEN)
+                    visibleSpinner(true, spinnerCustomer, spinnerMember, spinnerKind, spinnerP1);
+                else
+                    visibleSpinner(true, spinnerCustomer, spinnerKind, spinnerP1);
+
                 txDateTo.setVisibility(View.GONE);
                 mAdapCus.setData(Utility.genCustType());
                 getLabelFlags(mAdapMember);
                 mAdapKind.setData(Utility.genPeriodType());
-                //update P1
-                mActivity.showLoading(true);
-                AppClientRequest.get(mActivity,Define.GET_P1, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                        Log.d("minh", "GET_P1: " + response);
-                        if (Parser.isSuccess(response)) {
-                            mAdapP1.setData(Parser.parseP1(response.optJSONObject("Result"))).notifyDataSetChanged();
-                            spinnerP1.setSelection(0);
+
+                if(role == MainActivity.Role.GEN) {
+                    mActivity.showLoading(true);
+                    AppClientRequest.get(mActivity,Define.DIR_LIST_URL, new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                             mActivity.showLoading(false);
-                            updateP2();
-                        } else {
-                            // show error
-                            Toast.makeText(mActivity, Parser.getError(response), Toast.LENGTH_SHORT).show();
+                            Log.d("minh", "DIR_LIST_URL: " + response);
+                            if (Parser.isSuccess(response)) {
+                                mAdapMember.setData(Parser.parseMember(response.optJSONArray("Result"))).notifyDataSetChanged();
+                                mMember = (Member) mAdapMember.getItem(0);
+
+                                updateP1();
+                            } else {
+                                // show error
+                                Toast.makeText(mActivity, Parser.getError(response), Toast.LENGTH_SHORT).show();
+                            }
                         }
 
-                    }
-                    @Override
-                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                        mActivity.showLoading(false);
-                        Toast.makeText(mActivity,"status :"+statusCode+" error: "+errorResponse+"",Toast.LENGTH_SHORT).show();
-                        mAdapP1.setData(null);
-                        mAdapP1.notifyDataSetChanged();
-                    }
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                            mActivity.showLoading(false);
 
+                            if(statusCode == 401 || statusCode == 404)
+                                Toast.makeText(mActivity, "Session timeout. Please re-login and try again.", Toast.LENGTH_SHORT).show();
+                            else
+                                Toast.makeText(mActivity, "status :" + statusCode + " error: " + errorResponse + "", Toast.LENGTH_SHORT).show();
 
-                });
+                            mAdapMember.setData(null);
+                            mAdapMember.notifyDataSetChanged();
+                        }
+                    });
+                }
+                else {
+                    updateP1();
+                }
 
                 notifyDataChange(mAdapMember, mAdapCus, mAdapKind);
 
@@ -461,7 +525,7 @@ public class FrgMain extends BaseFrg {
                 mMember = (Member) mAdapMember.getItem(0);
                 mCustomer = (Customer) mAdapCus.getItem(0);
                 mKind = (Member) mAdapKind.getItem(0);
-                mActivity.showLoading(false);
+                // mActivity.showLoading(false);
             }
             break;
             case SLTT: {
@@ -485,7 +549,12 @@ public class FrgMain extends BaseFrg {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                             mActivity.showLoading(false);
-                            Toast.makeText(mActivity, "status :" + statusCode + " error: " + errorResponse + "", Toast.LENGTH_SHORT).show();
+
+                            if(statusCode == 401 || statusCode == 404)
+                                Toast.makeText(mActivity, "Session timeout. Please re-login and try again.", Toast.LENGTH_SHORT).show();
+                            else
+                                Toast.makeText(mActivity, "status :" + statusCode + " error: " + errorResponse + "", Toast.LENGTH_SHORT).show();
+
                             mAdapMember.setData(null);
                             mAdapMember.notifyDataSetChanged();
                         }
@@ -535,7 +604,12 @@ public class FrgMain extends BaseFrg {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                             mActivity.showLoading(false);
-                            Toast.makeText(mActivity, "status :" + statusCode + " error: " + errorResponse + "", Toast.LENGTH_SHORT).show();
+
+                            if(statusCode == 401 || statusCode == 404)
+                                Toast.makeText(mActivity, "Session timeout. Please re-login and try again.", Toast.LENGTH_SHORT).show();
+                            else
+                                Toast.makeText(mActivity, "status :" + statusCode + " error: " + errorResponse + "", Toast.LENGTH_SHORT).show();
+
                             mAdapMember.setData(null);
                             mAdapMember.notifyDataSetChanged();
                         }
@@ -667,7 +741,15 @@ public class FrgMain extends BaseFrg {
     }
 
     public enum Reports {
-        NONE,SLKH, SLTT, SLTV, SLGD
+        NONE,
+        // Khach hang
+        SLKH,
+        // Tiep thi
+        SLTT,
+        // Truong vung
+        SLTV,
+        // Giam doc
+        SLGD
     }
 
     @Override
