@@ -99,6 +99,7 @@ public class FrgMain extends BaseFrg {
         result[4] = mProduct.getCode();
         result[5] = fromDate;
         result[6] = mKind.getName();
+//        result[7] = mMember.getCode();
         return result;
     }
 
@@ -493,6 +494,7 @@ public class FrgMain extends BaseFrg {
                             if (Parser.isSuccess(response)) {
                                 mAdapMember.setData(Parser.parseMember(response.optJSONArray("Result"))).notifyDataSetChanged();
                                 mMember = (Member) mAdapMember.getItem(0);
+                                mAdapMember.notifyDataSetChanged();
 
                                 updateP1();
                             } else {

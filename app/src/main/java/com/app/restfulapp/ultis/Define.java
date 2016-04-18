@@ -4,9 +4,9 @@ package com.app.restfulapp.ultis;
  * Created by minhpham on 1/20/16.
  */
 public final class Define {
-    private static String SERVICE = "http://192.168.1.103:83";
+    //private static String SERVICE = "http://192.168.1.103:83";
     //private static String SERVICE = "http://visitme.cloudapp.net:83";
-    //private static String SERVICE = "http://antvn.vn";
+    private static String SERVICE = "http://antvn.vn";
 
     public static final String SUBMIT_DATA_URL = SERVICE+"/Home/GetSaleData?SaleNo=%s&Date=%s";
     public static final String SALEMAN_LIST_URL = SERVICE+"/Home/GetSalemanList";
@@ -32,7 +32,9 @@ public final class Define {
             "&model.p_2=%s" +
             "&model.product_no=%s" +
             "&model.tc_date=%s" +
-            "&model.PeriodType=%s";
+            "&model.PeriodType=%s" +
+            "&model.sale_no=%s"
+            ;
     //// {chief_no: "6073", cust_type: "1", label_flag: "1", tc_date: "2015-01-01"}
     public static final String SLTV_URL = SERVICE+"/Home/GetChiefReport?" +
             "model.chief_no=%s"+

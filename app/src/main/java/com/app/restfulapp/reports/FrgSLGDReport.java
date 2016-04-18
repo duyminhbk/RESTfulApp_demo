@@ -32,9 +32,11 @@ public class FrgSLGDReport extends FrgReport {
 //        }
         //{ cust_type, label_flag, p_1, p_2, product_no, tc_date, PeriodType }
         mActivity.showLoading(true);
+        String sale_no = args[1];
+
         //{ cust_type, label_flag, p_1, p_2, product_no, tc_date, PeriodType }
-        AppClientRequest.get(mActivity,String.format(Define.SLGD_URL, args[0], args[1], args[2], args[3], args[4],
-                        args[5], args[6]), new JsonHttpResponseHandler() {
+        AppClientRequest.get(mActivity, String.format(Define.SLGD_URL, args[0], args[1], args[2], args[3], args[4],
+                        args[5], args[6], sale_no), new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                         super.onSuccess(statusCode, headers, response);
@@ -52,16 +54,15 @@ public class FrgSLGDReport extends FrgReport {
                             Toast.makeText(mActivity, Parser.getError(response), Toast.LENGTH_SHORT).show();
                         }
                     }
+
                     public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                         mActivity.showLoading(false);
 
-                        if(statusCode == 401 || statusCode == 404)
+                        if (statusCode == 401 || statusCode == 404)
                             Toast.makeText(mActivity, "Session timeout. Please re-login and try again.", Toast.LENGTH_SHORT).show();
                         else
                             Toast.makeText(mActivity, "status :" + statusCode + " error: " + responseString + "", Toast.LENGTH_SHORT).show();
                     }
-
-
                 }
         );
     }
@@ -80,8 +81,8 @@ public class FrgSLGDReport extends FrgReport {
     @Override
     protected void initView() {
         super.initView();
-        if(args ==null || args.length !=7) return;
-        ((TextView)findViewById(R.id.tx_time)).setText(mActivity.getString(R.string.time_label)+" "+args[5]);
+        if (args == null || args.length != 7) return;
+        ((TextView) findViewById(R.id.tx_time)).setText(mActivity.getString(R.string.time_label) + " " + args[5]);
     }
 
     public enum PeriodType {
