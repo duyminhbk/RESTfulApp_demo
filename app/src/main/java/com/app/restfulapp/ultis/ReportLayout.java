@@ -159,21 +159,20 @@ public class ReportLayout extends RelativeLayout {
 		// Special code for Customer Report
 		if(reportType.equals(RptTypeCustomer)) {
 
-			if(result.length < CustomerReportColumnPercents.length)
+			if(result.length >= CustomerReportColumnPercents.length) {
+
+				int total = 0;
+				for (int i = 0; i < CustomerReportColumnPercents.length; i++) {
+					if (i < CustomerReportColumnPercents.length - 1) {
+						result[i] = (int) (screenWidth * CustomerReportColumnPercents[i]);
+						total += result[i];
+					} else {
+						result[i] = screenWidth - total;
+					}
+				}
+
 				return result;
-
-			int total = 0;
-			for(int i=0; i<CustomerReportColumnPercents.length; i++) {
-				if(i<CustomerReportColumnPercents.length - 1) {
-					result[i] = (int)(screenWidth * CustomerReportColumnPercents[i]);
-					total += result[i];
-				}
-				else {
-					result[i] = screenWidth - total;
-				}
 			}
-
-			return result;
 		}
 
 		if(widthBaseOnScreen > columnWidth){
