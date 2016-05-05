@@ -454,34 +454,39 @@ public class ReportLayout extends RelativeLayout {
 
 		int rowBg = bodyBg;
 		int rowTextColor = bodyTextColor;
-		boolean L2 = false;
+		// Total line P1 / P2
+		boolean L12 = false;
 
 		// Normal lines
 		if(reportType.equals(RptTypeCustomer)) {
 			if("Total of P2".equals(data[0])) {
 				// rowBg = SumL2Bg;
-				L2 = true;
+				L12 = true;
 			}
 			else if("Total of P1".equals(data[0])) {
+				L12 = true;
 				rowBg = SumL1Bg;
 			}
 		}
 		else if(reportType.equals(RptTypeSaleman)) {
 			if(data[1] != null && data[1].endsWith(" Total")) {
 				// rowBg = SumL2Bg;
-				L2 = true;
+				L12 = true;
 			}
 			else if(data[0] != null && data[0].endsWith(" Total")) {
+				L12 = true;
 				rowBg = SumL1Bg;
 			}
 		}
 		else if(reportType.equals(RptTypeChief)) {
 			if("Total".equals(data[1])) {
+				L12 = true;
 				rowBg = SumL1Bg;
 			}
 		}
 		else if(reportType.equals(RptTypeDirector)) {
 			if(data[0] != null && !data[0].equals("")) {
+				L12 = true;
 				rowBg = SumL1Bg;
 			}
 		}
@@ -504,7 +509,7 @@ public class ReportLayout extends RelativeLayout {
 				//textViewB.setBackgroundColor(bodyBg);
 				textViewB.setTextColor(rowTextColor);
 				textViewB.setBackgroundColor(rowBg);
-				if(L2) {
+				if(L12) {
 					textViewB.setTypeface(null, Typeface.BOLD);
 				}
 			}
