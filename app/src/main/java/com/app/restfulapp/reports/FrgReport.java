@@ -26,6 +26,10 @@ public abstract class FrgReport extends BaseFrg {
         reportLayout = (ReportLayout)findViewById(R.id.rp_sample);
         reportLayout.reportType = this.getClass().getSimpleName();
         requestData();
+
+        if(member != null && mActivity != null) {
+            mActivity.getSupportActionBar().setTitle(member.getName());
+        }
     }
 
     protected abstract void requestData();
@@ -46,5 +50,4 @@ public abstract class FrgReport extends BaseFrg {
         this.toDate = toDate;
         return this;
     }
-
 }

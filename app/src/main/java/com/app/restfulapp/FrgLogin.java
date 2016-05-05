@@ -90,7 +90,6 @@ public class FrgLogin extends BaseFrg implements View.OnClickListener {
                 mActivity.showLoading(false);
 
                 try {
-
                     // JSON Object
                     JSONObject obj = new JSONObject(response);
                     String saleName = obj.optString("sale_ename");

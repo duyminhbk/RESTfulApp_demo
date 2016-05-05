@@ -39,7 +39,7 @@ public class FrgSLKHReport extends FrgReport {
         mActivity.getSupportActionBar().setTitle(customer.getCustNo() + ": " + getInitials(customer.getCustName()));
     }
 
-    protected String getInitials(String userName) {
+    public static String getInitials(String userName) {
         String[] parts = userName.split(" ");
         String result = "";
         for(int i=0; i<parts.length; i++) {
