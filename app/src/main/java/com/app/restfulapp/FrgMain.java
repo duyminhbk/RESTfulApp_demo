@@ -91,7 +91,7 @@ public class FrgMain extends BaseFrg {
 
     public String[] getGDArg() {
         //{ cust_type, label_flag, p_1, p_2, product_no, tc_date, PeriodType }
-        String[] result = new String[7];
+        String[] result = new String[8];
         result[0] = mCustomer.getCustName();
         result[1] = mMember.getCode();
         result[2] = mP1.getCode();
@@ -99,7 +99,6 @@ public class FrgMain extends BaseFrg {
         result[4] = mProduct.getCode();
         result[5] = fromDate;
         result[6] = mKind.getName();
-//        result[7] = mMember.getCode();
         return result;
     }
 
@@ -475,9 +474,11 @@ public class FrgMain extends BaseFrg {
             case SLGD:
             {
                 if (role == MainActivity.Role.GEN)
-                    visibleSpinner(true, spinnerCustomer, spinnerMember, spinnerKind, spinnerP1);
+                    // visibleSpinner(true, spinnerCustomer, spinnerMember, spinnerKind, spinnerP1);
+                    visibleSpinner(true, spinnerMember, spinnerKind, spinnerP1);
                 else
-                    visibleSpinner(true, spinnerCustomer, spinnerKind, spinnerP1);
+                    //visibleSpinner(true, spinnerCustomer, spinnerKind, spinnerP1);
+                    visibleSpinner(true, spinnerKind, spinnerP1);
 
                 txDateTo.setVisibility(View.GONE);
                 mAdapCus.setData(Utility.genCustType());

@@ -1,6 +1,8 @@
 package com.app.restfulapp.reports;
 
 import android.util.Log;
+import android.view.View;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -82,15 +84,16 @@ public class FrgSLGDReport extends FrgReport {
     protected void initView() {
         super.initView();
         if (args == null || args.length != 7) return;
+
         ((TextView) findViewById(R.id.tx_time)).setText(mActivity.getString(R.string.time_label) + " " + args[5]);
     }
 
     public enum PeriodType {
-        None,
+        // None,
         Daily,
-        Weekly,
+        // Weekly,
         Monthly,
         Quarterly,
-        Annualy
+        Yearly // Annualy
     }
 }
