@@ -94,7 +94,9 @@ public class Utility {
         SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
         return dateFormatter.format(date);
 
-    }public static String convertDate(Date date){
+    }
+
+    public static String convertDate(Date date){
         SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         return dateFormatter.format(date);
     }
@@ -102,7 +104,18 @@ public class Utility {
     public static String convertSimpleDate(String fulldate){
         return fulldate.substring(0, fulldate.indexOf('T') > 0 ? fulldate.indexOf('T') : fulldate.length());
     }
-    public static String getYear(String fulldate){
+
+    public static String getMonthYear(String fulldate) {
+
+        String[] parts = fulldate.split("-");
+
+        if(parts.length >= 2)
+            return parts[0] + "-" + parts[1];
+
+        return fulldate;
+    }
+
+    public static String getYear(String fulldate) {
         return fulldate.substring(0, fulldate.indexOf('-') > 0 ? fulldate.indexOf('-') : fulldate.length());
     }
 
@@ -147,7 +160,7 @@ public class Utility {
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
-    public static List<Member> genPeriodType() {
+    public static List<Member> genPeriodTypes() {
         ArrayList<Member> result = new ArrayList<>();
         for(int i=0;i<FrgSLGDReport.PeriodType.values().length;i++){
             result.add(new Member(FrgSLGDReport.PeriodType.values()[i].name(),""+i));
@@ -213,6 +226,36 @@ public class Utility {
             return deviceIdStr;
         }
     }
+
+    public static void showDatePickerParts(DatePickerDialog datepicker) {
+        showDatePickerParts(datepicker, true, true, true);
+    }
+
+    public static void showDatePickerParts(DatePickerDialog datepicker, boolean visibleDay) {
+        showDatePickerParts(datepicker, visibleDay, true, true);
+    }
+
+    public static void showDatePickerParts(DatePickerDialog datepicker, boolean visibleDay, boolean visibleMonth) {
+        showDatePickerParts(datepicker, visibleDay, visibleMonth, true);
+    }
+
+    public static void showDatePickerParts(DatePickerDialog datepicker, boolean visibleDay, boolean visibleMonth, boolean visibleYear) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+            findAndHideField(datepicker, "mDayPicker", visibleDay);
+            findAndHideField(datepicker, "mMonthPicker", visibleMonth);
+            findAndHideField(datepicker, "mYearPicker", visibleYear);
+        } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            findAndHideField(datepicker, "mDaySpinner", visibleDay);
+            findAndHideField(datepicker, "mMonthSpinner", visibleMonth);
+            findAndHideField(datepicker, "mYearSpinner", visibleYear);
+        } else {
+            final Object mDatePickerDelegate = findFieldInstance((DatePicker) findField(datepicker, "mDatePicker"), "mDelegate");
+            findAndHideField(mDatePickerDelegate, "mHeaderMonthDay", visibleDay | visibleMonth);
+            findAndHideField(mDatePickerDelegate, "mYearPickerView", visibleYear);
+            findField(mDatePickerDelegate, "mYearPickerView").setBackgroundColor(Color.parseColor(visibleYear ? "#ffffff" : "#00ffffff"));
+        }
+    }
+
     public static void showYearPicker(DatePickerDialog datepicker,boolean flag){
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB){
             findAndHideField(datepicker, "mDayPicker",flag);

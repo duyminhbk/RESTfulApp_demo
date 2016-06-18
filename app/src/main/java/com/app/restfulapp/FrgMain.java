@@ -27,6 +27,7 @@ import com.app.restfulapp.reports.FrgSLTVReport;
 import com.app.restfulapp.ultis.AppClientRequest;
 import com.app.restfulapp.ultis.Define;
 import com.app.restfulapp.ultis.Parser;
+import com.app.restfulapp.ultis.Tuple;
 import com.app.restfulapp.ultis.Utility;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -114,7 +115,38 @@ public class FrgMain extends BaseFrg {
         }else{
             reportType = Reports.NONE;
         }
+    }
 
+    /*
+     * Return Tuple<day, month, year> visibilities.
+     */
+    private Tuple<Boolean, Boolean, Boolean> getDatePickerVisibleParts()
+    {
+        switch (reportType) {
+            case SLTV:
+                return new Tuple<>(false, false, true);
+            case SLGD:
+                return new Tuple<>(
+                        Integer.parseInt(mKind.getCode()) <= FrgSLGDReport.PeriodType.Daily.ordinal(),
+                        Integer.parseInt(mKind.getCode()) <= FrgSLGDReport.PeriodType.Monthly.ordinal(),
+                        true);
+            default:
+                return new Tuple<>(true, true, true);
+        }
+    }
+
+    /*
+     * Get date string for displaying in text field, matching Date picker "style"
+     */
+    private String getDateString(String fullDate)
+    {
+        Tuple<Boolean, Boolean, Boolean> visibleParts = getDatePickerVisibleParts();
+
+        if(visibleParts.T1)
+            return fullDate;
+        if(visibleParts.T2)
+            return Utility.getMonthYear(fullDate);
+        return Utility.getYear(fullDate);
     }
 
     @Override
@@ -464,11 +496,13 @@ public class FrgMain extends BaseFrg {
         mKind = null;
         visibleSpinner(false, spinnerCustomer, spinnerMember, spinnerKind, spinnerProduct, spinnerP1, spinnerP2);
         txDateTo.setVisibility(View.VISIBLE);
+
         if(isShowingYearOnly){
-            Utility.showYearPicker(fromDatePickerDialog, false);
-            isShowingYearOnly = false;
-            txDateFrom.setText(fromDate);
+            Tuple<Boolean, Boolean, Boolean> dateParts = getDatePickerVisibleParts();
+            Utility.showDatePickerParts(fromDatePickerDialog, dateParts.T1, dateParts.T2, dateParts.T3);
+            txDateFrom.setText(getDateString(fromDate));
         }
+
         switch (reportType) {
             // reuse spinner customer and member to define cust_type and label_flag
             case SLGD:
@@ -483,7 +517,7 @@ public class FrgMain extends BaseFrg {
                 txDateTo.setVisibility(View.GONE);
                 mAdapCus.setData(Utility.genCustType());
                 getLabelFlags(mAdapMember);
-                mAdapKind.setData(Utility.genPeriodType());
+                mAdapKind.setData(Utility.genPeriodTypes());
 
                 if(role == MainActivity.Role.GEN) {
                     mActivity.showLoading(true);
@@ -581,11 +615,6 @@ public class FrgMain extends BaseFrg {
                 mKind =(Member)mAdapKind.getItem(0);
                 break;
             case SLTV: {
-                if(!isShowingYearOnly) {
-                    Utility.showYearPicker(fromDatePickerDialog, true);
-                    isShowingYearOnly = true;
-                    txDateFrom.setText(Utility.getYear(fromDate));
-                }
                 txDateTo.setVisibility(View.GONE);
                 visibleSpinner(true, spinnerMember);
                 if (role != MainActivity.Role.CHIEF) {
@@ -690,9 +719,9 @@ public class FrgMain extends BaseFrg {
                 newDate.set(year, monthOfYear, dayOfMonth);
                 fromDate = Utility.convertDate(newDate.getTime());
                 if(isShowingYearOnly){
-                    txDateFrom.setText(year+"");
-                }else {
-                    txDateFrom.setText(Utility.convertDate(newDate.getTime()));
+                    txDateFrom.setText(year);
+                } else {
+                    txDateFrom.setText(fromDate);
                 }
             }
 

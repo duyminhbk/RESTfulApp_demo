@@ -11,11 +11,14 @@ import com.app.restfulapp.models.Member;
 import com.app.restfulapp.ultis.ReportLayout;
 import com.app.restfulapp.ultis.Utility;
 
+import java.util.Date;
+
 /**
  * Created by minhpham on 1/18/16.
  */
 public abstract class FrgReport extends BaseFrg {
     protected ReportLayout reportLayout;
+    protected Date dtFromDate;
     protected String fromDate;
     protected String toDate;
     protected Customer customer;
@@ -43,7 +46,7 @@ public abstract class FrgReport extends BaseFrg {
         }
     }
 
-    public FrgReport setData(Customer customer,Member member, String fromDate,String toDate){
+    public FrgReport setData(Customer customer, Member member, String fromDate, String toDate){
         this.customer = customer;
         this.member = member;
         this.fromDate = fromDate;

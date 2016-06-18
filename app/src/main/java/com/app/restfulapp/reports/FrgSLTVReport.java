@@ -34,7 +34,7 @@ public class FrgSLTVReport extends FrgReport {
         if(customer!=null){
         ((TextView)findViewById(R.id.tx_area)).setText(String.format(getString(R.string.area_label), customer.getCustName()));}
         TextView txDate = (TextView) findViewById(R.id.txdate);
-        txDate.setText(mActivity.getString(R.string.time_year_label)+Utility.getYear(fromDate));
+        txDate.setText(mActivity.getString(R.string.time_year_label) + Utility.getYear(fromDate));
     }
 
     @Override
