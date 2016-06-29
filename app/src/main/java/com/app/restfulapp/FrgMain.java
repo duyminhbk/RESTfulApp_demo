@@ -126,10 +126,15 @@ public class FrgMain extends BaseFrg {
             case SLTV:
                 return new Tuple<>(false, false, true);
             case SLGD:
-                return new Tuple<>(
-                        Integer.parseInt(mKind.getCode()) <= FrgSLGDReport.PeriodType.Daily.ordinal(),
-                        Integer.parseInt(mKind.getCode()) <= FrgSLGDReport.PeriodType.Monthly.ordinal(),
-                        true);
+                try{
+                    return new Tuple<>(
+                            Integer.parseInt(mKind.getCode()) <= FrgSLGDReport.PeriodType.Daily.ordinal(),
+                            Integer.parseInt(mKind.getCode()) <= FrgSLGDReport.PeriodType.Quarterly.ordinal(),
+                            true);
+                }
+                catch(Exception ex) {
+                    return new Tuple<>(true, true, true);
+                }
             default:
                 return new Tuple<>(true, true, true);
         }
@@ -310,6 +315,13 @@ public class FrgMain extends BaseFrg {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 mKind = (Member) parent.getSelectedItem();
+
+                // For SLGD report, change date picker type accordingly
+                if(reportType == Reports.SLGD) {
+                    Tuple<Boolean, Boolean, Boolean> dateParts = getDatePickerVisibleParts();
+                    Utility.showDatePickerParts(fromDatePickerDialog, dateParts.T1, dateParts.T2, dateParts.T3);
+                    txDateFrom.setText(getDateString(fromDate));
+                }
             }
 
             @Override
@@ -497,11 +509,9 @@ public class FrgMain extends BaseFrg {
         visibleSpinner(false, spinnerCustomer, spinnerMember, spinnerKind, spinnerProduct, spinnerP1, spinnerP2);
         txDateTo.setVisibility(View.VISIBLE);
 
-        if(isShowingYearOnly){
-            Tuple<Boolean, Boolean, Boolean> dateParts = getDatePickerVisibleParts();
-            Utility.showDatePickerParts(fromDatePickerDialog, dateParts.T1, dateParts.T2, dateParts.T3);
-            txDateFrom.setText(getDateString(fromDate));
-        }
+        Tuple<Boolean, Boolean, Boolean> dateParts = getDatePickerVisibleParts();
+        Utility.showDatePickerParts(fromDatePickerDialog, dateParts.T1, dateParts.T2, dateParts.T3);
+        txDateFrom.setText(getDateString(fromDate));
 
         switch (reportType) {
             // reuse spinner customer and member to define cust_type and label_flag
@@ -718,11 +728,10 @@ public class FrgMain extends BaseFrg {
                 Calendar newDate = Calendar.getInstance();
                 newDate.set(year, monthOfYear, dayOfMonth);
                 fromDate = Utility.convertDate(newDate.getTime());
-                if(isShowingYearOnly){
-                    txDateFrom.setText(year);
-                } else {
-                    txDateFrom.setText(fromDate);
-                }
+
+                Tuple<Boolean, Boolean, Boolean> dateParts = getDatePickerVisibleParts();
+                Utility.showDatePickerParts(fromDatePickerDialog, dateParts.T1, dateParts.T2, dateParts.T3);
+                txDateFrom.setText(getDateString(fromDate));
             }
 
         }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));

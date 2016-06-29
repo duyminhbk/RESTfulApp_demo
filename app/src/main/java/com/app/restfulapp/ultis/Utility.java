@@ -256,34 +256,54 @@ public class Utility {
         }
     }
 
-    public static void showYearPicker(DatePickerDialog datepicker,boolean flag){
+    public static void showYearPicker(DatePickerDialog datepicker, boolean flag){
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB){
-            findAndHideField(datepicker, "mDayPicker",flag);
-            findAndHideField(datepicker, "mMonthPicker",flag);
+            findAndHideField(datepicker, "mDayPicker", flag);
+            findAndHideField(datepicker, "mMonthPicker", flag);
         }else if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
-            findAndHideField(datepicker, "mDaySpinner",flag);
-            findAndHideField(datepicker, "mMonthSpinner",flag);
+            findAndHideField(datepicker, "mDaySpinner", flag);
+            findAndHideField(datepicker, "mMonthSpinner", flag);
         }else{
             final Object mDatePickerDelegate = findFieldInstance((DatePicker) findField(datepicker, "mDatePicker"), "mDelegate");
 //            findAndHideField(mDatePickerDelegate, "mDaySpinner",flag);
-            findAndHideField(mDatePickerDelegate, "mHeaderMonthDay",flag);
-            findAndHideField(mDatePickerDelegate, "mYearPickerView",!flag);
+            findAndHideField(mDatePickerDelegate, "mHeaderMonthDay", flag);
+            findAndHideField(mDatePickerDelegate, "mYearPickerView", !flag);
             findField(mDatePickerDelegate, "mYearPickerView").setBackgroundColor(Color.parseColor(flag?"#ffffff":"#00ffffff"));
         }
 
     }
 
     /** find a member field by given name and hide it */
-    private static void findAndHideField(Object object, String name,boolean flag) {
+    private static boolean findAndHideField(Object object, String name, boolean visible) {
         try {
-            final Field field = object.getClass().getDeclaredField(name);
-            field.setAccessible(true);
-            final View fieldInstance = (View) field.get(object);
-            fieldInstance.setVisibility(flag?View.GONE:View.VISIBLE);
+            // Find DatePicker (mDatePicker) control first.
+            Field[] datePickerDialogFields = object.getClass().getDeclaredFields();
+            for (Field datePickerDialogField : datePickerDialogFields) {
+                if (datePickerDialogField.getName().equals("mDatePicker")) {
+                    datePickerDialogField.setAccessible(true);
+                    DatePicker datePicker = (DatePicker) datePickerDialogField.get(object);
+                    Field datePickerFields[] = datePickerDialogField.getType().getDeclaredFields();
+                    for (Field datePickerField : datePickerFields) {
+                        if (datePickerField.getName().equals(name)) {
+
+                            datePickerField.setAccessible(true);
+                            Object dayPicker = new Object();
+                            dayPicker = datePickerField.get(datePicker);
+                            ((View) dayPicker).setVisibility(visible ? View.VISIBLE : View.GONE);
+
+                            return true;
+                        }
+                    }
+                }
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        return false;
     }
+
     /** find a member field by given name and hide it */
     private static View findField(Object object, String name) {
         try {

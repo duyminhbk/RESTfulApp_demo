@@ -17,6 +17,8 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONObject;
 
+import java.util.Date;
+
 import cz.msebera.android.httpclient.Header;
 
 /**
@@ -47,8 +49,16 @@ public class FrgSLGDReport extends FrgReport {
                         //success request
                         if (Parser.isSuccess(response)) {
                             try {
-                                reportLayout.setDataAndLayout(Parser.parseSLGD(response.optJSONObject("Result")));
-                            } catch (ReportLayout.DataFormatException e) {
+                                JSONObject result = Parser.parseSLGD(response.optJSONObject("Result"));
+                                reportLayout.setDataAndLayout(result);
+
+                                // Get from_date, to_date
+                                String fromDate = result.getString("from_date");
+                                String toDate = result.getString("to_date");
+
+                                setTimeLabel(fromDate, toDate);
+
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         } else {
@@ -83,9 +93,14 @@ public class FrgSLGDReport extends FrgReport {
     @Override
     protected void initView() {
         super.initView();
-        if (args == null || args.length != 7) return;
 
-        ((TextView) findViewById(R.id.tx_time)).setText(mActivity.getString(R.string.time_label) + " " + args[5]);
+        if (args == null || args.length < 6) return;
+
+//        ((TextView) findViewById(R.id.tx_time)).setText(mActivity.getString(R.string.time_label) + " " + args[5]);
+    }
+
+    protected void setTimeLabel(String fromDate, String toDate) {
+        ((TextView) findViewById(R.id.tx_time)).setText("Từ ngày " + fromDate.toString() + " đến ngày " + toDate.toString());
     }
 
     public enum PeriodType {
