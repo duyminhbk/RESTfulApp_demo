@@ -91,7 +91,10 @@ public class ReportLayout extends RelativeLayout {
 	private int bodyBg = Color.parseColor("#afBDD7EE");
 	private int bodyTextColor= Color.parseColor("#000000");
 
-	private float[] CustomerReportColumnPercents = new float[]{0.29f, 0.11f, 0.10f, 0.14f, 0.35f};
+	private float[] CustomerReportColumnPercents = new float[]{
+//			0.29f, 0.11f, 0.10f, 0.14f, 0.35f
+			0.16f, 0.16f, 0.16f, 0.16f, 0.16f, 0.21f
+	};
 
 	public ReportLayout(Context context, AttributeSet attrs) {
 		this(context,attrs,0);
@@ -458,11 +461,13 @@ public class ReportLayout extends RelativeLayout {
 
 		// Normal lines
 		if(reportType.equals(RptTypeCustomer)) {
-			if("Total of P2".equals(data[0])) {
+			// col 0 -> 2
+			if("Total of P2".equals(data[2])) {
 				// rowBg = SumL2Bg;
 				L12 = true;
 			}
-			else if("Total of P1".equals(data[0])) {
+			// col 0 -> 2
+			else if("Total of P1".equals(data[2])) {
 				L12 = true;
 				rowBg = SumL1Bg;
 			}
