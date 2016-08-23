@@ -100,7 +100,8 @@ public class FrgSLGDReport extends FrgReport {
     }
 
     protected void setTimeLabel(String fromDate, String toDate) {
-        ((TextView) findViewById(R.id.tx_time)).setText("Từ ngày " + fromDate.toString() + " đến ngày " + toDate.toString());
+        //((TextView) findViewById(R.id.tx_time)).setText("Từ ngày " + fromDate.toString() + " đến ngày " + toDate.toString());
+        ((TextView) findViewById(R.id.tx_time)).setText(fromDate.toString());
     }
 
     public enum PeriodType {

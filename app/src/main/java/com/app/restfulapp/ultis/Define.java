@@ -4,7 +4,7 @@ package com.app.restfulapp.ultis;
  * Created by minhpham on 1/20/16.
  */
 public final class Define {
-//    private static String SERVICE = "http://192.168.1.101:83";
+//    private static String SERVICE = "http://192.168.1.105:83";
 //    private static String SERVICE = "http://visitme.cloudapp.net:83";
     private static String SERVICE = "http://antvn.vn";
 

@@ -127,10 +127,11 @@ public class FrgMain extends BaseFrg {
                 return new Tuple<>(false, false, true);
             case SLGD:
                 try{
-                    return new Tuple<>(
-                            Integer.parseInt(mKind.getCode()) <= FrgSLGDReport.PeriodType.Daily.ordinal(),
-                            Integer.parseInt(mKind.getCode()) <= FrgSLGDReport.PeriodType.Quarterly.ordinal(),
-                            true);
+//                    return new Tuple<>(
+//                            Integer.parseInt(mKind.getCode()) <= FrgSLGDReport.PeriodType.Daily.ordinal(),
+//                            Integer.parseInt(mKind.getCode()) <= FrgSLGDReport.PeriodType.Quarterly.ordinal(),
+//                            true);
+                    return new Tuple<>(true, true, true);
                 }
                 catch(Exception ex) {
                     return new Tuple<>(true, true, true);
@@ -319,7 +320,7 @@ public class FrgMain extends BaseFrg {
                 // For SLGD report, change date picker type accordingly
                 if(reportType == Reports.SLGD) {
                     Tuple<Boolean, Boolean, Boolean> dateParts = getDatePickerVisibleParts();
-                    Utility.showDatePickerParts(fromDatePickerDialog, dateParts.T1, dateParts.T2, dateParts.T3);
+                    // Utility.showDatePickerParts(fromDatePickerDialog, dateParts.T1, dateParts.T2, dateParts.T3);
                     txDateFrom.setText(getDateString(fromDate));
                 }
             }
@@ -510,7 +511,7 @@ public class FrgMain extends BaseFrg {
         txDateTo.setVisibility(View.VISIBLE);
 
         Tuple<Boolean, Boolean, Boolean> dateParts = getDatePickerVisibleParts();
-        Utility.showDatePickerParts(fromDatePickerDialog, dateParts.T1, dateParts.T2, dateParts.T3);
+        // Utility.showDatePickerParts(fromDatePickerDialog, dateParts.T1, dateParts.T2, dateParts.T3);
         txDateFrom.setText(getDateString(fromDate));
 
         switch (reportType) {
@@ -629,7 +630,7 @@ public class FrgMain extends BaseFrg {
                 visibleSpinner(true, spinnerMember);
                 if (role != MainActivity.Role.CHIEF) {
                     mActivity.showLoading(true);
-                    AppClientRequest.get(mActivity,Define.CHIEF_LIST_URL, new JsonHttpResponseHandler() {
+                    AppClientRequest.get(mActivity, Define.CHIEF_LIST_URL, new JsonHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                             mActivity.showLoading(false);
@@ -647,7 +648,7 @@ public class FrgMain extends BaseFrg {
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                             mActivity.showLoading(false);
 
-                            if(statusCode == 401 || statusCode == 404)
+                            if (statusCode == 401 || statusCode == 404)
                                 Toast.makeText(mActivity, "Session timeout. Please re-login and try again.", Toast.LENGTH_SHORT).show();
                             else
                                 Toast.makeText(mActivity, "status :" + statusCode + " error: " + errorResponse + "", Toast.LENGTH_SHORT).show();
@@ -730,7 +731,7 @@ public class FrgMain extends BaseFrg {
                 fromDate = Utility.convertDate(newDate.getTime());
 
                 Tuple<Boolean, Boolean, Boolean> dateParts = getDatePickerVisibleParts();
-                Utility.showDatePickerParts(fromDatePickerDialog, dateParts.T1, dateParts.T2, dateParts.T3);
+                // Utility.showDatePickerParts(fromDatePickerDialog, dateParts.T1, dateParts.T2, dateParts.T3);
                 txDateFrom.setText(getDateString(fromDate));
             }
 
