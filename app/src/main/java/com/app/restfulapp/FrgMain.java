@@ -84,6 +84,7 @@ public class FrgMain extends BaseFrg {
     private Member mP1;
     private View lnDate;
     private boolean isShowingYearOnly =false;
+    private Date selectedDate;
     private String fromDate;
 
     public FrgMain() {
@@ -127,11 +128,11 @@ public class FrgMain extends BaseFrg {
                 return new Tuple<>(false, false, true);
             case SLGD:
                 try{
-//                    return new Tuple<>(
-//                            Integer.parseInt(mKind.getCode()) <= FrgSLGDReport.PeriodType.Daily.ordinal(),
-//                            Integer.parseInt(mKind.getCode()) <= FrgSLGDReport.PeriodType.Quarterly.ordinal(),
-//                            true);
-                    return new Tuple<>(true, true, true);
+                    return new Tuple<>(
+                            Integer.parseInt(mKind.getCode()) <= FrgSLGDReport.PeriodType.Daily.ordinal(),
+                            Integer.parseInt(mKind.getCode()) <= FrgSLGDReport.PeriodType.Quarterly.ordinal(),
+                            true);
+//                    return new Tuple<>(true, true, true);
                 }
                 catch(Exception ex) {
                     return new Tuple<>(true, true, true);
@@ -146,13 +147,23 @@ public class FrgMain extends BaseFrg {
      */
     private String getDateString(String fullDate)
     {
-        Tuple<Boolean, Boolean, Boolean> visibleParts = getDatePickerVisibleParts();
+        if(fullDate == null || fullDate == "" || mKind == null)
+            return "";
 
-        if(visibleParts.T1)
+        if(Integer.parseInt(mKind.getCode()) == FrgSLGDReport.PeriodType.Daily.ordinal()) {
             return fullDate;
-        if(visibleParts.T2)
+        }
+        else if(Integer.parseInt(mKind.getCode()) == FrgSLGDReport.PeriodType.Monthly.ordinal()) {
             return Utility.getMonthYear(fullDate);
-        return Utility.getYear(fullDate);
+        }
+        else if(Integer.parseInt(mKind.getCode()) == FrgSLGDReport.PeriodType.Quarterly.ordinal()) {
+            // getMonth is zero-based
+            int quarter = selectedDate.getMonth() / 3 + 1;
+            return "Q." + quarter + "." + (selectedDate.getYear() + 1900);
+        }
+        else {
+            return Integer.toString(selectedDate.getYear() + 1900);
+        }
     }
 
     @Override
@@ -319,8 +330,9 @@ public class FrgMain extends BaseFrg {
 
                 // For SLGD report, change date picker type accordingly
                 if(reportType == Reports.SLGD) {
+
                     Tuple<Boolean, Boolean, Boolean> dateParts = getDatePickerVisibleParts();
-                    // Utility.showDatePickerParts(fromDatePickerDialog, dateParts.T1, dateParts.T2, dateParts.T3);
+                    Utility.showDatePickerParts(fromDatePickerDialog, dateParts.T1, dateParts.T2, dateParts.T3);
                     txDateFrom.setText(getDateString(fromDate));
                 }
             }
@@ -511,7 +523,7 @@ public class FrgMain extends BaseFrg {
         txDateTo.setVisibility(View.VISIBLE);
 
         Tuple<Boolean, Boolean, Boolean> dateParts = getDatePickerVisibleParts();
-        // Utility.showDatePickerParts(fromDatePickerDialog, dateParts.T1, dateParts.T2, dateParts.T3);
+        Utility.showDatePickerParts(fromDatePickerDialog, dateParts.T1, dateParts.T2, dateParts.T3);
         txDateFrom.setText(getDateString(fromDate));
 
         switch (reportType) {
@@ -685,36 +697,36 @@ public class FrgMain extends BaseFrg {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!Utility.isOnline(mActivity)) {
-                    Toast.makeText(mActivity, R.string.connect_warning, Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (TextUtils.isEmpty(txDateFrom.getText()) || (reportType != Reports.SLTV && TextUtils.isEmpty(txDateTo.getText()))) {
-                    Toast.makeText(mActivity, "Date field not empty", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (!Utility.isGreater(txDateTo.getText() + "", txDateFrom.getText() + "") && (reportType != Reports.SLGD && reportType!= Reports.SLTV)) {
-                    Toast.makeText(mActivity, "To date should greater than From date", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (reportType == Reports.NONE) {
-                    Toast.makeText(mActivity, "Please choose kind of report", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                switch (reportType) {
-                    case SLGD:
-                        mActivity.addFragment(new FrgSLGDReport().setData(getGDArg()), true);
-                        break;
-                    case SLKH:
-                        mActivity.addFragment(new FrgSLKHReport().setData(mCustomer, mKind, fromDate, txDateTo.getText() + ""), true);
-                        break;
-                    case SLTT:
-                        mActivity.addFragment(new FrgSLTTReport().setData(mMember, mKind, fromDate, txDateTo.getText() + ""), true);
-                        break;
-                    case SLTV:
-                        mActivity.addFragment(new FrgSLTVReport().setData(mCustomer, mMember, mKind, fromDate, txDateTo.getText() + ""), true);
-                        break;
-                }
+            if (!Utility.isOnline(mActivity)) {
+                Toast.makeText(mActivity, R.string.connect_warning, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (TextUtils.isEmpty(txDateFrom.getText()) || (reportType != Reports.SLTV && TextUtils.isEmpty(txDateTo.getText()))) {
+                Toast.makeText(mActivity, "Date field not empty", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (!Utility.isGreater(txDateTo.getText() + "", txDateFrom.getText() + "") && (reportType != Reports.SLGD && reportType!= Reports.SLTV)) {
+                Toast.makeText(mActivity, "To date should greater than From date", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (reportType == Reports.NONE) {
+                Toast.makeText(mActivity, "Please choose kind of report", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            switch (reportType) {
+                case SLGD:
+                    mActivity.addFragment(new FrgSLGDReport().setData(getGDArg()), true);
+                    break;
+                case SLKH:
+                    mActivity.addFragment(new FrgSLKHReport().setData(mCustomer, mKind, fromDate, txDateTo.getText() + ""), true);
+                    break;
+                case SLTT:
+                    mActivity.addFragment(new FrgSLTTReport().setData(mMember, mKind, fromDate, txDateTo.getText() + ""), true);
+                    break;
+                case SLTV:
+                    mActivity.addFragment(new FrgSLTVReport().setData(mCustomer, mMember, mKind, fromDate, txDateTo.getText() + ""), true);
+                    break;
+            }
             }
         });
     }
@@ -726,12 +738,25 @@ public class FrgMain extends BaseFrg {
         fromDatePickerDialog = new DatePickerDialog(mActivity, new DatePickerDialog.OnDateSetListener() {
 
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                // Integer.parseInt(mKind.getCode()) <= FrgSLGDReport.PeriodType.Daily.ordinal()
+                // Set date according to current report type
+//                if(Integer.parseInt(mKind.getCode()) == FrgSLGDReport.PeriodType.Daily.ordinal()) {
+//                    // No change
+//                }
+//                else if(Integer.parseInt(mKind.getCode()) == FrgSLGDReport.PeriodType.Monthly.ordinal()) {
+//                    dayOfMonth = 1;
+//                }
+//                else if(Integer.parseInt(mKind.getCode()) == FrgSLGDReport.PeriodType.Monthly.ordinal()) {
+//                    // First month of quarter (1, 4, 7, 10)
+//                    monthOfYear = ((monthOfYear + 2) / 3 - 1) *  3 + 1;
+//                    dayOfMonth = 1;
+//                }
+
                 Calendar newDate = Calendar.getInstance();
                 newDate.set(year, monthOfYear, dayOfMonth);
-                fromDate = Utility.convertDate(newDate.getTime());
 
-                Tuple<Boolean, Boolean, Boolean> dateParts = getDatePickerVisibleParts();
-                // Utility.showDatePickerParts(fromDatePickerDialog, dateParts.T1, dateParts.T2, dateParts.T3);
+                selectedDate = newDate.getTime();
+                fromDate = Utility.convertDate(selectedDate);
                 txDateFrom.setText(getDateString(fromDate));
             }
 
@@ -742,19 +767,19 @@ public class FrgMain extends BaseFrg {
         txDateFrom.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    fromDatePickerDialog.show();
-                }
-                return false;
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                fromDatePickerDialog.show();
+            }
+            return false;
             }
         });
 
         toDatePickerDialog = new DatePickerDialog(mActivity, new DatePickerDialog.OnDateSetListener() {
 
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                Calendar newDate = Calendar.getInstance();
-                newDate.set(year, monthOfYear, dayOfMonth);
-                txDateTo.setText(Utility.convertDate(newDate.getTime()));
+            Calendar newDate = Calendar.getInstance();
+            newDate.set(year, monthOfYear, dayOfMonth);
+            txDateTo.setText(Utility.convertDate(newDate.getTime()));
             }
 
         }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
@@ -764,10 +789,10 @@ public class FrgMain extends BaseFrg {
         txDateTo.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    toDatePickerDialog.show();
-                }
-                return false;
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                toDatePickerDialog.show();
+            }
+            return false;
             }
         });
     }
@@ -806,13 +831,14 @@ public class FrgMain extends BaseFrg {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if(!TextUtils.isEmpty(getArguments().getString("from"))){
-           txDateFrom.setText(getArguments().getString("from"));
-           txDateTo.setText(getArguments().getString("to"));
-        }else{
-            Date date = new Date();
-            date.setDate(1);
-            fromDate = Utility.convertDate(date);
+        if (!TextUtils.isEmpty(getArguments().getString("from"))) {
+            txDateFrom.setText(getArguments().getString("from"));
+            txDateTo.setText(getArguments().getString("to"));
+        } else {
+            selectedDate = new Date();
+            selectedDate.setDate(1);
+
+            fromDate = Utility.convertDate(selectedDate);
             txDateFrom.setText(fromDate);
             txDateTo.setText(Utility.convertDate(new Date()));
         }

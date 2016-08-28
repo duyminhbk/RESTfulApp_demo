@@ -56,8 +56,7 @@ public class FrgLogin extends BaseFrg implements View.OnClickListener {
                 new AlertDialog.Builder(mActivity)
                         .setTitle("Your device ID")
                         .setMessage(Utility.getDeviceId(mActivity))
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener()
-                        {
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
@@ -69,6 +68,10 @@ public class FrgLogin extends BaseFrg implements View.OnClickListener {
         });
         mActivity.getSupportActionBar().setTitle(R.string.app_name);
         cbAuto = (CheckBox)findViewById(R.id.cb_auto);
+
+        // TODO_: DEBUG
+//        emailET.setText("3188");
+//        pwdET.setText("Wh4tTh3Heo");
     }
 
     /**
