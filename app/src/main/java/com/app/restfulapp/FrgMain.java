@@ -145,10 +145,20 @@ public class FrgMain extends BaseFrg {
     /*
      * Get date string for displaying in text field, matching Date picker "style"
      */
-    private String getDateString(String fullDate)
+    private String getFromDateString()
     {
-        if(fullDate == null || fullDate == "" || mKind == null)
-            return "";
+        Tuple<Boolean, Boolean, Boolean> visibleParts = getDatePickerVisibleParts();
+
+        String fullDate = Utility.convertDate(selectedDate);
+
+        // Not Director report
+        if(mKind == null || reportType != Reports.SLGD) {
+            if(visibleParts.T1)
+                return fullDate;
+            if(visibleParts.T2)
+                return Utility.getMonthYear(fullDate);
+            return Utility.getYear(fullDate);
+        }
 
         if(Integer.parseInt(mKind.getCode()) == FrgSLGDReport.PeriodType.Daily.ordinal()) {
             return fullDate;
@@ -188,12 +198,11 @@ public class FrgMain extends BaseFrg {
 
         btnSubmit = (Button) rootView.findViewById(R.id.btnSubmit);
         mActivity.getSupportActionBar().setTitle(Utility.getString(mActivity, "saleName"));
-//        etSal = (EditText) rootView.findViewById(R.id.ed_sal);
-//        txtTotal = (TextView) rootView.findViewById(R.id.txtTotal);
-//        lvContent = (ListView) rootView.findViewById(R.id.lv_content);
-//        txEmpty = (TextView) rootView.findViewById(R.id.tv_empty);
 
-//        initList();
+        selectedDate = new Date();
+        selectedDate.setDate(1);
+        fromDate = Utility.convertDate(selectedDate);
+
         initDatePicker();
         initSpinner();
 
@@ -333,7 +342,7 @@ public class FrgMain extends BaseFrg {
 
                     Tuple<Boolean, Boolean, Boolean> dateParts = getDatePickerVisibleParts();
                     Utility.showDatePickerParts(fromDatePickerDialog, dateParts.T1, dateParts.T2, dateParts.T3);
-                    txDateFrom.setText(getDateString(fromDate));
+                    txDateFrom.setText(getFromDateString());
                 }
             }
 
@@ -524,7 +533,7 @@ public class FrgMain extends BaseFrg {
 
         Tuple<Boolean, Boolean, Boolean> dateParts = getDatePickerVisibleParts();
         Utility.showDatePickerParts(fromDatePickerDialog, dateParts.T1, dateParts.T2, dateParts.T3);
-        txDateFrom.setText(getDateString(fromDate));
+        txDateFrom.setText(getFromDateString());
 
         switch (reportType) {
             // reuse spinner customer and member to define cust_type and label_flag
@@ -738,26 +747,12 @@ public class FrgMain extends BaseFrg {
         fromDatePickerDialog = new DatePickerDialog(mActivity, new DatePickerDialog.OnDateSetListener() {
 
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                // Integer.parseInt(mKind.getCode()) <= FrgSLGDReport.PeriodType.Daily.ordinal()
-                // Set date according to current report type
-//                if(Integer.parseInt(mKind.getCode()) == FrgSLGDReport.PeriodType.Daily.ordinal()) {
-//                    // No change
-//                }
-//                else if(Integer.parseInt(mKind.getCode()) == FrgSLGDReport.PeriodType.Monthly.ordinal()) {
-//                    dayOfMonth = 1;
-//                }
-//                else if(Integer.parseInt(mKind.getCode()) == FrgSLGDReport.PeriodType.Monthly.ordinal()) {
-//                    // First month of quarter (1, 4, 7, 10)
-//                    monthOfYear = ((monthOfYear + 2) / 3 - 1) *  3 + 1;
-//                    dayOfMonth = 1;
-//                }
+            Calendar newDate = Calendar.getInstance();
+            newDate.set(year, monthOfYear, dayOfMonth);
 
-                Calendar newDate = Calendar.getInstance();
-                newDate.set(year, monthOfYear, dayOfMonth);
-
-                selectedDate = newDate.getTime();
-                fromDate = Utility.convertDate(selectedDate);
-                txDateFrom.setText(getDateString(fromDate));
+            selectedDate = newDate.getTime();
+            fromDate = Utility.convertDate(selectedDate);
+            txDateFrom.setText(getFromDateString());
             }
 
         }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
