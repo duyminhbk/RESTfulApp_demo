@@ -9,6 +9,7 @@
     <string name="name">Name</string>
     <string name="email">Email</string>
     <string name="pwd">Password</string>
+    <string name="server_address">Server Address</string>
     <string name="btnRegister">Register</string>
     <string name="welcome">Welcome</string>
     <string name="home_title">Home</string>

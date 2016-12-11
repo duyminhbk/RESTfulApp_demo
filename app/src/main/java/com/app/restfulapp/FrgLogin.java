@@ -34,6 +34,7 @@ public class FrgLogin extends BaseFrg implements View.OnClickListener {
     private TextView errorMsg;
     private EditText emailET;
     private EditText pwdET;
+    private EditText serverAddressET;
     private Button btnLogin;
     private CheckBox cbAuto;
     private TextView txDeviceID;
@@ -47,6 +48,8 @@ public class FrgLogin extends BaseFrg implements View.OnClickListener {
         emailET = (EditText) rootView.findViewById(R.id.loginEmail);
         // Find Password Edit View control by ID
         pwdET = (EditText) rootView.findViewById(R.id.loginPassword);
+        // Find Server Address View control by ID
+        serverAddressET = (EditText) rootView.findViewById(R.id.serverAddress);
         // Find login button
         btnLogin = (Button) rootView.findViewById(R.id.btnLogin);
         btnLogin.setOnClickListener(this);
@@ -66,8 +69,12 @@ public class FrgLogin extends BaseFrg implements View.OnClickListener {
                         .show();
             }
         });
+
         mActivity.getSupportActionBar().setTitle(R.string.app_name);
         cbAuto = (CheckBox)findViewById(R.id.cb_auto);
+
+        String serverAddress = Utility.getString(mActivity, "serverAddress");
+        serverAddressET.setText(serverAddress);
 
         // TODO_: DEBUG
 //        emailET.setText("3188");
@@ -100,8 +107,9 @@ public class FrgLogin extends BaseFrg implements View.OnClickListener {
                     Utility.saveString(mActivity, "saleNo", emailET.getText().toString());
                     Utility.saveString(mActivity, "saleName", saleName);
                     mActivity.setRole(obj.optString("role"));
-                    Utility.saveString(mActivity, "email", emailET.getText() + "");
-                    Utility.saveString(mActivity, "pass", pwdET.getText() + "");
+                    Utility.saveString(mActivity, "email", emailET.getText().toString());
+                    Utility.saveString(mActivity, "pass", pwdET.getText().toString());
+                    Utility.saveString(mActivity, "serverAddress", serverAddressET.getText().toString());
                     Utility.saveBool(mActivity, "auto", cbAuto.isChecked());
 
                     goHomeScreen();
@@ -157,6 +165,13 @@ public class FrgLogin extends BaseFrg implements View.OnClickListener {
 
         // Get Password Edit View Value
         String password = pwdET.getText().toString();
+
+        // Get Password Edit View Value
+        String serverAddress = serverAddressET.getText().toString();
+
+        // Save server address to Util
+        Define.AssignServerAddress(serverAddress);
+
         if(!Utility.isOnline(mActivity)){
             Toast.makeText(mActivity, R.string.connect_warning, Toast.LENGTH_SHORT).show();
             return;
